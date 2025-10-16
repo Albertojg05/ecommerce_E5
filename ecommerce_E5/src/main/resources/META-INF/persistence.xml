@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence version="3.0" xmlns="https://jakarta.ee/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
-    <!-- Define Persistence Unit -->
-    <persistence-unit name="my_persistence_unit">
-        
-    </persistence-unit>
+  <!-- Define Persistence Unit -->
+  <persistence-unit name="my_persistence_unit">
+    <class>com.mycompany.ecommerce_e5.dominio.Usuario</class>
+    <class>com.mycompany.ecommerce_e5.dominio.Direccion</class>
+    <class>com.mycompany.ecommerce_e5.dominio.Producto</class>
+    <class>com.mycompany.ecommerce_e5.dominio.Categoria</class>
+    <class>com.mycompany.ecommerce_e5.dominio.Resena</class>
+    <class>com.mycompany.ecommerce_e5.dominio.Pedido</class>
+    <class>com.mycompany.ecommerce_e5.dominio.DetallePedido</class>
+    <class>com.mycompany.ecommerce_e5.dominio.Pago</class>
+  </persistence-unit>
 </persistence>
