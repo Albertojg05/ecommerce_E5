@@ -12,7 +12,7 @@ import java.util.List;
 
 /**
  *
- * @author Alberto Jiménez García 252595
+ * @author Alberto Jiménez García 252595 
  * Rene Ezequiel Figueroa Lopez 228691
  * Freddy Alí Castro Román 252191
  */
@@ -42,8 +42,21 @@ public class Pedido implements Serializable {
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
     private List<DetallePedido> detalles;
 
-    @OneToOne(mappedBy = "pedido", cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "pago_id", referencedColumnName = "id")
     private Pago pago;
+
+    public Pedido() {
+    }
+
+    public Pedido(String numeroPedido, Date fecha, double total, EstadoPedido estado, Usuario usuario, Direccion direccionEnvio) {
+        this.numeroPedido = numeroPedido;
+        this.fecha = fecha;
+        this.total = total;
+        this.estado = estado;
+        this.usuario = usuario;
+        this.direccionEnvio = direccionEnvio;
+    }
 
     public int getId() {
         return id;
@@ -116,20 +129,5 @@ public class Pedido implements Serializable {
     public void setPago(Pago pago) {
         this.pago = pago;
     }
-
-    public Pedido(int id, String numeroPedido, Date fecha, double total, EstadoPedido estado, Usuario usuario, Direccion direccionEnvio, List<DetallePedido> detalles, Pago pago) {
-        this.id = id;
-        this.numeroPedido = numeroPedido;
-        this.fecha = fecha;
-        this.total = total;
-        this.estado = estado;
-        this.usuario = usuario;
-        this.direccionEnvio = direccionEnvio;
-        this.detalles = detalles;
-        this.pago = pago;
-    }
-
-    public Pedido() {
-    }
-
+    
 }

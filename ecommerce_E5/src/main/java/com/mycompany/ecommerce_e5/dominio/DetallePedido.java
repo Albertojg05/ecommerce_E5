@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 /**
  *
- * @author Alberto Jiménez García 252595
+ * @author Alberto Jiménez García 252595 
  * Rene Ezequiel Figueroa Lopez 228691
  * Freddy Alí Castro Román 252191
  */
@@ -18,7 +18,7 @@ public class DetallePedido implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // ID propio para la entidad
+    private Long id;
 
     private int cantidad;
     private double precioUnitario;
@@ -28,6 +28,16 @@ public class DetallePedido implements Serializable {
 
     @ManyToOne
     private Pedido pedido;
+
+    public DetallePedido() {
+    }
+
+    public DetallePedido(int cantidad, double precioUnitario, Producto producto, Pedido pedido) {
+        this.cantidad = cantidad;
+        this.precioUnitario = precioUnitario;
+        this.producto = producto;
+        this.pedido = pedido;
+    }
 
     public Long getId() {
         return id;
@@ -67,17 +77,6 @@ public class DetallePedido implements Serializable {
 
     public void setPedido(Pedido pedido) {
         this.pedido = pedido;
-    }
-
-    public DetallePedido(Long id, int cantidad, double precioUnitario, Producto producto, Pedido pedido) {
-        this.id = id;
-        this.cantidad = cantidad;
-        this.precioUnitario = precioUnitario;
-        this.producto = producto;
-        this.pedido = pedido;
-    }
-
-    public DetallePedido() {
     }
 
 }

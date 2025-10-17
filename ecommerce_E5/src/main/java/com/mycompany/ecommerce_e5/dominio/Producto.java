@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  *
- * @author Alberto Jiménez García 252595
+ * @author Alberto Jiménez García 252595 
  * Rene Ezequiel Figueroa Lopez 228691
  * Freddy Alí Castro Román 252191
  */
@@ -24,8 +24,8 @@ public class Producto implements Serializable {
     private String nombre;
     private String descripcion;
     private double precio;
-    private int existencias;
     private String imagenUrl;
+    private int existencias;
     private String talla;
     private String color;
 
@@ -34,6 +34,20 @@ public class Producto implements Serializable {
 
     @OneToMany(mappedBy = "producto")
     private List<Resena> resenas;
+
+    public Producto() {
+    }
+
+    public Producto(String nombre, String descripcion, double precio, String imagenUrl, int existencias, String talla, String color, Categoria categoria) {
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.precio = precio;
+        this.imagenUrl = imagenUrl;
+        this.existencias = existencias;
+        this.talla = talla;
+        this.color = color;
+        this.categoria = categoria;
+    }
 
     public int getId() {
         return id;
@@ -67,20 +81,20 @@ public class Producto implements Serializable {
         this.precio = precio;
     }
 
-    public int getExistencias() {
-        return existencias;
-    }
-
-    public void setExistencias(int existencias) {
-        this.existencias = existencias;
-    }
-
     public String getImagenUrl() {
         return imagenUrl;
     }
 
     public void setImagenUrl(String imagenUrl) {
         this.imagenUrl = imagenUrl;
+    }
+
+    public int getExistencias() {
+        return existencias;
+    }
+
+    public void setExistencias(int existencias) {
+        this.existencias = existencias;
     }
 
     public String getTalla() {
@@ -114,21 +128,5 @@ public class Producto implements Serializable {
     public void setResenas(List<Resena> resenas) {
         this.resenas = resenas;
     }
-
-    public Producto(int id, String nombre, String descripcion, double precio, int existencias, String imagenUrl, String talla, String color, Categoria categoria, List<Resena> resenas) {
-        this.id = id;
-        this.nombre = nombre;
-        this.descripcion = descripcion;
-        this.precio = precio;
-        this.existencias = existencias;
-        this.imagenUrl = imagenUrl;
-        this.talla = talla;
-        this.color = color;
-        this.categoria = categoria;
-        this.resenas = resenas;
-    }
-
-    public Producto() {
-    }
-
+    
 }

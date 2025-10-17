@@ -9,7 +9,7 @@ import java.io.Serializable;
 
 /**
  *
- * @author Alberto Jiménez García 252595
+ * @author Alberto Jiménez García 252595 
  * Rene Ezequiel Figueroa Lopez 228691
  * Freddy Alí Castro Román 252191
  */
@@ -28,8 +28,10 @@ public class Direccion implements Serializable {
     @ManyToOne
     private Usuario usuario;
 
-    public Direccion(int id, String calle, String ciudad, String estado, String codigoPostal, Usuario usuario) {
-        this.id = id;
+    public Direccion() {
+    }
+
+    public Direccion(String calle, String ciudad, String estado, String codigoPostal, Usuario usuario) {
         this.calle = calle;
         this.ciudad = ciudad;
         this.estado = estado;
@@ -84,8 +86,5 @@ public class Direccion implements Serializable {
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
     }
-
-    public Direccion() {
-    }
-
+    
 }

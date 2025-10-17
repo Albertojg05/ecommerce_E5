@@ -12,7 +12,7 @@ import java.util.Date;
 
 /**
  *
- * @author Alberto Jiménez García 252595
+ * @author Alberto Jiménez García 252595 
  * Rene Ezequiel Figueroa Lopez 228691
  * Freddy Alí Castro Román 252191
  */
@@ -34,8 +34,18 @@ public class Pago implements Serializable {
     @Enumerated(EnumType.STRING)
     private EstadoPago estado;
 
-    @OneToOne
+    @OneToOne(mappedBy = "pago")
     private Pedido pedido;
+
+    public Pago() {
+    }
+
+    public Pago(double monto, Date fecha, MetodoPago metodo, EstadoPago estado) {
+        this.monto = monto;
+        this.fecha = fecha;
+        this.metodo = metodo;
+        this.estado = estado;
+    }
 
     public int getId() {
         return id;
@@ -84,17 +94,5 @@ public class Pago implements Serializable {
     public void setPedido(Pedido pedido) {
         this.pedido = pedido;
     }
-
-    public Pago(int id, double monto, Date fecha, MetodoPago metodo, EstadoPago estado, Pedido pedido) {
-        this.id = id;
-        this.monto = monto;
-        this.fecha = fecha;
-        this.metodo = metodo;
-        this.estado = estado;
-        this.pedido = pedido;
-    }
-
-    public Pago() {
-    }
-
+    
 }

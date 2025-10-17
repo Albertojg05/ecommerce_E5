@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  *
- * @author Alberto Jiménez García 252595
+ * @author Alberto Jiménez García 252595 
  * Rene Ezequiel Figueroa Lopez 228691
  * Freddy Alí Castro Román 252191
  */
@@ -25,6 +25,13 @@ public class Categoria implements Serializable {
 
     @OneToMany(mappedBy = "categoria")
     private List<Producto> productos;
+
+    public Categoria() {
+    }
+
+    public Categoria(String nombre) {
+        this.nombre = nombre;
+    }
 
     public int getId() {
         return id;
@@ -49,14 +56,6 @@ public class Categoria implements Serializable {
     public void setProductos(List<Producto> productos) {
         this.productos = productos;
     }
-
-    public Categoria(int id, String nombre, List<Producto> productos) {
-        this.id = id;
-        this.nombre = nombre;
-        this.productos = productos;
-    }
-
-    public Categoria() {
-    }
-
+    
+    
 }

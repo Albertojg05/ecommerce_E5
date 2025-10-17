@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  *
- * @author Alberto Jiménez García 252595
+ * @author Alberto Jiménez García 252595 
  * Rene Ezequiel Figueroa Lopez 228691
  * Freddy Alí Castro Román 252191
  */
@@ -36,8 +36,16 @@ public class Usuario implements Serializable {
     @OneToMany(mappedBy = "usuario")
     private List<Pedido> pedidos;
 
-    @OneToMany(mappedBy = "usuario")
-    private List<Resena> resenas;
+    public Usuario() {
+    }
+
+    public Usuario(String nombre, String correo, String contrasena, String telefono, RolUsuario rol) {
+        this.nombre = nombre;
+        this.correo = correo;
+        this.contrasena = contrasena;
+        this.telefono = telefono;
+        this.rol = rol;
+    }
 
     public int getId() {
         return id;
@@ -101,29 +109,5 @@ public class Usuario implements Serializable {
 
     public void setPedidos(List<Pedido> pedidos) {
         this.pedidos = pedidos;
-    }
-
-    public List<Resena> getResenas() {
-        return resenas;
-    }
-
-    public void setResenas(List<Resena> resenas) {
-        this.resenas = resenas;
-    }
-
-    public Usuario(int id, String nombre, String correo, String contrasena, String telefono, RolUsuario rol, List<Direccion> direcciones, List<Pedido> pedidos, List<Resena> resenas) {
-        this.id = id;
-        this.nombre = nombre;
-        this.correo = correo;
-        this.contrasena = contrasena;
-        this.telefono = telefono;
-        this.rol = rol;
-        this.direcciones = direcciones;
-        this.pedidos = pedidos;
-        this.resenas = resenas;
-    }
-
-    public Usuario() {
-    }
-
+    }    
 }

@@ -10,7 +10,7 @@ import java.util.Date;
 
 /**
  *
- * @author Alberto Jiménez García 252595
+ * @author Alberto Jiménez García 252595 
  * Rene Ezequiel Figueroa Lopez 228691
  * Freddy Alí Castro Román 252191
  */
@@ -32,6 +32,17 @@ public class Resena implements Serializable {
 
     @ManyToOne
     private Producto producto;
+
+    public Resena() {
+    }
+
+    public Resena(int calificacion, String comentario, Date fecha, Usuario usuario, Producto producto) {
+        this.calificacion = calificacion;
+        this.comentario = comentario;
+        this.fecha = fecha;
+        this.usuario = usuario;
+        this.producto = producto;
+    }
 
     public int getId() {
         return id;
@@ -80,17 +91,5 @@ public class Resena implements Serializable {
     public void setProducto(Producto producto) {
         this.producto = producto;
     }
-
-    public Resena(int id, int calificacion, String comentario, Date fecha, Usuario usuario, Producto producto) {
-        this.id = id;
-        this.calificacion = calificacion;
-        this.comentario = comentario;
-        this.fecha = fecha;
-        this.usuario = usuario;
-        this.producto = producto;
-    }
-
-    public Resena() {
-    }
-
+    
 }
