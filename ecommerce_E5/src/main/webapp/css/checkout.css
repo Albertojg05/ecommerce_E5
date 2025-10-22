@@ -25,7 +25,7 @@ main.checkout-page {
     gap: 15px;
     font-size: 20px;
     font-weight: 600;
-    color: #000;
+    color: var(--color-tittle);
     margin-bottom: 20px;
 }
 
@@ -76,7 +76,7 @@ main.checkout-page {
 
 .payment-option input[type="radio"] {
     margin-right: 12px;
-    accent-color: #000;
+    accent-color: var(--color-selection);
 }
 
 .payment-option .logos {
@@ -92,8 +92,8 @@ main.checkout-page {
 
 .checkout-btn {
     width: 100%;
-    background-color: #000;
-    color: #fff;
+    background-color: var(--color-selection);
+    color: var(--background);
     border: none;
     padding: 18px;
     font-size: 16px;
@@ -136,7 +136,7 @@ main.checkout-page {
     top: -10px;
     right: -10px;
     background-color: #555;
-    color: #fff;
+    color: var(--background);
     width: 22px;
     height: 22px;
     border-radius: 50%;
@@ -145,20 +145,20 @@ main.checkout-page {
     justify-content: center;
     font-size: 12px;
     font-weight: bold;
-    border: 1px solid #fff;
+    border: 1px solid var(--background);
 }
 
 .item-details .item-title {
     font-size: 16px;
     font-weight: 600;
     margin: 0 0 8px 0;
-    color: #000;
+    color: var(--color-tittle);
 }
 
 .item-details .item-spec {
     font-size: 14px;
     margin: 4px 0;
-    color: #333;
+    color: var(--color-text);
 }
 
 @media (max-width: 900px) {

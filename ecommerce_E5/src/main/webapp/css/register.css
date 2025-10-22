@@ -12,7 +12,7 @@
     font-size: 28px;
     font-weight: 600;
     margin-bottom: 50px;
-    color: #000;
+    color: var(--color-tittle);
 }
 
 .register-form {
@@ -27,7 +27,7 @@
     display: block;
     font-size: 20px;
     font-weight: 600;
-    color: #000;
+    color: var(--color-tittle);
     margin-bottom: 10px;
 }
 
@@ -36,22 +36,22 @@
     padding: 14px;
     font-size: 15px;
     font-family: inherit;
-    color: #333;
-    background-color: #f0f0f0;
-    border: 1px solid #f0f0f0;
+    color: var(--color-text);
+    background-color: var(--background-input, #f0f0f0);
+    border: 1px solid var(--background-input, #f0f0f0);
     border-radius: 4px;
     box-sizing: border-box;
 }
 
 .form-input:focus {
     outline: none;
-    border-color: #ccc;
+    border-color: var(--color-border-light, #ccc);
 }
 
 .register-btn {
     width: 100%;
-    background-color: #000;
-    color: #fff;
+    background-color: var(--color-selection);
+    color: var(--background);
     border: none;
     padding: 18px;
     font-size: 16px;

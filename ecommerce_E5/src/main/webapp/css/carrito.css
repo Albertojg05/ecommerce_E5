@@ -27,7 +27,7 @@ main.cart-container {
 }
 
 .explore-link a {
-    color: black;
+    color: var(--color-tittle);
     font-weight: 600;
     text-decoration: none;
 }
@@ -37,7 +37,7 @@ main.cart-container {
     gap: 20px;
     padding-bottom: 25px;
     margin-bottom: 25px;
-    border-bottom: 1px solid;
+    border-bottom: 1px solid var(--color-border);
 }
 
 .cart-item img {
@@ -55,7 +55,7 @@ main.cart-container {
     font-size: 16px;
     font-weight: 600;
     margin: 0 0 10px 0;
-    color: #000;
+    color: var(--color-tittle);
 }
 
 .item-spec {
@@ -73,7 +73,7 @@ main.cart-container {
 .item-quantity {
     display: flex;
     align-items: center;
-    border: 1px solid;
+    border: 1px solid var(--color-border);
     width: fit-content;
     margin-top: 15px;
 }

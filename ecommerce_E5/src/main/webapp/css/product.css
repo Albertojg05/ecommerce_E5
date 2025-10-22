@@ -12,12 +12,12 @@
     font-size: 28px;
     font-weight: 600;
     margin: 0;
-    color: #000;
+    color: var(--color-tittle);
 }
 
 .category-header p {
     font-size: 14px;
-    color: #555;
+    color: var(--color-text-medium, #555);
     margin: 5px 0 0 0;
 }
 
@@ -36,7 +36,7 @@
 
 .product-card {
     position: relative;
-    background: #fff;
+    background: var(--background);
 }
 
 .product-card img {
@@ -53,7 +53,7 @@
 .product-info .product-title {
     font-size: 15px;
     margin: 5px 0;
-    color: #333;
+    color: var(--color-text);
     font-weight: 400;
 }
 
@@ -61,7 +61,7 @@
     font-size: 15px;
     margin: 0;
     font-weight: 600;
-    color: #000;
+    color: var(--color-tittle);
 }
 
 .wishlist-btn {
@@ -72,11 +72,11 @@
     border: none;
     cursor: pointer;
     padding: 5px;
-    color: #333;
+    color: var(--color-text);
 }
 
 .wishlist-btn:hover {
-    color: #000;
+    color: var(--color-tittle);
 }
 
 .pagination {
@@ -89,7 +89,7 @@
 
 .pagination a {
     text-decoration: none;
-    color: #000;
+    color: var(--color-tittle);
     font-size: 16px;
     font-weight: 500;
     padding: 5px 10px;
@@ -97,11 +97,11 @@
 
 .pagination a.active {
     font-weight: 700;
-    border-bottom: 2px solid #000;
+    border-bottom: 2px solid var(--color-border);
 }
 
 .pagination a:hover {
-    color: #555;
+    color: var(--color-text-medium, #555);
 }
 
 @media (max-width: 768px) {

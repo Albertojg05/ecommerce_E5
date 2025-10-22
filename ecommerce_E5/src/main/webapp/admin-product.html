@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin: Productos - MiTienda</title>
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+
+<body>
+
+    <header class="header-productos">
+        <div class="logo">
+            MiTienda (Admin)
+        </div>
+        <nav class="main-nav">
+            <a href="#">Productos</a>
+            <a href="#">Órdenes</a>
+            <a href="#">Salir</a>
+        </nav>
+    </header>
+
+    <main class="admin-container">
+        <div class="admin-header">
+            <h1>Gestionar Productos</h1>
+            <a href="admin-producto-editar.html" class="btn btn-primary">
+                + Agregar Nuevo Producto
+            </a>
+        </div>
+
+        <table class="product-table">
+            <thead>
+                <tr>
+                    <th>Imagen</th>
+                    <th>Nombre</th>
+                    <th>Precio</th>
+                    <th>Stock</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><img src="https://placehold.co/80x100/555/FFF?text=Prod" alt=""></td>
+                    <td>Short vestir pinza doble</td>
+                    <td>$ 649.00</td>
+                    <td>150</td>
+                    <td>
+                        <a href="admin-producto-editar.html" class="btn btn-edit">Editar</a>
+                        <button class="btn btn-delete">Eliminar</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td><img src="https://placehold.co/80x100/6A8D9F/FFF?text=Prod" alt=""></td>
+                    <td>Blazer crop rayas</td>
+                    <td>$ 849.00</td>
+                    <td>80</td>
+                    <td>
+                        <a href="admin-producto-editar.html" class="btn btn-edit">Editar</a>
+                        <button class="btn btn-delete">Eliminar</button>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+
+    </main>
+
+</body>
+
+</html>

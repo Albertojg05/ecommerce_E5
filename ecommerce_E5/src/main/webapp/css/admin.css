@@ -1,0 +1,158 @@
+@import url(global.css);
+
+.admin-container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 40px auto;
+}
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.admin-header h1 {
+    margin: 0;
+    font-size: 28px;
+}
+
+.btn {
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    background-color: var(--color-selection);
+    color: var(--background);
+}
+
+.btn-primary:hover {
+    opacity: 0.85;
+}
+
+.btn-edit {
+    background-color: #3498db;
+    color: var(--background);
+}
+
+.btn-edit:hover {
+    background-color: #2980b9;
+}
+
+.btn-delete {
+    background-color: #e74c3c;
+    color: var(--background);
+}
+
+.btn-delete:hover {
+    background-color: #c0392b;
+}
+
+.product-table {
+    width: 100%;
+    border-collapse: collapse;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.product-table th,
+.product-table td {
+    border: 1px solid #eee;
+    padding: 12px 15px;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.product-table th {
+    background-color: #f9f9f9;
+    font-size: 14px;
+}
+
+.product-table td img {
+    width: 60px;
+    height: auto;
+    display: block;
+}
+
+.product-table td:last-child {
+    display: flex;
+    gap: 10px;
+}
+
+.product-edit-form {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 40px;
+    background: var(--background);
+    padding: 30px;
+    border-radius: 5px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.current-images {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.current-images img {
+    width: 100px;
+    height: auto;
+    border-radius: 4px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group input[type="file"],
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    font-size: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.form-group textarea {
+    font-family: inherit;
+    resize: vertical;
+}
+
+.form-group-inline {
+    display: flex;
+    gap: 20px;
+}
+
+.form-group-inline .form-group {
+    flex: 1;
+}
+
+@media (max-width: 900px) {
+    .product-edit-form {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+}
