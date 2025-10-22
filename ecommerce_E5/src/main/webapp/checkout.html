@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compra - MiTienda</title>
+    <link rel="stylesheet" href="css/checkout.css">
+</head>
+
+<body>
+
+    <header class="header-productos">
+        <div class="logo">
+            <a href="index.html">MiTienda</a>
+        </div>
+
+        <form class="search-bar-centered">
+            <input type="text" placeholder="Lorem ipsum has">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path
+                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+            </svg>
+        </form>
+        <nav class="main-nav">
+            <a href="product.html">Tienda</a>
+            <a href="login.html">Cuenta</a>
+            <a href="carrito.html">Carrito</a>
+        </nav>
+    </header>
+
+    <main class="checkout-page">
+
+        <h1 class="page-title">COMPRA</h1>
+
+        <div class="checkout-container">
+
+            <section class="checkout-details">
+
+                <div class="user-info">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
+                        viewBox="0 0 16 16">
+                        <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
+                        <path fill-rule="evenodd"
+                            d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z" />
+                    </svg>
+                    <span>Rene Figueroa</span>
+                </div>
+
+                <form class="shipping-form">
+                    <h2>ENTREGA</h2>
+
+                    <div class="form-group">
+                        <input type="text" class="form-input" placeholder="País / Región">
+                    </div>
+
+                    <div class="form-group">
+                        <input type="text" class="form-input" placeholder="Calle, número y colonia">
+                    </div>
+
+                    <div class="form-grid-3">
+                        <div class="form-group">
+                            <input type="text" class="form-input" placeholder="Código postal">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-input" placeholder="Ciudad">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-input" placeholder="Estado">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="tel" class="form-input" placeholder="Teléfono">
+                    </div>
+                </form>
+
+                <div class="payment-section">
+                    <h2>PAGO</h2>
+                    <div class="payment-options">
+
+                        <label class="payment-option">
+                            <input type="radio" name="payment" checked>
+                            <span>Tarjeta de crédito y débito</span>
+                            <div class="logos">
+                                <img src="https://placehold.co/30x20/aaa/fff?text=VISA" alt="Visa">
+                                <img src="https://placehold.co/30x20/aaa/fff?text=MC" alt="Mastercard">
+                                <img src="https://placehold.co/30x20/aaa/fff?text=AMEX" alt="Amex">
+                            </div>
+                        </label>
+
+                        <label class="payment-option">
+                            <input type="radio" name="payment">
+                            <span>PayPal</span>
+                            <div class="logos">
+                                <img src="https://placehold.co/50x20/00457C/FFF?text=PayPal" alt="PayPal">
+                            </div>
+                        </label>
+
+                    </div>
+                </div>
+
+                <button class="checkout-btn" type="submit">COMPRAR</button>
+
+            </section>
+
+            <aside class="order-summary">
+
+                <div class="summary-item">
+                    <div class="item-image">
+                        <img src="https://placehold.co/100x130/555/FFF?text=Producto" alt="Producto">
+                        <span class="quantity-badge">1</span>
+                    </div>
+                    <div class="item-details">
+                        <p class="item-title">Short vestir pinza doble</p>
+                        <p class="item-spec">Color: <strong>NEGRO</strong></p>
+                        <p class="item-spec">Talla: <strong>S</strong></p>
+                    </div>
+                </div>
+
+                <div class="summary-box">
+                    <h2>Resumen de compra</h2>
+                    <div class="summary-line">
+                        <span>Producto:</span>
+                        <span>649.00</span>
+                    </div>
+                    <div class="summary-line">
+                        <span>Envío:</span>
+                        <span>200.00</span>
+                    </div>
+                    <div class="summary-total">
+                        <span>Total:</span>
+                        <span>849.00</span>
+                    </div>
+                </div>
+
+            </aside>
+        </div>
+    </main>
+
+</body>
+
+</html>

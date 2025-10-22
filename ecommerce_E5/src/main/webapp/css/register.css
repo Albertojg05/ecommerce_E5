@@ -1,0 +1,73 @@
+@import url(global.css);
+
+.register-container {
+    max-width: 450px;
+    margin: 0 auto;
+    padding: 80px 5% 120px 5%;
+    box-sizing: border-box;
+}
+
+.register-title {
+    text-align: center;
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 50px;
+    color: #000;
+}
+
+.register-form {
+    width: 100%;
+}
+
+.form-group {
+    margin-bottom: 30px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 20px;
+    font-weight: 600;
+    color: #000;
+    margin-bottom: 10px;
+}
+
+.form-input {
+    width: 100%;
+    padding: 14px;
+    font-size: 15px;
+    font-family: inherit;
+    color: #333;
+    background-color: #f0f0f0;
+    border: 1px solid #f0f0f0;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #ccc;
+}
+
+.register-btn {
+    width: 100%;
+    background-color: #000;
+    color: #fff;
+    border: none;
+    padding: 18px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: opacity 0.2s ease;
+}
+
+.register-btn:hover {
+    opacity: 0.85;
+}
+
+@media (max-width: 900px) {
+    .register-container {
+        padding-top: 60px;
+        padding-bottom: 80px;
+    }
+}

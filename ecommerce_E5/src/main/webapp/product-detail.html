@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de Producto - MiTienda</title>
+    <link rel="stylesheet" href="./css/product-detail.css">
+</head>
+
+<body>
+
+    <header class="header-productos">
+        <div class="logo">
+            <a href="index.html">MiTienda</a>
+        </div>
+
+        <form class="search-bar-centered">
+            <input type="text" placeholder="Lorem ipsum has">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path
+                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+            </svg>
+        </form>
+        <nav class="main-nav">
+            <a href="product.html">Tienda</a>
+            <a href="login.html">Cuenta</a>
+            <a href="carrito.html">Carrito</a>
+        </nav>
+    </header>
+
+    <main class="product-detail-page">
+        <div class="product-detail-container">
+
+            <section class="product-gallery">
+                <div class="product-thumbnails">
+                    <img src="https://placehold.co/100x130/555/FFF?text=Thumb+1" alt="Thumbnail 1" class="active-thumb">
+                    <img src="https://placehold.co/100x130/555/FFF?text=Thumb+2" alt="Thumbnail 2">
+                    <img src="https://placehold.co/100x130/555/FFF?text=Thumb+3" alt="Thumbnail 3">
+                    <img src="https://placehold.co/100x130/555/FFF?text=Thumb+4" alt="Thumbnail 4">
+                </div>
+                <div class="product-main-image">
+                    <img src="https://placehold.co/500x650/555/FFF?text=Producto+Principal" alt="Producto Principal">
+                </div>
+            </section>
+
+            <section class="product-info">
+                <h1 class="product-title">Short vestir pinza doble</h1>
+                <p class="product-price">$ 649.00</p>
+                <p class="product-color">Color : <strong>NEGRO</strong></p>
+
+                <div class="product-size-selector">
+                    <label>Talla</label>
+                    <div class="size-buttons">
+                        <button type="button" class="size-btn">XS</button>
+                        <button type="button" class="size-btn active">S</button>
+                        <button type="button" class="size-btn">M</button>
+                        <button type="button" class="size-btn">L</button>
+                    </div>
+                </div>
+
+                <button class="add-to-cart-btn" type="button">AGREGAR AL CARRITO</button>
+
+                <div class="product-description">
+                    <h3>Descripción</h3>
+                    <p>Short de corte en a, cintura alta con pretina elástica posterior y trabillas, doble pinza
+                        frontal, bolsillos delanteros, cierre frontal con broche y cremallera oculta.</p>
+                </div>
+            </section>
+        </div>
+
+        <section class="product-reviews-section">
+            <div class="rating-summary">
+                <span class="rating-value">4.0</span>
+                <div class="stars">
+                    <span>★</span><span>★</span><span>★</span><span>★</span><span class="star-empty">★</span>
+                </div>
+                <span class="rating-count">13 Calificaciones</span>
+            </div>
+
+            <h2 class="reviews-title">Opiniones del producto</h2>
+
+            <div class="reviews-list">
+                <div class="review-item">
+                    <div class="review-header">
+                        <span class="review-user">Usuario1</span>
+                        <div class="stars">
+                            <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                        </div>
+                    </div>
+                    <p class="review-text">Lorem ipsum dolor sit amet consectetur adipiscing elit vulputate enim,
+                        fringilla vitae est tellus.</p>
+                    <span class="review-date">08/10/2025</span>
+                </div>
+
+                <div class="review-item">
+                    <div class="review-header">
+                        <span class="review-user">Usuario2</span>
+                        <div class="stars">
+                            <span>★</span><span>★</span><span>★</span><span>★</span><span class="star-empty">★</span>
+                        </div>
+                    </div>
+                    <p class="review-text">Lorem ipsum dolor sit amet consectetur adipiscing elit vulputate enim,
+                        fringilla vitae est tellus.</p>
+                    <span class="review-date">10/10/2025</span>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+</body>
+
+</html>

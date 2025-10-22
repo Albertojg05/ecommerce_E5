@@ -1,0 +1,230 @@
+@import url(global.css);
+
+.hero-section {
+    height: 40vh;
+    min-height: 300px;
+    width: 100%;
+    background-color: var(--background-2);
+}
+
+.featured-categories {
+    padding: 0 5%;
+}
+
+.categories-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.category-item {
+    position: relative;
+    width: 18%;
+    min-width: 180px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.category-item img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    display: block;
+}
+
+.category-item span {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--background);
+    font-size: 18px;
+    font-weight: 600;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+.product-section {
+    padding: 0 5%;
+}
+
+.filter-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.filter-buttons button {
+    padding: 10px 22px;
+    font-size: 14px;
+    font-weight: 500;
+    border: 1px solid;
+    border-radius: 20px;
+    background-color: var(--background);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.filter-buttons button:hover {
+    background-color: var(--background);
+}
+
+.filter-buttons button.active {
+    background-color: var(--color-selection);
+    color: var(--background);
+    border-color: var(--color-border);
+}
+
+.product-list-wrapper {
+    position: relative;
+}
+
+.product-list {
+    display: flex;
+    overflow-x: auto;
+    padding: 10px 0 30px 0;
+    gap: 20px;
+}
+
+.product-item {
+    flex: 0 0 240px;
+    width: 240px;
+}
+
+.product-item img {
+    width: 100%;
+    height: auto;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.product-title {
+    font-size: 15px;
+    margin: 5px 0;
+    color: #333;
+    font-weight: 400;
+}
+
+.product-price {
+    font-size: 15px;
+    margin: 0;
+}
+
+.product-price .original-price {
+    text-decoration: line-through;
+    color: var(--color-text);
+    margin-right: 8px;
+    font-weight: 400;
+}
+
+.product-price .sale-price {
+    font-weight: 600;
+    color: #000;
+}
+
+.scroll-arrow {
+    position: absolute;
+    top: 40%;
+    transform: translateY(-50%);
+    background-color: var(--background);
+    border: 1px solid;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--color-text);
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.scroll-arrow.right {
+    right: -10px;
+}
+
+@media (max-width: 768px) {
+    .scroll-arrow {
+        display: none;
+    }
+
+    .category-item {
+        width: 45%;
+    }
+
+    .main-nav a:first-child {
+        display: none;
+    }
+
+    h2 {
+        text-align: left;
+        font-size: 22px;
+        margin: 40px 0 20px 0;
+    }
+
+    section {
+        padding: 0 5%;
+    }
+
+    .hero-section {
+        height: 50vh;
+        min-height: 350px;
+    }
+
+    .featured-categories {
+        position: relative;
+    }
+
+    .categories-container {
+        display: flex;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        gap: 15px;
+        padding: 10px 0;
+    }
+
+    .category-item {
+        width: auto;
+        flex: 0 0 45%;
+        min-width: 160px;
+    }
+
+    .filter-buttons {
+        justify-content: flex-start;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 10px;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+
+    .filter-buttons::-webkit-scrollbar {
+        display: none;
+    }
+
+    .filter-buttons button {
+        flex: 0 0 auto;
+    }
+
+    .product-item {
+        flex: 0 0 65%;
+        max-width: 280px;
+    }
+
+    .scroll-arrow {
+        display: flex;
+        top: 45%;
+        width: 35px;
+        height: 35px;
+        font-size: 20px;
+    }
+
+    .scroll-arrow.right {
+        right: 5px;
+    }
+}
