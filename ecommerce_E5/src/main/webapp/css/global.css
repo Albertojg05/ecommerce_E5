@@ -5,7 +5,6 @@
     --background-2: #888888;
     --color-selection: #000000;
     --color-border: #000000;
-    
 }
 
 body {
@@ -41,7 +40,7 @@ header {
     margin: 0 auto;
 }
 
-.logo a{
+.logo a {
     margin-left: 25px;
     text-decoration: none;
     color: var(--color-tittle);
@@ -146,6 +145,7 @@ header {
     background-color: var(--background);
     padding: 25px;
     border-radius: 5px;
+    text-align: right;
 }
 
 .summary-box h2 {
@@ -162,6 +162,7 @@ header {
     font-size: 15px;
     margin-bottom: 12px;
     color: var(--color-text);
+    text-align: left;
 }
 
 .summary-total {
@@ -173,6 +174,7 @@ header {
     padding-top: 20px;
     border-top: 1px solid;
     color: var(--color-tittle);
+    text-align: left;
 }
 
 @media (max-width: 768px) {

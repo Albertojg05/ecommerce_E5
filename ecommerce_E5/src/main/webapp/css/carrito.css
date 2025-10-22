@@ -90,8 +90,8 @@ main.cart-container {
 .item-quantity span {
     padding: 5px 12px;
     font-size: 14px;
-    border-left: 1px solid #ccc;
-    border-right: 1px solid #ccc;
+    border-left: 1px solid var(--color-border-light, #ccc);
+    border-right: 1px solid var(--color-border-light, #ccc);
 }
 
 .remove-btn {
@@ -117,15 +117,14 @@ main.cart-container {
 }
 
 .checkout-btn {
-    width: 100%;
     background-color: var(--color-selection);
     color: var(--background);
     border: none;
-    padding: 16px;
+    padding: 16px 25px;
     font-size: 16px;
     font-weight: 600;
     cursor: pointer;
-    margin-top: 25px;
+    margin: 90px;
     transition: opacity 0.2s ease;
 }
 
