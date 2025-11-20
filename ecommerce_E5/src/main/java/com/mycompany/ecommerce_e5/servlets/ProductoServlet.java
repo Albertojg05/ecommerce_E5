@@ -23,7 +23,7 @@ import java.util.List;
  * Freddy Alí Castro Román 252191
  */
 
-@WebServlet(name = "ProductoServlet", urlPatterns = {"/admin/productos"})
+@WebServlet(name = "ProductoServlet", urlPatterns = {"/admin/producto"})
 public class ProductoServlet extends HttpServlet {
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -79,7 +79,7 @@ public class ProductoServlet extends HttpServlet {
             
         } catch (Exception e) {
             request.setAttribute("error", "Error: " + e.getMessage());
-            request.getRequestDispatcher("/admin/productos.jsp").forward(request, response);
+            request.getRequestDispatcher("/admin/producto.jsp").forward(request, response);
         }
     }
 
@@ -105,7 +105,7 @@ public class ProductoServlet extends HttpServlet {
             }
         } catch (Exception e) {
             request.setAttribute("error", "Error: " + e.getMessage());
-            request.getRequestDispatcher("/admin/productos.jsp").forward(request, response);
+            request.getRequestDispatcher("/admin/producto.jsp").forward(request, response);
         }
     }
     

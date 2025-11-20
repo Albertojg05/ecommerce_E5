@@ -5,11 +5,11 @@
 package com.mycompany.ecommerce_e5.dominio;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.util.List;
 
 /**
- *
  * @author Alberto Jiménez García 252595 
  * Rene Ezequiel Figueroa Lopez 228691
  * Freddy Alí Castro Román 252191
@@ -21,15 +21,29 @@ public class Producto implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @NotNull(message = "El nombre es requerido")
+    @Size(min = 3, max = 100, message = "El nombre debe tener entre 3 y 100 caracteres")
+    @Column(nullable = false)
     private String nombre;
+
+    @Column(length = 500)
     private String descripcion;
+
+    @Positive(message = "El precio debe ser positivo")
+    @Column(nullable = false)
     private double precio;
+
     private String imagenUrl;
+
+    @Min(value = 0, message = "Las existencias no pueden ser negativas")
+    @Column(nullable = false)
     private int existencias;
+
     private String talla;
     private String color;
 
     @ManyToOne
+    @JoinColumn(name = "categoria_id", nullable = false)
     private Categoria categoria;
 
     @OneToMany(mappedBy = "producto")
@@ -38,7 +52,8 @@ public class Producto implements Serializable {
     public Producto() {
     }
 
-    public Producto(String nombre, String descripcion, double precio, String imagenUrl, int existencias, String talla, String color, Categoria categoria) {
+    public Producto(String nombre, String descripcion, double precio, String imagenUrl,
+            int existencias, String talla, String color, Categoria categoria) {
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.precio = precio;
@@ -49,6 +64,7 @@ public class Producto implements Serializable {
         this.categoria = categoria;
     }
 
+    // Getters y Setters
     public int getId() {
         return id;
     }
@@ -128,5 +144,4 @@ public class Producto implements Serializable {
     public void setResenas(List<Resena> resenas) {
         this.resenas = resenas;
     }
-    
 }

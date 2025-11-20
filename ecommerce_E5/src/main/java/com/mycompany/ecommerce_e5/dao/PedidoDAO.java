@@ -7,73 +7,81 @@ package com.mycompany.ecommerce_e5.dao;
 import com.mycompany.ecommerce_e5.dominio.Pedido;
 import com.mycompany.ecommerce_e5.util.JPAUtil;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 import java.util.List;
 
-
 /**
- *
- * @author Alberto Jiménez García 252595
+ * @author Alberto Jiménez García 252595 
  * Rene Ezequiel Figueroa Lopez 228691
  * Freddy Alí Castro Román 252191
  */
-
 public class PedidoDAO {
-    
+
     public List<Pedido> obtenerTodos() {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             TypedQuery<Pedido> query = em.createQuery(
-                "SELECT p FROM Pedido p ORDER BY p.fecha DESC", Pedido.class);
+                    "SELECT DISTINCT p FROM Pedido p "
+                    + "LEFT JOIN FETCH p.usuario "
+                    + "LEFT JOIN FETCH p.direccionEnvio "
+                    + "ORDER BY p.fecha DESC", Pedido.class);
             return query.getResultList();
         } finally {
             em.close();
         }
     }
-    
+
     public Pedido obtenerPorId(int id) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
-            Pedido pedido = em.find(Pedido.class, id);
-            // Forzar la carga de detalles y relaciones
-            if (pedido != null) {
-                pedido.getDetalles().size();
-                if (pedido.getPago() != null) {
-                    pedido.getPago().getId();
-                }
-            }
-            return pedido;
+            TypedQuery<Pedido> query = em.createQuery(
+                    "SELECT p FROM Pedido p "
+                    + "LEFT JOIN FETCH p.detalles d "
+                    + "LEFT JOIN FETCH d.producto "
+                    + "LEFT JOIN FETCH p.pago "
+                    + "LEFT JOIN FETCH p.usuario "
+                    + "LEFT JOIN FETCH p.direccionEnvio "
+                    + "WHERE p.id = :id", Pedido.class);
+            query.setParameter("id", id);
+            return query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
         } finally {
             em.close();
         }
     }
-    
+
     public List<Pedido> obtenerPorUsuario(int usuarioId) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             TypedQuery<Pedido> query = em.createQuery(
-                "SELECT p FROM Pedido p WHERE p.usuario.id = :usuarioId ORDER BY p.fecha DESC", 
-                Pedido.class);
+                    "SELECT DISTINCT p FROM Pedido p "
+                    + "LEFT JOIN FETCH p.detalles "
+                    + "WHERE p.usuario.id = :usuarioId "
+                    + "ORDER BY p.fecha DESC", Pedido.class);
             query.setParameter("usuarioId", usuarioId);
             return query.getResultList();
         } finally {
             em.close();
         }
     }
-    
+
     public List<Pedido> obtenerPorEstado(String estado) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             TypedQuery<Pedido> query = em.createQuery(
-                "SELECT p FROM Pedido p WHERE p.estado = :estado ORDER BY p.fecha DESC", 
-                Pedido.class);
+                    "SELECT DISTINCT p FROM Pedido p "
+                    + "LEFT JOIN FETCH p.usuario "
+                    + "WHERE p.estado = :estado "
+                    + "ORDER BY p.fecha DESC", Pedido.class);
             query.setParameter("estado", estado);
             return query.getResultList();
         } finally {
             em.close();
         }
     }
-    
+
     public Pedido guardar(Pedido pedido) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
@@ -90,7 +98,7 @@ public class PedidoDAO {
             em.close();
         }
     }
-    
+
     public Pedido actualizar(Pedido pedido) {
         EntityManager em = JPAUtil.getEntityManager();
         try {
@@ -107,7 +115,7 @@ public class PedidoDAO {
             em.close();
         }
     }
-    
+
     public void eliminar(int id) {
         EntityManager em = JPAUtil.getEntityManager();
         try {

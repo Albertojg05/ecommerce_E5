@@ -8,7 +8,6 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 
 /**
- *
  * @author Alberto Jiménez García 252595 
  * Rene Ezequiel Figueroa Lopez 228691
  * Freddy Alí Castro Román 252191
@@ -18,7 +17,7 @@ public class DetallePedido implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
     private int cantidad;
     private double precioUnitario;
@@ -39,11 +38,11 @@ public class DetallePedido implements Serializable {
         this.pedido = pedido;
     }
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -78,5 +77,4 @@ public class DetallePedido implements Serializable {
     public void setPedido(Pedido pedido) {
         this.pedido = pedido;
     }
-
 }

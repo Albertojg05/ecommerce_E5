@@ -10,7 +10,6 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- *
  * @author Alberto Jiménez García 252595 
  * Rene Ezequiel Figueroa Lopez 228691
  * Freddy Alí Castro Román 252191
@@ -23,14 +22,20 @@ public class Usuario implements Serializable {
     private int id;
 
     private String nombre;
+
+    @Column(unique = true, nullable = false)
     private String correo;
+
+    @Column(nullable = false)
     private String contrasena;
+
     private String telefono;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private RolUsuario rol;
 
-    @OneToMany(mappedBy = "usuario")
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Direccion> direcciones;
 
     @OneToMany(mappedBy = "usuario")
@@ -47,6 +52,7 @@ public class Usuario implements Serializable {
         this.rol = rol;
     }
 
+    // Getters y Setters
     public int getId() {
         return id;
     }
@@ -109,5 +115,5 @@ public class Usuario implements Serializable {
 
     public void setPedidos(List<Pedido> pedidos) {
         this.pedidos = pedidos;
-    }    
+    }
 }
