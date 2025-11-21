@@ -7,6 +7,7 @@ ALTER USER 'root'@'localhost' IDENTIFIED BY 'ITSON';
 CREATE TABLE Categoria (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(255)
+);
 
 -- Tabla: Usuario
 CREATE TABLE Usuario (
