@@ -16,9 +16,14 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
 /**
+ * Servlet de registro de nuevos usuarios.
+ * Permite crear una cuenta de cliente con nombre, correo, contrasena
+ * y telefono. Valida los datos y crea la sesion automaticamente
+ * despues del registro exitoso.
+ *
  * @author Alberto Jiménez García 252595
- * Rene Ezequiel Figueroa Lopez 228691
- * Freddy Alí Castro Román 252191
+ * @author Rene Ezequiel Figueroa Lopez 228691
+ * @author Freddy Alí Castro Román 252191
  */
 @WebServlet(name = "RegisterServlet", urlPatterns = {"/register"})
 public class RegisterServlet extends HttpServlet {
@@ -44,7 +49,7 @@ public class RegisterServlet extends HttpServlet {
             return;
         }
         
-        request.getRequestDispatcher("/register.html").forward(request, response);
+        request.getRequestDispatcher("/register.jsp").forward(request, response);
     }
     
     @Override
@@ -74,10 +79,22 @@ public class RegisterServlet extends HttpServlet {
             if (contrasena.length() < 6) {
                 throw new Exception("La contraseña debe tener al menos 6 caracteres");
             }
+            // Validar complejidad: al menos una letra y un número
+            if (!contrasena.matches(".*[a-zA-Z].*") || !contrasena.matches(".*[0-9].*")) {
+                throw new Exception("La contraseña debe contener al menos una letra y un número");
+            }
             if (!contrasena.equals(contrasenaConfirm)) {
                 throw new Exception("Las contraseñas no coinciden");
             }
-            
+            // Validar teléfono: exactamente 10 dígitos si se proporciona
+            if (telefono != null && !telefono.trim().isEmpty()) {
+                String telefonoLimpio = telefono.replaceAll("[^0-9]", "");
+                if (telefonoLimpio.length() != 10) {
+                    throw new Exception("El teléfono debe tener exactamente 10 dígitos");
+                }
+                telefono = telefonoLimpio;
+            }
+
             // Crear usuario
             Usuario usuario = new Usuario();
             usuario.setNombre(nombre);
@@ -108,7 +125,7 @@ public class RegisterServlet extends HttpServlet {
             request.setAttribute("correo", request.getParameter("correo"));
             request.setAttribute("telefono", request.getParameter("telefono"));
             
-            request.getRequestDispatcher("/register.html").forward(request, response);
+            request.getRequestDispatcher("/register.jsp").forward(request, response);
         }
     }
     

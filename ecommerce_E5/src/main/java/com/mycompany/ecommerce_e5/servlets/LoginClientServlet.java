@@ -15,9 +15,14 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
 /**
+ * Servlet de login para clientes de la tienda.
+ * Valida las credenciales del usuario y crea la sesion.
+ * Soporta redireccion a la pagina original si el usuario
+ * fue enviado aqui desde una pagina protegida.
+ *
  * @author Alberto Jiménez García 252595
- * Rene Ezequiel Figueroa Lopez 228691
- * Freddy Alí Castro Román 252191
+ * @author Rene Ezequiel Figueroa Lopez 228691
+ * @author Freddy Alí Castro Román 252191
  */
 @WebServlet(name = "LoginClientServlet", urlPatterns = {"/login"})
 public class LoginClientServlet extends HttpServlet {
@@ -47,7 +52,7 @@ public class LoginClientServlet extends HttpServlet {
             request.setAttribute("redirect", redirect);
         }
         
-        request.getRequestDispatcher("/login.html").forward(request, response);
+        request.getRequestDispatcher("/login.jsp").forward(request, response);
     }
     
     @Override
@@ -60,10 +65,18 @@ public class LoginClientServlet extends HttpServlet {
         String correo = request.getParameter("correo");
         String contrasena = request.getParameter("contrasena");
         String redirect = request.getParameter("redirect");
-        
+
         try {
+            // Validar campos vacíos en servidor
+            if (correo == null || correo.trim().isEmpty()) {
+                throw new Exception("El correo electrónico es requerido");
+            }
+            if (contrasena == null || contrasena.trim().isEmpty()) {
+                throw new Exception("La contraseña es requerida");
+            }
+
             // Validar credenciales
-            Usuario usuario = usuarioBO.login(correo, contrasena);
+            Usuario usuario = usuarioBO.login(correo.trim(), contrasena);
             
             // Crear sesión
             HttpSession session = request.getSession();
@@ -87,7 +100,7 @@ public class LoginClientServlet extends HttpServlet {
             if (redirect != null) {
                 request.setAttribute("redirect", redirect);
             }
-            request.getRequestDispatcher("/login.html").forward(request, response);
+            request.getRequestDispatcher("/login.jsp").forward(request, response);
         }
     }
     
