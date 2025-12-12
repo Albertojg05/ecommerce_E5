@@ -12,9 +12,14 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 
 /**
- * @author Alberto Jiménez García 252595 
- * Rene Ezequiel Figueroa Lopez 228691
- * Freddy Alí Castro Román 252191
+ * Filtro de seguridad para las rutas de administracion.
+ * Intercepta todas las peticiones a /admin/* y verifica que el usuario
+ * este logueado y tenga rol de administrador.
+ * Si no cumple, redirige al login de admin o muestra error 403.
+ *
+ * @author Alberto Jiménez García 252595
+ * @author Rene Ezequiel Figueroa Lopez 228691
+ * @author Freddy Alí Castro Román 252191
  */
 @WebFilter(filterName = "AdminAuthFilter", urlPatterns = {"/admin/*"})
 public class AdminAuthFilter implements Filter {
