@@ -100,7 +100,7 @@
                 <c:if test="${not empty sessionScope.usuarioLogueado}">
                     <div class="add-review-form">
                         <h3>Escribe tu reseña</h3>
-                        <form action="${pageContext.request.contextPath}/cliente/productos" method="post">
+                        <form id="form-resena" action="${pageContext.request.contextPath}/cliente/productos" method="post">
                             <input type="hidden" name="accion" value="agregarResena">
                             <input type="hidden" name="productoId" value="${producto.id}">
 
@@ -127,7 +127,7 @@
                                           minlength="10" required></textarea>
                             </div>
 
-                            <button type="submit" class="btn-submit-review">Enviar Reseña</button>
+                            <button type="submit" class="btn-submit-review" id="btn-enviar-resena">Enviar Reseña</button>
                         </form>
                     </div>
                 </c:if>
@@ -208,6 +208,25 @@
                     mainNav.classList.remove('active');
                     this.classList.remove('active');
                     document.body.style.overflow = '';
+                });
+            }
+
+            // Proteccion contra doble envio de resena
+            const formResena = document.getElementById('form-resena');
+            const btnEnviarResena = document.getElementById('btn-enviar-resena');
+            let resenaEnviada = false;
+
+            if (formResena && btnEnviarResena) {
+                formResena.addEventListener('submit', function(e) {
+                    if (resenaEnviada) {
+                        e.preventDefault();
+                        return false;
+                    }
+                    resenaEnviada = true;
+                    btnEnviarResena.disabled = true;
+                    btnEnviarResena.textContent = 'Enviando...';
+                    btnEnviarResena.style.opacity = '0.7';
+                    btnEnviarResena.style.cursor = 'not-allowed';
                 });
             }
         </script>

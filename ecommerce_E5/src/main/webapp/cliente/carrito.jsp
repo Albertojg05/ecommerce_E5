@@ -102,17 +102,18 @@
                                         <p class="item-spec">Color: ${item.producto.color}</p>
                                     </c:if>
                                     <p class="item-price">$<fmt:formatNumber value="${item.precioUnitario}" pattern="#,##0.00"/></p>
+                                    <c:set var="limiteAlcanzado" value="${item.cantidad >= 10 || item.cantidad >= item.producto.existencias}" />
                                     <div class="item-quantity">
                                         <button type="button" class="qty-btn btn-menos-js"
                                                 data-id="${item.producto.id}"
-                                                data-cantidad="${item.cantidad}"
-                                                ${item.cantidad <= 1 ? 'disabled' : ''}>−</button>
+                                                data-cantidad="${item.cantidad}">−</button>
                                         <span class="qty-value">${item.cantidad}</span>
                                         <button type="button" class="qty-btn btn-mas-js"
                                                 data-id="${item.producto.id}"
                                                 data-cantidad="${item.cantidad}"
-                                                ${item.cantidad >= 10 ? 'disabled' : ''}
-                                                title="${item.cantidad >= 10 ? 'Máximo 10 unidades por producto' : ''}">+</button>
+                                                data-stock="${item.producto.existencias}"
+                                                ${limiteAlcanzado ? 'disabled' : ''}
+                                                title="${item.cantidad >= 10 ? 'Máximo 10 unidades por producto' : (item.cantidad >= item.producto.existencias ? 'Stock máximo disponible' : '')}">+</button>
                                     </div>
                                     <p class="item-subtotal">Subtotal: $<fmt:formatNumber value="${item.precioUnitario * item.cantidad}" pattern="#,##0.00"/></p>
                                     <button type="button" class="remove-btn btn-eliminar-js" data-id="${item.producto.id}">Quitar</button>

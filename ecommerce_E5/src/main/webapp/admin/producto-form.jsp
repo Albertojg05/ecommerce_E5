@@ -16,7 +16,7 @@
 </head>
 <body>
     <header class="header-productos">
-        <div class="logo">MiTienda Admin</div>
+        <div class="logo"><a href="${pageContext.request.contextPath}/admin/dashboard">MiTienda Admin</a></div>
         <button class="mobile-menu-btn" aria-label="Menu">
             <span></span>
             <span></span>
