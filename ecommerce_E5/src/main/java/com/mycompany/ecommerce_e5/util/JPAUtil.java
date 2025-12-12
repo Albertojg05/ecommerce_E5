@@ -9,12 +9,14 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 
 /**
+ * Clase utilitaria para la gestion de conexiones JPA.
+ * Proporciona un EntityManagerFactory unico (patron Singleton) para toda
+ * la aplicacion. Los DAOs usan esta clase para obtener EntityManager.
  *
  * @author Alberto Jiménez García 252595
- * Rene Ezequiel Figueroa Lopez 228691
- * Freddy Alí Castro Román 252191
+ * @author Rene Ezequiel Figueroa Lopez 228691
+ * @author Freddy Alí Castro Román 252191
  */
-
 public class JPAUtil {
     
     private static final String PERSISTENCE_UNIT_NAME = "my_persistence_unit";
@@ -31,6 +33,9 @@ public class JPAUtil {
     }
     
     public static EntityManager getEntityManager() {
+        if (emf == null || !emf.isOpen()) {
+            throw new IllegalStateException("EntityManagerFactory no está disponible");
+        }
         return emf.createEntityManager();
     }
     
@@ -39,4 +44,6 @@ public class JPAUtil {
             emf.close();
         }
     }
+    
+    private JPAUtil() {}
 }
