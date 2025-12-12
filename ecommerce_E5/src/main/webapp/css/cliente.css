@@ -1,0 +1,14 @@
+/*
+ * cliente.css
+ * Archivo principal para las paginas del cliente
+ * Importa todos los estilos base en orden
+ *
+ * @author Alberto Jimenez Garcia 252595
+ * @author Rene Ezequiel Figueroa Lopez 228691
+ * @author Freddy Ali Castro Roman 252191
+ */
+
+@import url('variables.css');
+@import url('base.css');
+@import url('components.css');
+@import url('layout.css');
