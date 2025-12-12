@@ -7,13 +7,24 @@ package com.mycompany.ecommerce_e5.bo;
 import com.mycompany.ecommerce_e5.dao.UsuarioDAO;
 import com.mycompany.ecommerce_e5.dominio.Usuario;
 import com.mycompany.ecommerce_e5.dominio.enums.RolUsuario;
+import com.mycompany.ecommerce_e5.excepciones.AutenticacionException;
+import com.mycompany.ecommerce_e5.excepciones.BusinessException;
+import com.mycompany.ecommerce_e5.excepciones.RecursoNoEncontradoException;
+import com.mycompany.ecommerce_e5.excepciones.ValidacionException;
+import com.mycompany.ecommerce_e5.util.Messages;
+import com.mycompany.ecommerce_e5.util.ValidationUtil;
 import org.mindrot.jbcrypt.BCrypt;
 import java.util.List;
 
 /**
- * @author Alberto Jiménez García 252595 
- * Rene Ezequiel Figueroa Lopez 228691
- * Freddy Alí Castro Román 252191
+ * Clase BO (Business Object) para la logica de negocio de usuarios.
+ * Contiene las reglas de negocio para registro, login, actualizacion
+ * y validacion de usuarios. Usa BCrypt para encriptar contrasenas
+ * y garantizar la seguridad de los datos.
+ *
+ * @author Alberto Jiménez García 252595
+ * @author Rene Ezequiel Figueroa Lopez 228691
+ * @author Freddy Alí Castro Román 252191
  */
 public class UsuarioBO {
 
@@ -23,64 +34,48 @@ public class UsuarioBO {
         this.usuarioDAO = new UsuarioDAO();
     }
 
-    /**
-     * Validar login de usuario con contraseña hasheada
-     */
-    public Usuario login(String correo, String contrasena) throws Exception {
-        if (correo == null || correo.trim().isEmpty()) {
-            throw new Exception("El correo es requerido");
-        }
-        if (contrasena == null || contrasena.trim().isEmpty()) {
-            throw new Exception("La contraseña es requerida");
+    public List<Usuario> obtenerTodos() {
+        return usuarioDAO.obtenerTodos();
+    }
+
+    public Usuario obtenerPorId(int id) throws BusinessException {
+        if (id <= 0) {
+            throw new ValidacionException("id", "El ID del usuario debe ser mayor a 0");
         }
 
-        Usuario usuario = usuarioDAO.obtenerPorCorreo(correo);
-
+        Usuario usuario = usuarioDAO.obtenerPorId(id);
         if (usuario == null) {
-            throw new Exception("Credenciales inválidas");
-        }
-
-        // Verificar contraseña con BCrypt
-        if (!BCrypt.checkpw(contrasena, usuario.getContrasena())) {
-            throw new Exception("Credenciales inválidas");
+            throw new RecursoNoEncontradoException("Usuario", id);
         }
 
         return usuario;
     }
 
     /**
-     * Validar si el usuario es administrador
+     * Busca un usuario por su correo electrónico.
+     * @param correo El correo a buscar
+     * @return El usuario encontrado o null si no existe
      */
-    public boolean esAdministrador(Usuario usuario) {
-        return usuario != null && usuario.getRol() == RolUsuario.ADMINISTRADOR;
+    public Usuario buscarPorCorreo(String correo) {
+        if (correo == null || correo.trim().isEmpty()) {
+            return null;
+        }
+        return usuarioDAO.obtenerPorCorreo(correo.trim().toLowerCase());
     }
 
-    /**
-     * Registrar nuevo usuario
-     */
-    public Usuario registrar(Usuario usuario) throws Exception {
-        // Validaciones pa la contra
-        if (usuario.getCorreo() == null || usuario.getCorreo().trim().isEmpty()) {
-            throw new Exception("El correo es requerido");
-        }
-        if (usuario.getContrasena() == null || usuario.getContrasena().trim().isEmpty()) {
-            throw new Exception("La contraseña es requerida");
-        }
-        if (usuario.getNombre() == null || usuario.getNombre().trim().isEmpty()) {
-            throw new Exception("El nombre es requerido");
+    public Usuario registrar(Usuario usuario) throws BusinessException {
+        validarDatosUsuario(usuario);
+
+        String correoNormalizado = usuario.getCorreo().trim().toLowerCase();
+        Usuario usuarioExistente = usuarioDAO.obtenerPorCorreo(correoNormalizado);
+        if (usuarioExistente != null) {
+            throw new ValidacionException("correo", Messages.ERROR_CORREO_DUPLICADO);
         }
 
-        if (!usuario.getCorreo().matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
-            throw new Exception("Formato de correo inválido");
-        }
+        usuario.setCorreo(correoNormalizado);
 
-        Usuario existente = usuarioDAO.obtenerPorCorreo(usuario.getCorreo());
-        if (existente != null) {
-            throw new Exception("El correo ya está registrado");
-        }
-
-        String hashedPassword = BCrypt.hashpw(usuario.getContrasena(), BCrypt.gensalt(12));
-        usuario.setContrasena(hashedPassword);
+        String contrasenaHasheada = BCrypt.hashpw(usuario.getContrasena(), BCrypt.gensalt(12));
+        usuario.setContrasena(contrasenaHasheada);
 
         if (usuario.getRol() == null) {
             usuario.setRol(RolUsuario.CLIENTE);
@@ -89,74 +84,116 @@ public class UsuarioBO {
         return usuarioDAO.guardar(usuario);
     }
 
-    /**
-     * Obtener todos los usuarios
-     */
-    public List<Usuario> obtenerTodos() {
-        return usuarioDAO.obtenerTodos();
-    }
-
-    /**
-     * Obtener usuario por ID
-     */
-    public Usuario obtenerPorId(int id) {
-        return usuarioDAO.obtenerPorId(id);
-    }
-
-    /**
-     * Actualizar usuario
-     */
-    public Usuario actualizar(Usuario usuario) throws Exception {
-        Usuario existente = usuarioDAO.obtenerPorId(usuario.getId());
-        if (existente == null) {
-            throw new Exception("Usuario no encontrado");
+    public Usuario login(String correo, String contrasena) throws BusinessException {
+        if (!ValidationUtil.isNotEmpty(correo) || !ValidationUtil.isNotEmpty(contrasena)) {
+            throw new AutenticacionException(Messages.ERROR_CREDENCIALES_INVALIDAS);
         }
 
-        // Si la contraseña está vacía, mantener la anterior
-        if (usuario.getContrasena() == null || usuario.getContrasena().trim().isEmpty()) {
-            usuario.setContrasena(existente.getContrasena());
-        } else {
-            // Si hay nueva contraseña, hashearla
-            String hashedPassword = BCrypt.hashpw(usuario.getContrasena(), BCrypt.gensalt(12));
-            usuario.setContrasena(hashedPassword);
+        String correoNormalizado = correo.trim().toLowerCase();
+        Usuario usuario = usuarioDAO.obtenerPorCorreo(correoNormalizado);
+
+        if (usuario == null) {
+            throw new AutenticacionException(Messages.ERROR_CREDENCIALES_INVALIDAS);
         }
+
+        if (!BCrypt.checkpw(contrasena, usuario.getContrasena())) {
+            throw new AutenticacionException(Messages.ERROR_CREDENCIALES_INVALIDAS);
+        }
+
+        return usuario;
+    }
+
+    public Usuario actualizar(Usuario usuario) throws BusinessException {
+        if (usuario == null || usuario.getId() <= 0) {
+            throw new ValidacionException("Los parámetros del usuario no son válidos");
+        }
+
+        Usuario usuarioExistente = usuarioDAO.obtenerPorId(usuario.getId());
+        if (usuarioExistente == null) {
+            throw new RecursoNoEncontradoException("Usuario", usuario.getId());
+        }
+
+        if (!ValidationUtil.isNotEmpty(usuario.getNombre())) {
+            throw new ValidacionException("nombre", "El nombre es requerido");
+        }
+
+        if (!ValidationUtil.isValidEmail(usuario.getCorreo())) {
+            throw new ValidacionException("correo", Messages.ERROR_CORREO_INVALIDO);
+        }
+
+        String correoNormalizado = usuario.getCorreo().trim().toLowerCase();
+        Usuario usuarioPorCorreo = usuarioDAO.obtenerPorCorreo(correoNormalizado);
+        if (usuarioPorCorreo != null && usuarioPorCorreo.getId() != usuario.getId()) {
+            throw new ValidacionException("correo", Messages.ERROR_CORREO_DUPLICADO);
+        }
+
+        usuario.setCorreo(correoNormalizado);
 
         return usuarioDAO.actualizar(usuario);
     }
 
-    /**
-     * Cambiar contraseña
-     */
-    public void cambiarContrasena(int usuarioId, String contrasenaActual, String nuevaContrasena) throws Exception {
+    public void cambiarContrasena(int usuarioId, String contrasenaActual, String contrasenaNueva)
+            throws BusinessException {
+
+        if (usuarioId <= 0) {
+            throw new ValidacionException("id", "El ID del usuario debe ser mayor a 0");
+        }
+
         Usuario usuario = usuarioDAO.obtenerPorId(usuarioId);
         if (usuario == null) {
-            throw new Exception("Usuario no encontrado");
+            throw new RecursoNoEncontradoException("Usuario", usuarioId);
         }
 
-        // Verificar contraseña actual
         if (!BCrypt.checkpw(contrasenaActual, usuario.getContrasena())) {
-            throw new Exception("La contraseña actual es incorrecta");
+            throw new AutenticacionException("La contraseña actual es incorrecta");
         }
 
-        // Validar nueva contraseña
-        if (nuevaContrasena == null || nuevaContrasena.length() < 6) {
-            throw new Exception("La nueva contraseña debe tener al menos 6 caracteres");
+        if (!ValidationUtil.hasMinLength(contrasenaNueva, 6)) {
+            throw new ValidacionException("contrasenaNueva", Messages.ERROR_CONTRASENA_CORTA);
         }
 
-        // Hashear y guardar nueva contraseña
-        String hashedPassword = BCrypt.hashpw(nuevaContrasena, BCrypt.gensalt(12));
-        usuario.setContrasena(hashedPassword);
+        String nuevaContrasenaHasheada = BCrypt.hashpw(contrasenaNueva, BCrypt.gensalt(12));
+        usuario.setContrasena(nuevaContrasenaHasheada);
+
         usuarioDAO.actualizar(usuario);
     }
 
-    /**
-     * Eliminar usuario
-     */
-    public void eliminar(int id) throws Exception {
+    public boolean esAdministrador(Usuario usuario) {
+        return usuario != null && usuario.getRol() == RolUsuario.ADMINISTRADOR;
+    }
+
+    public void eliminar(int id) throws BusinessException {
+        if (id <= 0) {
+            throw new ValidacionException("id", "El ID del usuario debe ser mayor a 0");
+        }
+
         Usuario usuario = usuarioDAO.obtenerPorId(id);
         if (usuario == null) {
-            throw new Exception("Usuario no encontrado");
+            throw new RecursoNoEncontradoException("Usuario", id);
         }
+
         usuarioDAO.eliminar(id);
+    }
+
+    private void validarDatosUsuario(Usuario usuario) throws ValidacionException {
+        if (usuario == null) {
+            throw new ValidacionException("El usuario no puede ser nulo");
+        }
+
+        if (!ValidationUtil.isNotEmpty(usuario.getNombre())) {
+            throw new ValidacionException("nombre", "El nombre es requerido");
+        }
+
+        if (usuario.getNombre().trim().length() < 2) {
+            throw new ValidacionException("nombre", "El nombre debe tener al menos 2 caracteres");
+        }
+
+        if (!ValidationUtil.isValidEmail(usuario.getCorreo())) {
+            throw new ValidacionException("correo", Messages.ERROR_CORREO_INVALIDO);
+        }
+
+        if (!ValidationUtil.hasMinLength(usuario.getContrasena(), 6)) {
+            throw new ValidacionException("contrasena", Messages.ERROR_CONTRASENA_CORTA);
+        }
     }
 }

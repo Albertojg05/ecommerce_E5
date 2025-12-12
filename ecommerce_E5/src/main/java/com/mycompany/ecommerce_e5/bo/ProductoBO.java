@@ -6,118 +6,185 @@ package com.mycompany.ecommerce_e5.bo;
 
 import com.mycompany.ecommerce_e5.dao.ProductoDAO;
 import com.mycompany.ecommerce_e5.dominio.Producto;
+import com.mycompany.ecommerce_e5.excepciones.BusinessException;
+import com.mycompany.ecommerce_e5.excepciones.RecursoNoEncontradoException;
+import com.mycompany.ecommerce_e5.excepciones.StockInsuficienteException;
+import com.mycompany.ecommerce_e5.excepciones.ValidacionException;
+import com.mycompany.ecommerce_e5.util.ValidationUtil;
 import java.util.List;
 
 /**
+ * Clase BO para la logica de negocio de productos.
+ * Maneja las operaciones de productos con validaciones:
+ * crear, actualizar, eliminar, buscar y gestionar existencias (stock).
+ * Valida que los datos del producto sean correctos antes de guardar.
  *
  * @author Alberto Jiménez García 252595
- * Rene Ezequiel Figueroa Lopez 228691
- * Freddy Alí Castro Román 252191
+ * @author Rene Ezequiel Figueroa Lopez 228691
+ * @author Freddy Alí Castro Román 252191
  */
-
 public class ProductoBO {
-    
+
     private final ProductoDAO productoDAO;
-    
+
     public ProductoBO() {
         this.productoDAO = new ProductoDAO();
     }
-    
-    /**
-     * Obtener todos los productos
-     */
+
     public List<Producto> obtenerTodos() {
         return productoDAO.obtenerTodos();
     }
-    
-    /**
-     * Obtener producto por ID
-     */
-    public Producto obtenerPorId(int id) {
-        return productoDAO.obtenerPorId(id);
+
+    public List<Producto> obtenerPaginados(int pagina, int tamano) {
+        return productoDAO.obtenerPaginados(pagina, tamano);
     }
-    
-    /**
-     * Obtener productos por categoría
-     */
+
+    public long contarProductos() {
+        return productoDAO.contarProductos();
+    }
+
+    public Producto obtenerPorId(int id) throws BusinessException {
+        if (id <= 0) {
+            throw new ValidacionException("id", "El ID del producto debe ser mayor a 0");
+        }
+
+        Producto producto = productoDAO.obtenerPorId(id);
+        if (producto == null) {
+            throw new RecursoNoEncontradoException("Producto", id);
+        }
+
+        return producto;
+    }
+
     public List<Producto> obtenerPorCategoria(int categoriaId) {
         return productoDAO.obtenerPorCategoria(categoriaId);
     }
-    
-    /**
-     * Buscar productos por nombre
-     */
+
     public List<Producto> buscarPorNombre(String nombre) {
         return productoDAO.buscarPorNombre(nombre);
     }
-    
-    /**
-     * Crear nuevo producto
-     */
-    public Producto crear(Producto producto) throws Exception {
-        // Validaciones de negocio
-        if (producto.getNombre() == null || producto.getNombre().trim().isEmpty()) {
-            throw new Exception("El nombre del producto es requerido");
-        }
-        if (producto.getPrecio() <= 0) {
-            throw new Exception("El precio debe ser mayor a cero");
-        }
-        if (producto.getExistencias() < 0) {
-            throw new Exception("Las existencias no pueden ser negativas");
-        }
-        if (producto.getCategoria() == null) {
-            throw new Exception("La categoría es requerida");
-        }
-        
+
+    public Producto crear(Producto producto) throws BusinessException {
+        validarProducto(producto);
         return productoDAO.guardar(producto);
     }
-    
-    /**
-     * Actualizar producto
-     */
-    public Producto actualizar(Producto producto) throws Exception {
-        Producto existente = productoDAO.obtenerPorId(producto.getId());
-        if (existente == null) {
-            throw new Exception("Producto no encontrado");
+
+    public Producto actualizar(Producto producto) throws BusinessException {
+        if (producto == null || producto.getId() <= 0) {
+            throw new ValidacionException("Los parámetros del producto no son válidos");
         }
-        
-        // Validaciones
-        if (producto.getPrecio() <= 0) {
-            throw new Exception("El precio debe ser mayor a cero");
+
+        Producto productoExistente = productoDAO.obtenerPorId(producto.getId());
+        if (productoExistente == null) {
+            throw new RecursoNoEncontradoException("Producto", producto.getId());
         }
-        if (producto.getExistencias() < 0) {
-            throw new Exception("Las existencias no pueden ser negativas");
-        }
-        
+
+        validarProducto(producto);
         return productoDAO.actualizar(producto);
     }
-    
-    /**
-     * Eliminar producto
-     */
-    public void eliminar(int id) throws Exception {
+
+    public void eliminar(int id) throws BusinessException {
+        if (id <= 0) {
+            throw new ValidacionException("id", "El ID del producto debe ser mayor a 0");
+        }
+
         Producto producto = productoDAO.obtenerPorId(id);
         if (producto == null) {
-            throw new Exception("Producto no encontrado");
+            throw new RecursoNoEncontradoException("Producto", id);
         }
+
         productoDAO.eliminar(id);
     }
-    
+
     /**
-     * Verificar disponibilidad de stock
+     * Verifica si hay suficiente stock para la cantidad solicitada.
+     *
+     * @param productoId ID del producto
+     * @param cantidad   Cantidad solicitada
+     * @return true si hay stock suficiente
+     * @throws BusinessException si el producto no existe
      */
-    public boolean verificarDisponibilidad(int productoId, int cantidad) {
-        Producto producto = productoDAO.obtenerPorId(productoId);
-        return producto != null && producto.getExistencias() >= cantidad;
+    public boolean verificarStock(int productoId, int cantidad) throws BusinessException {
+        Producto producto = obtenerPorId(productoId);
+        return producto.getExistencias() >= cantidad;
     }
-    
+
     /**
-     * Reducir existencias del producto
+     * Valida el stock y lanza excepción detallada si es insuficiente.
+     *
+     * @param productoId ID del producto
+     * @param cantidad   Cantidad solicitada
+     * @throws StockInsuficienteException si no hay stock suficiente
+     * @throws BusinessException          si el producto no existe
      */
-    public void reducirExistencias(int productoId, int cantidad) throws Exception {
-        if (!verificarDisponibilidad(productoId, cantidad)) {
-            throw new Exception("No hay suficiente stock disponible");
+    public void validarStock(int productoId, int cantidad) throws BusinessException {
+        Producto producto = obtenerPorId(productoId);
+        if (producto.getExistencias() < cantidad) {
+            throw new StockInsuficienteException(
+                    producto.getId(),
+                    producto.getNombre(),
+                    producto.getExistencias(),
+                    cantidad
+            );
         }
-        productoDAO.actualizarExistencias(productoId, -cantidad);
+    }
+
+    public void reducirExistencias(int productoId, int cantidad) throws BusinessException {
+        if (cantidad <= 0) {
+            throw new ValidacionException("cantidad", "La cantidad debe ser mayor a 0");
+        }
+
+        Producto producto = obtenerPorId(productoId);
+
+        if (producto.getExistencias() < cantidad) {
+            throw new StockInsuficienteException(
+                    producto.getId(),
+                    producto.getNombre(),
+                    producto.getExistencias(),
+                    cantidad
+            );
+        }
+
+        int nuevasExistencias = producto.getExistencias() - cantidad;
+        producto.setExistencias(nuevasExistencias);
+        productoDAO.actualizar(producto);
+    }
+
+    public void aumentarExistencias(int productoId, int cantidad) throws BusinessException {
+        if (cantidad <= 0) {
+            throw new ValidacionException("cantidad", "La cantidad debe ser mayor a 0");
+        }
+
+        Producto producto = obtenerPorId(productoId);
+
+        int nuevasExistencias = producto.getExistencias() + cantidad;
+        producto.setExistencias(nuevasExistencias);
+        productoDAO.actualizar(producto);
+    }
+
+    private void validarProducto(Producto producto) throws ValidacionException {
+        if (producto == null) {
+            throw new ValidacionException("El producto no puede ser nulo");
+        }
+
+        if (!ValidationUtil.isNotEmpty(producto.getNombre())) {
+            throw new ValidacionException("nombre", "El nombre del producto es requerido");
+        }
+
+        if (producto.getNombre().trim().length() < 3) {
+            throw new ValidacionException("nombre", "El nombre debe tener al menos 3 caracteres");
+        }
+
+        if (!ValidationUtil.isPositive(producto.getPrecio())) {
+            throw new ValidacionException("precio", "El precio debe ser mayor a 0");
+        }
+
+        if (!ValidationUtil.isNonNegative(producto.getExistencias())) {
+            throw new ValidacionException("existencias", "Las existencias no pueden ser negativas");
+        }
+
+        if (producto.getCategoria() == null || producto.getCategoria().getId() <= 0) {
+            throw new ValidacionException("categoria", "La categoría es requerida");
+        }
     }
 }
