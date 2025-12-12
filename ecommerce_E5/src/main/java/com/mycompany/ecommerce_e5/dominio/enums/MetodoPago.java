@@ -5,13 +5,24 @@
 package com.mycompany.ecommerce_e5.dominio.enums;
 
 /**
+ * Enum que define los metodos de pago disponibles en la tienda.
+ * Por ahora se soportan pagos con TARJETA de credito/debito y PAYPAL.
  *
  * @author Alberto Jiménez García 252595
- * Rene Ezequiel Figueroa Lopez 228691
- * Freddy Alí Castro Román 252191
+ * @author Rene Ezequiel Figueroa Lopez 228691
+ * @author Freddy Alí Castro Román 252191
  */
 public enum MetodoPago {
-    TARJETA, 
-    TRANSFERENCIA, 
-    CONTRA_ENTREGA
+    TARJETA("Tarjeta"),
+    PAYPAL("PayPal");
+    
+    private final String descripcion;
+    
+    MetodoPago(String descripcion) {
+        this.descripcion = descripcion;
+    }
+    
+    public String getDescripcion() {
+        return descripcion;
+    }
 }

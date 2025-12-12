@@ -5,44 +5,50 @@
 package com.mycompany.ecommerce_e5.dominio;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import java.util.List;
 
 /**
- * @author Alberto Jiménez García 252595 
- * Rene Ezequiel Figueroa Lopez 228691
- * Freddy Alí Castro Román 252191
+ * Entidad que representa un producto de la tienda de ropa.
+ * Contiene informacion como nombre, descripcion, precio, talla, color y existencias.
+ * Cada producto pertenece a una categoria y puede tener varias resenas de clientes.
+ *
+ * @author Alberto Jiménez García 252595
+ * @author Rene Ezequiel Figueroa Lopez 228691
+ * @author Freddy Alí Castro Román 252191
  */
 @Entity
+@Table(name = "producto")
 public class Producto implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @NotNull(message = "El nombre es requerido")
-    @Size(min = 3, max = 100, message = "El nombre debe tener entre 3 y 100 caracteres")
-    @Column(nullable = false)
+    @Column(nullable = false, length = 100)
     private String nombre;
 
     @Column(length = 500)
     private String descripcion;
 
-    @Positive(message = "El precio debe ser positivo")
     @Column(nullable = false)
     private double precio;
 
+    @Column(name = "imagen_url", length = 255)
     private String imagenUrl;
 
-    @Min(value = 0, message = "Las existencias no pueden ser negativas")
     @Column(nullable = false)
     private int existencias;
 
+    @Column(length = 50)
     private String talla;
+
+    @Column(length = 50)
     private String color;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "categoria_id", nullable = false)
     private Categoria categoria;
 

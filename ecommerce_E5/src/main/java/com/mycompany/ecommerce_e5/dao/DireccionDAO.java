@@ -11,12 +11,14 @@ import jakarta.persistence.TypedQuery;
 import java.util.List;
 
 /**
+ * Clase DAO para la entidad Direccion.
+ * Gestiona las direcciones de envio de los usuarios en la base de datos.
+ * Permite obtener, guardar, actualizar y eliminar direcciones.
  *
  * @author Alberto Jiménez García 252595
- * Rene Ezequiel Figueroa Lopez 228691
- * Freddy Alí Castro Román 252191
+ * @author Rene Ezequiel Figueroa Lopez 228691
+ * @author Freddy Alí Castro Román 252191
  */
-
 public class DireccionDAO {
     
     public List<Direccion> obtenerTodas() {
@@ -31,6 +33,10 @@ public class DireccionDAO {
     }
     
     public Direccion obtenerPorId(int id) {
+        if (id <= 0) {
+            return null;
+        }
+        
         EntityManager em = JPAUtil.getEntityManager();
         try {
             return em.find(Direccion.class, id);
@@ -40,6 +46,10 @@ public class DireccionDAO {
     }
     
     public List<Direccion> obtenerPorUsuario(int usuarioId) {
+        if (usuarioId <= 0) {
+            throw new IllegalArgumentException("ID de usuario inválido");
+        }
+        
         EntityManager em = JPAUtil.getEntityManager();
         try {
             TypedQuery<Direccion> query = em.createQuery(
@@ -53,6 +63,10 @@ public class DireccionDAO {
     }
     
     public Direccion guardar(Direccion direccion) {
+        if (direccion == null) {
+            throw new IllegalArgumentException("La dirección no puede ser null");
+        }
+        
         EntityManager em = JPAUtil.getEntityManager();
         try {
             em.getTransaction().begin();
@@ -63,13 +77,20 @@ public class DireccionDAO {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
-            throw e;
+            throw new RuntimeException("Error al guardar dirección: " + e.getMessage(), e);
         } finally {
             em.close();
         }
     }
     
     public Direccion actualizar(Direccion direccion) {
+        if (direccion == null) {
+            throw new IllegalArgumentException("La dirección no puede ser null");
+        }
+        if (direccion.getId() <= 0) {
+            throw new IllegalArgumentException("El ID de la dirección es inválido");
+        }
+        
         EntityManager em = JPAUtil.getEntityManager();
         try {
             em.getTransaction().begin();
@@ -80,13 +101,17 @@ public class DireccionDAO {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
-            throw e;
+            throw new RuntimeException("Error al actualizar dirección: " + e.getMessage(), e);
         } finally {
             em.close();
         }
     }
     
     public void eliminar(int id) {
+        if (id <= 0) {
+            throw new IllegalArgumentException("ID inválido");
+        }
+        
         EntityManager em = JPAUtil.getEntityManager();
         try {
             em.getTransaction().begin();
@@ -99,7 +124,7 @@ public class DireccionDAO {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
-            throw e;
+            throw new RuntimeException("Error al eliminar dirección: " + e.getMessage(), e);
         } finally {
             em.close();
         }

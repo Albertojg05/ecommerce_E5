@@ -11,19 +11,25 @@ import jakarta.persistence.TypedQuery;
 import java.util.List;
 
 /**
+ * Clase DAO para la entidad Resena.
+ * Maneja las operaciones de base de datos para las resenas de productos.
+ * Permite obtener resenas por producto o por usuario, crear nuevas
+ * resenas y eliminarlas.
  *
  * @author Alberto Jiménez García 252595
- * Rene Ezequiel Figueroa Lopez 228691
- * Freddy Alí Castro Román 252191
+ * @author Rene Ezequiel Figueroa Lopez 228691
+ * @author Freddy Alí Castro Román 252191
  */
-
 public class ResenaDAO {
     
     public List<Resena> obtenerTodas() {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             TypedQuery<Resena> query = em.createQuery(
-                "SELECT r FROM Resena r ORDER BY r.fecha DESC", Resena.class);
+                "SELECT r FROM Resena r " +
+                "LEFT JOIN FETCH r.usuario " +
+                "LEFT JOIN FETCH r.producto " +
+                "ORDER BY r.fecha DESC", Resena.class);
             return query.getResultList();
         } finally {
             em.close();
@@ -31,6 +37,10 @@ public class ResenaDAO {
     }
     
     public Resena obtenerPorId(int id) {
+        if (id <= 0) {
+            return null;
+        }
+        
         EntityManager em = JPAUtil.getEntityManager();
         try {
             return em.find(Resena.class, id);
@@ -40,11 +50,17 @@ public class ResenaDAO {
     }
     
     public List<Resena> obtenerPorProducto(int productoId) {
+        if (productoId <= 0) {
+            throw new IllegalArgumentException("ID de producto inválido");
+        }
+        
         EntityManager em = JPAUtil.getEntityManager();
         try {
             TypedQuery<Resena> query = em.createQuery(
-                "SELECT r FROM Resena r WHERE r.producto.id = :productoId ORDER BY r.fecha DESC", 
-                Resena.class);
+                "SELECT r FROM Resena r " +
+                "LEFT JOIN FETCH r.usuario " +
+                "WHERE r.producto.id = :productoId " +
+                "ORDER BY r.fecha DESC", Resena.class);
             query.setParameter("productoId", productoId);
             return query.getResultList();
         } finally {
@@ -53,11 +69,17 @@ public class ResenaDAO {
     }
     
     public List<Resena> obtenerPorUsuario(int usuarioId) {
+        if (usuarioId <= 0) {
+            throw new IllegalArgumentException("ID de usuario inválido");
+        }
+        
         EntityManager em = JPAUtil.getEntityManager();
         try {
             TypedQuery<Resena> query = em.createQuery(
-                "SELECT r FROM Resena r WHERE r.usuario.id = :usuarioId ORDER BY r.fecha DESC", 
-                Resena.class);
+                "SELECT r FROM Resena r " +
+                "LEFT JOIN FETCH r.producto " +
+                "WHERE r.usuario.id = :usuarioId " +
+                "ORDER BY r.fecha DESC", Resena.class);
             query.setParameter("usuarioId", usuarioId);
             return query.getResultList();
         } finally {
@@ -66,6 +88,10 @@ public class ResenaDAO {
     }
     
     public Resena guardar(Resena resena) {
+        if (resena == null) {
+            throw new IllegalArgumentException("La reseña no puede ser null");
+        }
+        
         EntityManager em = JPAUtil.getEntityManager();
         try {
             em.getTransaction().begin();
@@ -76,13 +102,17 @@ public class ResenaDAO {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
-            throw e;
+            throw new RuntimeException("Error al guardar reseña: " + e.getMessage(), e);
         } finally {
             em.close();
         }
     }
     
     public void eliminar(int id) {
+        if (id <= 0) {
+            throw new IllegalArgumentException("ID inválido");
+        }
+        
         EntityManager em = JPAUtil.getEntityManager();
         try {
             em.getTransaction().begin();
@@ -95,7 +125,7 @@ public class ResenaDAO {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
-            throw e;
+            throw new RuntimeException("Error al eliminar reseña: " + e.getMessage(), e);
         } finally {
             em.close();
         }

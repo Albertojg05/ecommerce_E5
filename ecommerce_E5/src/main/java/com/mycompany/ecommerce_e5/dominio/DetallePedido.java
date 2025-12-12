@@ -8,24 +8,36 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 
 /**
- * @author Alberto Jiménez García 252595 
- * Rene Ezequiel Figueroa Lopez 228691
- * Freddy Alí Castro Román 252191
+ * Entidad que representa un item dentro de un pedido.
+ * Guarda la informacion de cada producto comprado: cantidad y precio unitario
+ * al momento de la compra. Esto es importante porque el precio puede cambiar despues.
+ *
+ * @author Alberto Jiménez García 252595
+ * @author Rene Ezequiel Figueroa Lopez 228691
+ * @author Freddy Alí Castro Román 252191
  */
 @Entity
+@Table(name = "detalle_pedido")
 public class DetallePedido implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Column(nullable = false)
     private int cantidad;
+
+    @Column(name = "precio_unitario", nullable = false)
     private double precioUnitario;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "producto_id", nullable = false)
     private Producto producto;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pedido_id", nullable = false)
     private Pedido pedido;
 
     public DetallePedido() {
@@ -38,6 +50,7 @@ public class DetallePedido implements Serializable {
         this.pedido = pedido;
     }
 
+    // Getters y Setters
     public int getId() {
         return id;
     }

@@ -9,28 +9,41 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
+ * Entidad que representa una resena o comentario de un producto.
+ * Los clientes pueden dejar una calificacion (1 a 5 estrellas) y un comentario
+ * sobre los productos que han comprado. Cada usuario solo puede dejar
+ * una resena por producto.
  *
- * @author Alberto Jiménez García 252595 
- * Rene Ezequiel Figueroa Lopez 228691
- * Freddy Alí Castro Román 252191
+ * @author Alberto Jiménez García 252595
+ * @author Rene Ezequiel Figueroa Lopez 228691
+ * @author Freddy Alí Castro Román 252191
  */
 @Entity
+@Table(name = "resena")
 public class Resena implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Column(nullable = false)
     private int calificacion;
+
+    @Column(length = 1000)
     private String comentario;
 
     @Temporal(TemporalType.DATE)
+    @Column(nullable = false)
     private Date fecha;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "producto_id", nullable = false)
     private Producto producto;
 
     public Resena() {
@@ -44,6 +57,7 @@ public class Resena implements Serializable {
         this.producto = producto;
     }
 
+    // Getters y Setters
     public int getId() {
         return id;
     }
@@ -91,5 +105,4 @@ public class Resena implements Serializable {
     public void setProducto(Producto producto) {
         this.producto = producto;
     }
-    
 }

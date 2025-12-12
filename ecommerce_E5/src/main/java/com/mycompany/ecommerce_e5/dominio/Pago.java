@@ -4,34 +4,45 @@
  */
 package com.mycompany.ecommerce_e5.dominio;
 
-import com.mycompany.ecommerce_e5.dominio.enums.MetodoPago;
 import com.mycompany.ecommerce_e5.dominio.enums.EstadoPago;
+import com.mycompany.ecommerce_e5.dominio.enums.MetodoPago;
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 
 /**
+ * Entidad que representa el pago de un pedido.
+ * Almacena el monto, la fecha, el metodo de pago utilizado (tarjeta o PayPal)
+ * y el estado del pago (pendiente, aprobado o rechazado).
+ * Cada pago esta asociado a un unico pedido.
  *
- * @author Alberto Jiménez García 252595 
- * Rene Ezequiel Figueroa Lopez 228691
- * Freddy Alí Castro Román 252191
+ * @author Alberto Jiménez García 252595
+ * @author Rene Ezequiel Figueroa Lopez 228691
+ * @author Freddy Alí Castro Román 252191
  */
 @Entity
+@Table(name = "pago")
 public class Pago implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Column(nullable = false)
     private double monto;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(nullable = false)
     private Date fecha;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
     private MetodoPago metodo;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
     private EstadoPago estado;
 
     @OneToOne(mappedBy = "pago")
@@ -47,6 +58,7 @@ public class Pago implements Serializable {
         this.estado = estado;
     }
 
+    // Getters y Setters
     public int getId() {
         return id;
     }
@@ -94,5 +106,4 @@ public class Pago implements Serializable {
     public void setPedido(Pedido pedido) {
         this.pedido = pedido;
     }
-    
 }

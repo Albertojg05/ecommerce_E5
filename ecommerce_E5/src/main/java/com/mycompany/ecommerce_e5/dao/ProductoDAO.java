@@ -11,9 +11,14 @@ import jakarta.persistence.TypedQuery;
 import java.util.List;
 
 /**
- * @author Alberto Jiménez García 252595 
- * Rene Ezequiel Figueroa Lopez 228691
- * Freddy Alí Castro Román 252191
+ * Clase DAO para la entidad Producto.
+ * Maneja todas las operaciones de base de datos para productos:
+ * obtener todos, buscar por id, por categoria, por nombre, guardar,
+ * actualizar, eliminar y gestionar existencias.
+ *
+ * @author Alberto Jiménez García 252595
+ * @author Rene Ezequiel Figueroa Lopez 228691
+ * @author Freddy Alí Castro Román 252191
  */
 public class ProductoDAO {
 
@@ -21,9 +26,8 @@ public class ProductoDAO {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             TypedQuery<Producto> query = em.createQuery(
-                    "SELECT p FROM Producto p "
-                    + "LEFT JOIN FETCH p.categoria "
-                    + "ORDER BY p.id DESC", Producto.class);
+                    "SELECT p FROM Producto p LEFT JOIN FETCH p.categoria ORDER BY p.id DESC", 
+                    Producto.class);
             return query.getResultList();
         } finally {
             em.close();
@@ -31,12 +35,18 @@ public class ProductoDAO {
     }
 
     public List<Producto> obtenerPaginados(int pagina, int tamano) {
+        if (pagina < 1) {
+            throw new IllegalArgumentException("La página debe ser mayor o igual a 1");
+        }
+        if (tamano < 1) {
+            throw new IllegalArgumentException("El tamaño debe ser mayor a 0");
+        }
+        
         EntityManager em = JPAUtil.getEntityManager();
         try {
             TypedQuery<Producto> query = em.createQuery(
-                    "SELECT p FROM Producto p "
-                    + "LEFT JOIN FETCH p.categoria "
-                    + "ORDER BY p.id DESC", Producto.class);
+                    "SELECT p FROM Producto p LEFT JOIN FETCH p.categoria ORDER BY p.id DESC", 
+                    Producto.class);
             query.setFirstResult((pagina - 1) * tamano);
             query.setMaxResults(tamano);
             return query.getResultList();
@@ -57,11 +67,15 @@ public class ProductoDAO {
     }
 
     public Producto obtenerPorId(int id) {
+        if (id <= 0) {
+            return null;
+        }
+        
         EntityManager em = JPAUtil.getEntityManager();
         try {
             Producto producto = em.find(Producto.class, id);
             if (producto != null && producto.getCategoria() != null) {
-                // Forzar carga de categoría
+                // Forzar carga de categoría para evitar LazyInitializationException
                 producto.getCategoria().getNombre();
             }
             return producto;
@@ -71,12 +85,16 @@ public class ProductoDAO {
     }
 
     public List<Producto> obtenerPorCategoria(int categoriaId) {
+        if (categoriaId <= 0) {
+            throw new IllegalArgumentException("ID de categoría inválido");
+        }
+        
         EntityManager em = JPAUtil.getEntityManager();
         try {
             TypedQuery<Producto> query = em.createQuery(
-                    "SELECT p FROM Producto p "
-                    + "LEFT JOIN FETCH p.categoria "
-                    + "WHERE p.categoria.id = :categoriaId", Producto.class);
+                    "SELECT p FROM Producto p LEFT JOIN FETCH p.categoria " +
+                    "WHERE p.categoria.id = :categoriaId ORDER BY p.nombre", 
+                    Producto.class);
             query.setParameter("categoriaId", categoriaId);
             return query.getResultList();
         } finally {
@@ -85,13 +103,17 @@ public class ProductoDAO {
     }
 
     public List<Producto> buscarPorNombre(String nombre) {
+        if (nombre == null || nombre.trim().isEmpty()) {
+            return obtenerTodos();
+        }
+        
         EntityManager em = JPAUtil.getEntityManager();
         try {
             TypedQuery<Producto> query = em.createQuery(
-                    "SELECT p FROM Producto p "
-                    + "LEFT JOIN FETCH p.categoria "
-                    + "WHERE LOWER(p.nombre) LIKE LOWER(:nombre)", Producto.class);
-            query.setParameter("nombre", "%" + nombre + "%");
+                    "SELECT p FROM Producto p LEFT JOIN FETCH p.categoria " +
+                    "WHERE LOWER(p.nombre) LIKE LOWER(:nombre) ORDER BY p.nombre", 
+                    Producto.class);
+            query.setParameter("nombre", "%" + nombre.trim() + "%");
             return query.getResultList();
         } finally {
             em.close();
@@ -99,6 +121,10 @@ public class ProductoDAO {
     }
 
     public Producto guardar(Producto producto) {
+        if (producto == null) {
+            throw new IllegalArgumentException("El producto no puede ser null");
+        }
+        
         EntityManager em = JPAUtil.getEntityManager();
         try {
             em.getTransaction().begin();
@@ -109,13 +135,20 @@ public class ProductoDAO {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
-            throw e;
+            throw new RuntimeException("Error al guardar producto: " + e.getMessage(), e);
         } finally {
             em.close();
         }
     }
 
     public Producto actualizar(Producto producto) {
+        if (producto == null) {
+            throw new IllegalArgumentException("El producto no puede ser null");
+        }
+        if (producto.getId() <= 0) {
+            throw new IllegalArgumentException("El ID del producto es inválido");
+        }
+        
         EntityManager em = JPAUtil.getEntityManager();
         try {
             em.getTransaction().begin();
@@ -126,13 +159,17 @@ public class ProductoDAO {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
-            throw e;
+            throw new RuntimeException("Error al actualizar producto: " + e.getMessage(), e);
         } finally {
             em.close();
         }
     }
 
     public void eliminar(int id) {
+        if (id <= 0) {
+            throw new IllegalArgumentException("ID inválido");
+        }
+        
         EntityManager em = JPAUtil.getEntityManager();
         try {
             em.getTransaction().begin();
@@ -145,19 +182,27 @@ public class ProductoDAO {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
-            throw e;
+            throw new RuntimeException("Error al eliminar producto: " + e.getMessage(), e);
         } finally {
             em.close();
         }
     }
 
     public void actualizarExistencias(int productoId, int cantidad) {
+        if (productoId <= 0) {
+            throw new IllegalArgumentException("ID de producto inválido");
+        }
+        
         EntityManager em = JPAUtil.getEntityManager();
         try {
             em.getTransaction().begin();
             Producto producto = em.find(Producto.class, productoId);
             if (producto != null) {
-                producto.setExistencias(producto.getExistencias() + cantidad);
+                int nuevasExistencias = producto.getExistencias() + cantidad;
+                if (nuevasExistencias < 0) {
+                    throw new IllegalStateException("Las existencias no pueden ser negativas");
+                }
+                producto.setExistencias(nuevasExistencias);
                 em.merge(producto);
             }
             em.getTransaction().commit();
@@ -165,7 +210,7 @@ public class ProductoDAO {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
-            throw e;
+            throw new RuntimeException("Error al actualizar existencias: " + e.getMessage(), e);
         } finally {
             em.close();
         }
