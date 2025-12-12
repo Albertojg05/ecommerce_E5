@@ -5,48 +5,53 @@
 --%>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <!DOCTYPE html>
 <html lang="es">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Gestionar Productos - Admin</title>
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/global.css">
+        <title>Gestión de Productos - Admin</title>
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin.css">
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-common.css">
     </head>
     <body>
         <header class="header-productos">
             <div class="logo">MiTienda Admin</div>
+            <button class="mobile-menu-btn" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
             <nav class="main-nav">
                 <a href="${pageContext.request.contextPath}/admin/dashboard">Dashboard</a>
-                <a href="${pageContext.request.contextPath}/admin/productos">Productos</a>
+                <a href="${pageContext.request.contextPath}/admin/producto">Productos</a>
                 <a href="${pageContext.request.contextPath}/admin/pedidos">Pedidos</a>
                 <a href="${pageContext.request.contextPath}/admin/resenas">Reseñas</a>
                 <a href="${pageContext.request.contextPath}/admin/logout">Salir</a>
             </nav>
+            <div class="mobile-nav-overlay"></div>
         </header>
 
         <main class="admin-container">
             <div class="admin-header">
                 <h1>Gestionar Productos</h1>
-                <a href="${pageContext.request.contextPath}/admin/productos?accion=nuevo" class="btn btn-primary">
-                    + Agregar Nuevo Producto
-                </a>
+                <a href="${pageContext.request.contextPath}/admin/producto?accion=nuevo" 
+                   class="btn btn-primary">+ Agregar Nuevo Producto</a>
             </div>
 
             <c:if test="${param.success == 'created'}">
-                <div class="success-message">Producto creado exitosamente.</div>
+                <div class="success-message">Producto creado exitosamente</div>
             </c:if>
+
             <c:if test="${param.success == 'updated'}">
-                <div class="success-message">Producto actualizado exitosamente.</div>
+                <div class="success-message">Producto actualizado exitosamente</div>
             </c:if>
+
             <c:if test="${param.success == 'deleted'}">
-                <div class="success-message">Producto eliminado exitosamente.</div>
+                <div class="success-message">Producto eliminado exitosamente</div>
             </c:if>
+
             <c:if test="${not empty error}">
                 <div class="error-message">${error}</div>
             </c:if>
@@ -64,52 +69,29 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <c:if test="${empty productos}">
-                        <tr>
-                            <td colspan="7" style="text-align: center; padding: 20px;">
-                                No hay productos registrados.
-                            </td>
-                        </tr>
-                    </c:if>
-
                     <c:forEach var="producto" items="${productos}">
                         <tr>
-                            <td>${producto.id}</td>
-                            <td>
+                            <td data-label="ID">${producto.id}</td>
+                            <td data-label="Imagen">
                                 <c:choose>
                                     <c:when test="${not empty producto.imagenUrl}">
-                                        <img src="${producto.imagenUrl}" 
-                                             alt="${producto.nombre}" 
-                                             style="width: 60px; height: 80px; object-fit: cover;">
+                                        <img src="${pageContext.request.contextPath}/${producto.imagenUrl}"
+                                             alt="${producto.nombre}"
+                                             style="width: 60px; height: auto;">
                                     </c:when>
                                     <c:otherwise>
-                                        <img src="https://placehold.co/60x80/ccc/666?text=Sin+imagen" 
-                                             alt="Sin imagen">
+                                        <span>Sin imagen</span>
                                     </c:otherwise>
                                 </c:choose>
                             </td>
-                            <td>
-                                <strong>${producto.nombre}</strong><br>
-                                <small>${producto.color} - ${producto.talla}</small>
-                            </td>
-                            <td>${producto.categoria.nombre}</td>
-                            <td>$<fmt:formatNumber value="${producto.precio}" pattern="#,##0.00"/></td>
-                            <td>
-                                <c:choose>
-                                    <c:when test="${producto.existencias < 10}">
-                                        <span style="color: #e74c3c; font-weight: bold;">
-                                            ${producto.existencias}
-                                        </span>
-                                    </c:when>
-                                    <c:otherwise>
-                                        ${producto.existencias}
-                                    </c:otherwise>
-                                </c:choose>
-                            </td>
-                            <td>
-                                <a href="${pageContext.request.contextPath}/admin/productos?accion=editar&id=${producto.id}" 
+                            <td data-label="Nombre">${producto.nombre}</td>
+                            <td data-label="Categoría">${producto.categoria.nombre}</td>
+                            <td data-label="Precio">$<fmt:formatNumber value="${producto.precio}" pattern="#,##0.00"/></td>
+                            <td data-label="Stock">${producto.existencias}</td>
+                            <td data-label="Acciones">
+                                <a href="${pageContext.request.contextPath}/admin/producto?accion=editar&id=${producto.id}"
                                    class="btn btn-edit">Editar</a>
-                                <button onclick="confirmarEliminar(${producto.id}, '${producto.nombre}')" 
+                                <button onclick="confirmarEliminar(${producto.id}, '${producto.nombre}')"
                                         class="btn btn-delete">Eliminar</button>
                             </td>
                         </tr>
@@ -120,9 +102,30 @@
 
         <script>
             function confirmarEliminar(id, nombre) {
-                if (confirm('¿Estás seguro de eliminar el producto "' + nombre + '"?')) {
-                    window.location.href = '${pageContext.request.contextPath}/admin/productos?accion=eliminar&id=' + id;
+                if (confirm('¿Está seguro de eliminar el producto "' + nombre + '"?')) {
+                    window.location.href = '${pageContext.request.contextPath}/admin/producto?accion=eliminar&id=' + id;
                 }
+            }
+
+            // Mobile Menu Toggle
+            const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+            const mainNav = document.querySelector('.main-nav');
+            const overlay = document.querySelector('.mobile-nav-overlay');
+
+            if (mobileMenuBtn) {
+                mobileMenuBtn.addEventListener('click', function() {
+                    this.classList.toggle('active');
+                    mainNav.classList.toggle('active');
+                    overlay.classList.toggle('active');
+                    document.body.style.overflow = mainNav.classList.contains('active') ? 'hidden' : '';
+                });
+
+                overlay.addEventListener('click', function() {
+                    mobileMenuBtn.classList.remove('active');
+                    mainNav.classList.remove('active');
+                    this.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
             }
         </script>
     </body>

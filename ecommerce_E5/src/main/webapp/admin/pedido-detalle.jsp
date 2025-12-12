@@ -5,201 +5,221 @@
 --%>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
 <!DOCTYPE html>
 <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Detalle del Pedido - Admin</title>
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/global.css">
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin.css">
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin-common.css">
-    </head>
-    <body>
-        <header class="header-productos">
-            <div class="logo">MiTienda Admin</div>
-            <nav class="main-nav">
-                <a href="${pageContext.request.contextPath}/admin/dashboard">Dashboard</a>
-                <a href="${pageContext.request.contextPath}/admin/productos">Productos</a>
-                <a href="${pageContext.request.contextPath}/admin/pedidos">Pedidos</a>
-                <a href="${pageContext.request.contextPath}/admin/resenas">Reseñas</a>
-                <a href="${pageContext.request.contextPath}/admin/logout">Salir</a>
-            </nav>
-        </header>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle del Pedido - Admin</title>
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin.css">
+</head>
+<body>
+    <header class="header-productos">
+        <div class="logo">MiTienda Admin</div>
+        <button class="mobile-menu-btn" aria-label="Menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <nav class="main-nav">
+            <a href="${pageContext.request.contextPath}/admin/dashboard">Dashboard</a>
+            <a href="${pageContext.request.contextPath}/admin/producto">Productos</a>
+            <a href="${pageContext.request.contextPath}/admin/pedidos">Pedidos</a>
+            <a href="${pageContext.request.contextPath}/admin/resenas">Reseñas</a>
+            <a href="${pageContext.request.contextPath}/admin/logout">Salir</a>
+        </nav>
+        <div class="mobile-nav-overlay"></div>
+    </header>
 
-        <main class="admin-container">
-            <h1>Detalle del Pedido</h1>
+    <main class="admin-container">
+        <h1>Detalle del Pedido ${pedido.numeroPedido}</h1>
 
-            <c:if test="${param.success == 'updated'}">
-                <div class="success-message">Estado actualizado exitosamente.</div>
-            </c:if>
-            <c:if test="${param.success == 'cancelled'}">
-                <div class="success-message">Pedido cancelado exitosamente.</div>
-            </c:if>
+        <c:if test="${param.success == 'updated'}">
+            <div class="success-message">Estado actualizado exitosamente</div>
+        </c:if>
 
-            <c:if test="${empty pedido}">
-                <p>Pedido no encontrado.</p>
-                <a href="${pageContext.request.contextPath}/admin/pedidos" class="btn btn-primary">Volver a Pedidos</a>
-            </c:if>
+        <c:if test="${param.success == 'cancelled'}">
+            <div class="success-message">Pedido cancelado exitosamente</div>
+        </c:if>
 
-            <c:if test="${not empty pedido}">
-                <div class="pedido-section">
-                    <h2>Información General</h2>
-                    <div class="pedido-info">
-                        <div class="info-grid">
-                            <div class="info-item">
-                                <label>Número de Pedido:</label>
-                                <strong>${pedido.numeroPedido}</strong>
-                            </div>
-                            <div class="info-item">
-                                <label>Fecha:</label>
-                                <fmt:formatDate value="${pedido.fecha}" pattern="dd/MM/yyyy HH:mm"/>
-                            </div>
-                            <div class="info-item">
-                                <label>Estado:</label>
-                                <span class="badge badge-${pedido.estado.name().toLowerCase()}">
-                                    ${pedido.estado}
-                                </span>
-                            </div>
-                            <div class="info-item">
-                                <label>Total:</label>
-                                <strong style="font-size: 18px;">$<fmt:formatNumber value="${pedido.total}" pattern="#,##0.00"/></strong>
-                            </div>
-                        </div>
-                    </div>
+        <!-- Información del Cliente -->
+        <div class="pedido-section">
+            <h2>Información del Cliente</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Nombre:</label>
+                    <p>${pedido.usuario.nombre}</p>
                 </div>
-
-                <div class="pedido-section">
-                    <h2>Cliente</h2>
-                    <div class="pedido-info">
-                        <div class="info-grid">
-                            <div class="info-item">
-                                <label>Nombre:</label>
-                                ${pedido.usuario.nombre}
-                            </div>
-                            <div class="info-item">
-                                <label>Correo:</label>
-                                ${pedido.usuario.correo}
-                            </div>
-                            <div class="info-item">
-                                <label>Teléfono:</label>
-                                ${pedido.usuario.telefono}
-                            </div>
-                        </div>
-                    </div>
+                <div class="info-item">
+                    <label>Correo:</label>
+                    <p>${pedido.usuario.correo}</p>
                 </div>
-
-                <div class="pedido-section">
-                    <h2>Dirección de Envío</h2>
-                    <div class="pedido-info">
-                        <p>
-                            ${pedido.direccionEnvio.calle}<br>
-                            ${pedido.direccionEnvio.ciudad}, ${pedido.direccionEnvio.estado}<br>
-                            C.P. ${pedido.direccionEnvio.codigoPostal}
-                        </p>
-                    </div>
+                <div class="info-item">
+                    <label>Teléfono:</label>
+                    <p>${pedido.usuario.telefono}</p>
                 </div>
+            </div>
+        </div>
 
-                <div class="pedido-section">
-                    <h2>Productos</h2>
-                    <table class="product-table">
-                        <thead>
-                            <tr>
-                                <th>Producto</th>
-                                <th>Precio Unitario</th>
-                                <th>Cantidad</th>
-                                <th>Subtotal</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <c:forEach var="detalle" items="${pedido.detalles}">
-                                <tr>
-                                    <td>
-                                        <strong>${detalle.producto.nombre}</strong><br>
-                                        <small>${detalle.producto.color} - ${detalle.producto.talla}</small>
-                                    </td>
-                                    <td>$<fmt:formatNumber value="${detalle.precioUnitario}" pattern="#,##0.00"/></td>
-                                    <td>${detalle.cantidad}</td>
-                                    <td>
-                                        <strong>$<fmt:formatNumber value="${detalle.precioUnitario * detalle.cantidad}" pattern="#,##0.00"/></strong>
-                                    </td>
-                                </tr>
-                            </c:forEach>
-                            <tr style="background: #f0f0f0; font-weight: bold;">
-                                <td colspan="3" style="text-align: right;">TOTAL:</td>
-                                <td>$<fmt:formatNumber value="${pedido.total}" pattern="#,##0.00"/></td>
-                            </tr>
-                        </tbody>
-                    </table>
+        <!-- Información del Pedido -->
+        <div class="pedido-section">
+            <h2>Información del Pedido</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Fecha:</label>
+                    <p><fmt:formatDate value="${pedido.fecha}" pattern="dd/MM/yyyy HH:mm"/></p>
                 </div>
+                <div class="info-item">
+                    <label>Estado:</label>
+                    <p><span class="badge badge-${pedido.estado.name().toLowerCase()}">${pedido.estado}</span></p>
+                </div>
+                <div class="info-item">
+                    <label>Total:</label>
+                    <p><strong>$<fmt:formatNumber value="${pedido.total}" pattern="#,##0.00"/></strong></p>
+                </div>
+            </div>
+        </div>
 
-                <c:if test="${not empty pedido.pago}">
-                    <div class="pedido-section">
-                        <h2>Información de Pago</h2>
-                        <div class="pedido-info">
-                            <div class="info-grid">
-                                <div class="info-item">
-                                    <label>Método de Pago:</label>
-                                    ${pedido.pago.metodo}
-                                </div>
-                                <div class="info-item">
-                                    <label>Estado del Pago:</label>
-                                    <span class="badge badge-${pedido.pago.estado.name().toLowerCase()}">
-                                        ${pedido.pago.estado}
-                                    </span>
-                                </div>
-                                <div class="info-item">
-                                    <label>Monto:</label>
-                                    $<fmt:formatNumber value="${pedido.pago.monto}" pattern="#,##0.00"/>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+        <!-- Dirección de Envío -->
+        <div class="pedido-section">
+            <h2>Dirección de Envío</h2>
+            <div class="pedido-info">
+                <p><strong>Calle:</strong> ${pedido.direccionEnvio.calle}</p>
+                <p><strong>Ciudad:</strong> ${pedido.direccionEnvio.ciudad}</p>
+                <p><strong>Estado:</strong> ${pedido.direccionEnvio.estado}</p>
+                <p><strong>Código Postal:</strong> ${pedido.direccionEnvio.codigoPostal}</p>
+            </div>
+        </div>
+
+        <!-- Información de Pago -->
+        <div class="pedido-section">
+            <h2>Información de Pago</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <label>Método:</label>
+                    <p>${pedido.pago.metodo}</p>
+                </div>
+                <div class="info-item">
+                    <label>Estado:</label>
+                    <p><span class="badge badge-${pedido.pago.estado.name().toLowerCase()}">${pedido.pago.estado}</span></p>
+                </div>
+                <div class="info-item">
+                    <label>Monto:</label>
+                    <p>$<fmt:formatNumber value="${pedido.pago.monto}" pattern="#,##0.00"/></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Productos del Pedido -->
+        <div class="pedido-section">
+            <h2>Productos</h2>
+            <table class="product-table">
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>Precio Unitario</th>
+                        <th>Cantidad</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <c:forEach var="detalle" items="${pedido.detalles}">
+                        <tr>
+                            <td>${detalle.producto.nombre}</td>
+                            <td>$<fmt:formatNumber value="${detalle.precioUnitario}" pattern="#,##0.00"/></td>
+                            <td>${detalle.cantidad}</td>
+                            <td>$<fmt:formatNumber value="${detalle.precioUnitario * detalle.cantidad}" pattern="#,##0.00"/></td>
+                        </tr>
+                    </c:forEach>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Actualizar Estado -->
+        <c:if test="${pedido.estado != 'ENTREGADO' && pedido.estado != 'CANCELADO'}">
+            <form class="form-update-estado" method="post" 
+                  action="${pageContext.request.contextPath}/admin/pedidos">
+                <input type="hidden" name="accion" value="actualizarEstado">
+                <input type="hidden" name="id" value="${pedido.id}">
+                
+                <h2>Actualizar Estado del Pedido</h2>
+                <div class="form-group">
+                    <label for="nuevoEstado">Nuevo Estado:</label>
+                    <select id="nuevoEstado" name="nuevoEstado" required>
+                        <c:forEach var="estado" items="${estados}">
+                            <option value="${estado}" ${pedido.estado == estado ? 'selected' : ''}>
+                                ${estado}
+                            </option>
+                        </c:forEach>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Actualizar Estado</button>
+                
+                <c:if test="${pedido.estado != 'CANCELADO'}">
+                    <button type="button" 
+                            onclick="confirmarCancelacion()" 
+                            class="btn btn-delete" 
+                            style="margin-left: 10px;">
+                        Cancelar Pedido
+                    </button>
                 </c:if>
+            </form>
+        </c:if>
 
-                <div class="form-update-estado">
-                    <h3>Actualizar Estado del Pedido</h3>
-                    <form method="post" action="${pageContext.request.contextPath}/admin/pedidos" style="display: flex; gap: 15px; align-items: center; margin-top: 15px;">
-                        <input type="hidden" name="accion" value="actualizarEstado">
-                        <input type="hidden" name="id" value="${pedido.id}">
+        <a href="${pageContext.request.contextPath}/admin/pedidos" 
+           class="btn" 
+           style="background-color: #95a5a6; color: white; margin-top: 20px; display: inline-block;">
+            Volver a Pedidos
+        </a>
+    </main>
 
-                        <label for="nuevoEstado" style="font-weight: 600;">Nuevo Estado:</label>
-                        <select id="nuevoEstado" name="nuevoEstado" required>
-                            <c:forEach var="estado" items="${estados}">
-                                <option value="${estado}" ${pedido.estado == estado ? 'selected' : ''}>
-                                    ${estado}
-                                </option>
-                            </c:forEach>
-                        </select>
+    <script>
+        function confirmarCancelacion() {
+            if (confirm('¿Está seguro de cancelar este pedido? Esta acción restaurará el stock de los productos.')) {
+                var form = document.createElement('form');
+                form.method = 'post';
+                form.action = '${pageContext.request.contextPath}/admin/pedidos';
 
-                        <button type="submit" class="btn btn-primary">Actualizar Estado</button>
+                var accion = document.createElement('input');
+                accion.type = 'hidden';
+                accion.name = 'accion';
+                accion.value = 'cancelar';
+                form.appendChild(accion);
 
-                        <c:if test="${pedido.estado != 'CANCELADO' && pedido.estado != 'ENTREGADO'}">
-                            <button type="button" 
-                                    onclick="if (confirm('¿Cancelar este pedido?')) {
-                                            document.getElementById('formCancelar').submit();
-                                        }" 
-                                    class="btn btn-delete">
-                                Cancelar Pedido
-                            </button>
-                        </c:if>
-                    </form>
+                var id = document.createElement('input');
+                id.type = 'hidden';
+                id.name = 'id';
+                id.value = '${pedido.id}';
+                form.appendChild(id);
 
-                    <form id="formCancelar" method="post" action="${pageContext.request.contextPath}/admin/pedidos" style="display: none;">
-                        <input type="hidden" name="accion" value="cancelar">
-                        <input type="hidden" name="id" value="${pedido.id}">
-                    </form>
-                </div>
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
 
-                <div style="margin-top: 30px;">
-                    <a href="${pageContext.request.contextPath}/admin/pedidos" class="btn" style="background: #6c757d; color: white; text-decoration: none; display: inline-block; padding: 10px 18px;">
-                        ← Volver a Pedidos
-                    </a>
-                </div>
-            </c:if>
-        </main>
-    </body>
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const mainNav = document.querySelector('.main-nav');
+        const overlay = document.querySelector('.mobile-nav-overlay');
+
+        if (mobileMenuBtn) {
+            mobileMenuBtn.addEventListener('click', function() {
+                this.classList.toggle('active');
+                mainNav.classList.toggle('active');
+                overlay.classList.toggle('active');
+                document.body.style.overflow = mainNav.classList.contains('active') ? 'hidden' : '';
+            });
+
+            overlay.addEventListener('click', function() {
+                mobileMenuBtn.classList.remove('active');
+                mainNav.classList.remove('active');
+                this.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        }
+    </script>
+</body>
 </html>
