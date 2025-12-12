@@ -73,9 +73,27 @@
 
     /* Otros colores */
     --color-star: #333333;
+    --color-star-empty: #dddddd;
     --color-free-shipping: #555555;
     --color-danger: #666666;
     --color-success: #444444;
+
+    /* Footer */
+    --color-footer-bg: #1a1a1a;
+    --color-footer-text: #ffffff;
+    --color-footer-link: #cccccc;
+    --color-footer-border: #333333;
+    --color-footer-muted: #888888;
+
+    /* Overlays y sombras con transparencia */
+    --color-overlay: rgba(0, 0, 0, 0.5);
+    --color-overlay-light: rgba(0, 0, 0, 0.1);
+    --color-shadow-text: rgba(0, 0, 0, 0.6);
+    --color-shadow-modal: rgba(0, 0, 0, 0.2);
+
+    /* Elementos miscelaneos */
+    --color-quantity-badge: #555555;
+    --color-placeholder-bg: #f5f5f5;
 
     /* Espaciados - los usamos en padding y margin */
     --spacing-xs: 5px;

@@ -97,9 +97,8 @@ public class CarritoResource {
             // Validar cantidad dentro de límites
             if (!ConfiguracionTienda.esCantidadValida(cantidad)) {
                 return Response.status(Response.Status.BAD_REQUEST)
-                        .entity(ApiResponse.error("La cantidad debe estar entre " +
-                                ConfiguracionTienda.CANTIDAD_MINIMA_PRODUCTO + " y " +
-                                ConfiguracionTienda.CANTIDAD_MAXIMA_PRODUCTO))
+                        .entity(ApiResponse.error("Máximo " +
+                                ConfiguracionTienda.CANTIDAD_MAXIMA_PRODUCTO + " unidades por producto"))
                         .build();
             }
 

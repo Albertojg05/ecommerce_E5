@@ -44,6 +44,10 @@
             <div class="success-message">Pedido cancelado exitosamente</div>
         </c:if>
 
+        <c:if test="${not empty error}">
+            <div class="error-message">${error}</div>
+        </c:if>
+
         <!-- Información del Cliente -->
         <div class="pedido-section">
             <h2>Información del Cliente</h2>
@@ -139,66 +143,88 @@
 
         <!-- Actualizar Estado -->
         <c:if test="${pedido.estado != 'ENTREGADO' && pedido.estado != 'CANCELADO'}">
-            <form class="form-update-estado" method="post" 
-                  action="${pageContext.request.contextPath}/admin/pedidos">
-                <input type="hidden" name="accion" value="actualizarEstado">
-                <input type="hidden" name="id" value="${pedido.id}">
-                
-                <h2>Actualizar Estado del Pedido</h2>
-                <div class="form-group">
-                    <label for="nuevoEstado">Nuevo Estado:</label>
-                    <select id="nuevoEstado" name="nuevoEstado" required>
-                        <c:forEach var="estado" items="${estados}">
-                            <option value="${estado}" ${pedido.estado == estado ? 'selected' : ''}>
-                                ${estado}
-                            </option>
-                        </c:forEach>
-                    </select>
-                </div>
-                
-                <button type="submit" class="btn btn-primary">Actualizar Estado</button>
-                
-                <c:if test="${pedido.estado != 'CANCELADO'}">
-                    <button type="button" 
-                            onclick="confirmarCancelacion()" 
-                            class="btn btn-delete" 
-                            style="margin-left: 10px;">
-                        Cancelar Pedido
-                    </button>
-                </c:if>
-            </form>
+            <div class="form-update-estado">
+                <h2>Actualizar Estado</h2>
+                <form method="post" action="${pageContext.request.contextPath}/admin/pedidos">
+                    <input type="hidden" name="accion" value="actualizarEstado">
+                    <input type="hidden" name="id" value="${pedido.id}">
+
+                    <div class="form-group">
+                        <label for="nuevoEstado">Cambiar Estado</label>
+                        <select id="nuevoEstado" name="nuevoEstado" required>
+                            <c:forEach var="estado" items="${estados}">
+                                <option value="${estado}" ${pedido.estado == estado ? 'selected' : ''}>
+                                    ${estado}
+                                </option>
+                            </c:forEach>
+                        </select>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">Actualizar Estado</button>
+                        <c:if test="${pedido.estado != 'CANCELADO'}">
+                            <button type="button" onclick="confirmarCancelacion()" class="btn btn-delete">
+                                Cancelar Pedido
+                            </button>
+                        </c:if>
+                    </div>
+                </form>
+            </div>
         </c:if>
 
-        <a href="${pageContext.request.contextPath}/admin/pedidos" 
-           class="btn" 
-           style="background-color: #95a5a6; color: white; margin-top: 20px; display: inline-block;">
+        <a href="${pageContext.request.contextPath}/admin/pedidos" class="btn btn-secondary" style="margin-top: 20px;">
             Volver a Pedidos
         </a>
     </main>
 
+    <!-- Modal de confirmación para cancelar pedido -->
+    <div id="modal-cancelar" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h3>Cancelar Pedido</h3>
+            <p>¿Está seguro de cancelar este pedido?</p>
+            <div class="modal-actions">
+                <button type="button" class="btn-modal btn-cancelar" onclick="cerrarModalCancelar()">Retroceder</button>
+                <button type="button" class="btn-modal btn-confirmar" onclick="ejecutarCancelacion()">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         function confirmarCancelacion() {
-            if (confirm('¿Está seguro de cancelar este pedido? Esta acción restaurará el stock de los productos.')) {
-                var form = document.createElement('form');
-                form.method = 'post';
-                form.action = '${pageContext.request.contextPath}/admin/pedidos';
-
-                var accion = document.createElement('input');
-                accion.type = 'hidden';
-                accion.name = 'accion';
-                accion.value = 'cancelar';
-                form.appendChild(accion);
-
-                var id = document.createElement('input');
-                id.type = 'hidden';
-                id.name = 'id';
-                id.value = '${pedido.id}';
-                form.appendChild(id);
-
-                document.body.appendChild(form);
-                form.submit();
-            }
+            document.getElementById('modal-cancelar').style.display = 'flex';
         }
+
+        function cerrarModalCancelar() {
+            document.getElementById('modal-cancelar').style.display = 'none';
+        }
+
+        function ejecutarCancelacion() {
+            var form = document.createElement('form');
+            form.method = 'post';
+            form.action = '${pageContext.request.contextPath}/admin/pedidos';
+
+            var accion = document.createElement('input');
+            accion.type = 'hidden';
+            accion.name = 'accion';
+            accion.value = 'cancelar';
+            form.appendChild(accion);
+
+            var id = document.createElement('input');
+            id.type = 'hidden';
+            id.name = 'id';
+            id.value = '${pedido.id}';
+            form.appendChild(id);
+
+            document.body.appendChild(form);
+            form.submit();
+        }
+
+        // Cerrar modal al hacer clic fuera
+        document.getElementById('modal-cancelar').addEventListener('click', function(e) {
+            if (e.target === this) {
+                cerrarModalCancelar();
+            }
+        });
 
         // Mobile Menu Toggle
         const mobileMenuBtn = document.querySelector('.mobile-menu-btn');

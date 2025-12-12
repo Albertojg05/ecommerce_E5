@@ -81,11 +81,18 @@ function renderDirecciones(direcciones) {
         </div>
     `;
 
-    // Solo mostrar botón si no se alcanzó el límite
+    // Mostrar botones de acción
     if (direcciones.length < MAX_DIRECCIONES) {
         container.innerHTML += `
             <button type="button" class="btn btn-link" onclick="irAgregarDireccion()">
                 + Agregar nueva dirección
+            </button>
+        `;
+    } else {
+        // Si ya tiene el máximo, mostrar botón para editar
+        container.innerHTML += `
+            <button type="button" class="btn btn-link" onclick="irEditarDirecciones()">
+                Editar direcciones
             </button>
         `;
     }
@@ -194,6 +201,14 @@ function irAgregarDireccion() {
     // Obtener el context path
     const contextPath = window.location.pathname.split('/')[1];
     window.location.href = '/' + contextPath + '/cliente/cuenta?accion=editar&nuevaDireccion=true';
+}
+
+/**
+ * Redirige a la página de editar perfil para editar direcciones.
+ */
+function irEditarDirecciones() {
+    const contextPath = window.location.pathname.split('/')[1];
+    window.location.href = '/' + contextPath + '/cliente/cuenta?accion=editar';
 }
 
 /**

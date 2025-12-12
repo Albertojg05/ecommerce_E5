@@ -151,9 +151,9 @@ main.account-page {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    background-color: #e8e8e8;
-    color: #333;
-    border: 1px solid #d0d0d0;
+    background-color: var(--badge-pendiente-bg);
+    color: var(--badge-pendiente-text);
+    border: 1px solid var(--color-border-light);
 }
 
 .order-body {
@@ -443,7 +443,7 @@ main.account-page {
         font-size: 11px;
         text-align: center;
         border-radius: 6px;
-        background-color: #f5f5f5;
+        background-color: var(--color-placeholder-bg);
         width: auto;
     }
 
@@ -454,7 +454,7 @@ main.account-page {
 
     .account-nav .logout-link {
         margin-top: 0;
-        background-color: #f0f0f0;
+        background-color: var(--background-hover);
         color: var(--color-text-light);
     }
 
@@ -580,12 +580,14 @@ main.account-page {
     font-weight: 600;
     margin: 0 0 var(--spacing-sm) 0;
     color: var(--color-title);
+    text-align: left;
 }
 
 .direcciones-info {
     font-size: var(--font-size-sm);
     color: var(--color-text-light);
     margin: 0 0 var(--spacing-lg) 0;
+    text-align: left;
 }
 
 .direccion-card {
@@ -670,8 +672,8 @@ main.account-page {
 
 .btn-delete {
     background-color: transparent;
-    color: #dc3545;
-    border: 1px solid #dc3545;
+    color: var(--color-text);
+    border: 1px solid var(--color-text);
     padding: 10px var(--spacing-lg);
     font-size: var(--font-size-sm);
     font-weight: 500;
@@ -681,8 +683,8 @@ main.account-page {
 }
 
 .btn-delete:hover {
-    background-color: #dc3545;
-    color: white;
+    background-color: var(--color-text);
+    color: var(--background);
 }
 
 .limite-direcciones {
@@ -695,20 +697,20 @@ main.account-page {
     margin-top: var(--spacing-md);
 }
 
-/* Alertas de éxito */
+/* Alertas - Colores de la tienda (gris) */
 .alert-success {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
+    background-color: var(--color-success-bg);
+    color: var(--color-success-text);
+    border: 1px solid var(--color-success-border);
     padding: var(--spacing-md) var(--spacing-lg);
     border-radius: var(--radius-md);
     margin-bottom: var(--spacing-lg);
 }
 
 .alert-error {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
+    background-color: var(--color-error-bg);
+    color: var(--color-error-text);
+    border: 1px solid var(--color-error-border);
     padding: var(--spacing-md) var(--spacing-lg);
     border-radius: var(--radius-md);
     margin-bottom: var(--spacing-lg);
@@ -767,7 +769,7 @@ main.account-page {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: var(--color-overlay);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -840,9 +842,9 @@ main.account-page {
 .pedido-estado-badge.estado-enviado,
 .pedido-estado-badge.estado-entregado,
 .pedido-estado-badge.estado-cancelado {
-    background-color: #e8e8e8;
-    color: #333;
-    border: 1px solid #d0d0d0;
+    background-color: var(--badge-pendiente-bg);
+    color: var(--badge-pendiente-text);
+    border: 1px solid var(--color-border-light);
 }
 
 .pedido-productos-section h3 {
@@ -953,7 +955,7 @@ main.account-page {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: var(--color-overlay);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1041,5 +1043,119 @@ main.account-page {
     .btn-modal-cancelar,
     .btn-modal-confirmar {
         width: 100%;
+    }
+}
+
+/* MODAL Eliminar Dirección */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-overlay);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.modal-overlay.mostrar {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-contenido {
+    background-color: var(--background);
+    padding: var(--spacing-xl) var(--spacing-2xl);
+    border-radius: var(--radius-lg);
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+    box-shadow: 0 10px 40px var(--color-shadow-modal);
+}
+
+.modal-overlay.mostrar .modal-contenido {
+    transform: scale(1);
+}
+
+.modal-contenido h3 {
+    margin: 0 0 var(--spacing-md) 0;
+    font-size: var(--font-size-xl);
+    color: var(--color-title);
+    font-weight: 600;
+}
+
+.modal-contenido p {
+    margin: 0 0 var(--spacing-xl) 0;
+    font-size: var(--font-size-base);
+    color: var(--color-text);
+    line-height: 1.5;
+}
+
+.modal-botones {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: center;
+}
+
+.btn-modal {
+    padding: 12px 24px;
+    font-size: var(--font-size-base);
+    font-weight: 500;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    font-family: inherit;
+    min-width: 120px;
+}
+
+.btn-cancelar {
+    background-color: transparent;
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+}
+
+.btn-cancelar:hover {
+    background-color: var(--background-hover);
+    border-color: var(--color-text);
+}
+
+.btn-confirmar {
+    background-color: var(--color-btn-primary);
+    border: 1px solid var(--color-btn-primary);
+    color: var(--background);
+}
+
+.btn-confirmar:hover {
+    opacity: 0.9;
+}
+
+@media (max-width: 480px) {
+    .modal-contenido {
+        padding: var(--spacing-lg);
+        margin: 0 var(--spacing-md);
+    }
+
+    .modal-contenido h3 {
+        font-size: var(--font-size-lg);
+    }
+
+    .modal-contenido p {
+        font-size: var(--font-size-sm);
+    }
+
+    .modal-botones {
+        flex-direction: column;
+    }
+
+    .btn-modal {
+        width: 100%;
+        min-width: auto;
     }
 }

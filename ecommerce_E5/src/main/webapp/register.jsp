@@ -55,7 +55,7 @@
                 <div class="form-group">
                     <label for="telefono">Teléfono (10 dígitos, opcional)</label>
                     <input type="tel" id="telefono" name="telefono" class="form-input"
-                           value="${telefono}" placeholder="Ej: 6441234567"
+                           value="${telefono}" placeholder="Número de Teléfono"
                            pattern="[0-9]{10}" maxlength="10" inputmode="numeric"
                            oninput="this.value = this.value.replace(/[^0-9]/g, '')">
                 </div>

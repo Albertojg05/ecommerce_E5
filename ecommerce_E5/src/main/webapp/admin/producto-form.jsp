@@ -150,9 +150,9 @@
                 <button type="submit" class="btn btn-primary">
                     ${empty producto ? 'Crear' : 'Actualizar'} Producto
                 </button>
-                <a href="${pageContext.request.contextPath}/admin/producto" 
-                   class="btn" 
-                   style="background-color: #95a5a6; color: white; margin-left: 10px;">
+                <a href="${pageContext.request.contextPath}/admin/producto"
+                   class="btn btn-secondary"
+                   style="margin-left: 10px;">
                     Cancelar
                 </a>
             </div>

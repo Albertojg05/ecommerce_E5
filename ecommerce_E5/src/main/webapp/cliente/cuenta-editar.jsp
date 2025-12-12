@@ -210,6 +210,18 @@
                     </form>
                 </section>
             </div>
+
+            <!-- Modal de confirmación para eliminar dirección -->
+            <div id="modal-eliminar-direccion" class="modal-overlay" style="display: none;">
+                <div class="modal-contenido">
+                    <h3>Eliminar dirección</h3>
+                    <p>¿Estás seguro de que deseas eliminar esta dirección?</p>
+                    <div class="modal-botones">
+                        <button type="button" class="btn-modal btn-cancelar" onclick="cerrarModalDireccion()">Cancelar</button>
+                        <button type="button" class="btn-modal btn-confirmar" onclick="ejecutarEliminarDireccion()">Eliminar</button>
+                    </div>
+                </div>
+            </div>
         </main>
 
         <footer>
@@ -283,13 +295,54 @@
                 }
             }
 
-            // Confirmar eliminación de dirección
+            // Variable para guardar el ID de la dirección a eliminar
+            let direccionIdAEliminar = null;
+
+            // Mostrar modal de confirmación para eliminar dirección
             function confirmarEliminarDireccion(id) {
-                if (confirm('¿Estás seguro de que deseas eliminar esta dirección?')) {
-                    document.getElementById('direccionIdEliminar').value = id;
+                direccionIdAEliminar = id;
+                const modal = document.getElementById('modal-eliminar-direccion');
+                modal.style.display = 'flex';
+                setTimeout(() => modal.classList.add('mostrar'), 10);
+                document.body.style.overflow = 'hidden';
+            }
+
+            // Cerrar modal de eliminar dirección
+            function cerrarModalDireccion() {
+                const modal = document.getElementById('modal-eliminar-direccion');
+                modal.classList.remove('mostrar');
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                }, 300);
+                document.body.style.overflow = '';
+                direccionIdAEliminar = null;
+            }
+
+            // Ejecutar eliminación de dirección
+            function ejecutarEliminarDireccion() {
+                if (direccionIdAEliminar !== null) {
+                    document.getElementById('direccionIdEliminar').value = direccionIdAEliminar;
                     document.getElementById('form-eliminar-direccion').submit();
                 }
+                cerrarModalDireccion();
             }
+
+            // Cerrar modal al hacer clic fuera
+            document.getElementById('modal-eliminar-direccion').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    cerrarModalDireccion();
+                }
+            });
+
+            // Cerrar modal con tecla Escape
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    const modal = document.getElementById('modal-eliminar-direccion');
+                    if (modal.classList.contains('mostrar')) {
+                        cerrarModalDireccion();
+                    }
+                }
+            });
 
             // Abrir formulario de nueva dirección si viene el parámetro
             document.addEventListener('DOMContentLoaded', function() {

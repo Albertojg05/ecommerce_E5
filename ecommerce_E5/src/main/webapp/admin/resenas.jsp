@@ -88,29 +88,60 @@
         </c:choose>
     </main>
 
+    <!-- Modal de confirmación para eliminar reseña -->
+    <div id="modal-eliminar" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h3>Eliminar Reseña</h3>
+            <p>¿Está seguro de eliminar esta reseña?</p>
+            <div class="modal-actions">
+                <button type="button" class="btn-modal btn-cancelar" onclick="cerrarModal()">Retroceder</button>
+                <button type="button" class="btn-modal btn-confirmar" onclick="ejecutarEliminar()">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
     <script>
+        var resenaIdEliminar = null;
+
         function confirmarEliminar(id) {
-            if (confirm('¿Está seguro de eliminar esta reseña?')) {
-                var form = document.createElement('form');
-                form.method = 'post';
-                form.action = '${pageContext.request.contextPath}/admin/resenas';
-
-                var accion = document.createElement('input');
-                accion.type = 'hidden';
-                accion.name = 'accion';
-                accion.value = 'eliminar';
-                form.appendChild(accion);
-
-                var idInput = document.createElement('input');
-                idInput.type = 'hidden';
-                idInput.name = 'id';
-                idInput.value = id;
-                form.appendChild(idInput);
-
-                document.body.appendChild(form);
-                form.submit();
-            }
+            resenaIdEliminar = id;
+            document.getElementById('modal-eliminar').style.display = 'flex';
         }
+
+        function cerrarModal() {
+            document.getElementById('modal-eliminar').style.display = 'none';
+            resenaIdEliminar = null;
+        }
+
+        function ejecutarEliminar() {
+            if (resenaIdEliminar === null) return;
+
+            var form = document.createElement('form');
+            form.method = 'post';
+            form.action = '${pageContext.request.contextPath}/admin/resenas';
+
+            var accion = document.createElement('input');
+            accion.type = 'hidden';
+            accion.name = 'accion';
+            accion.value = 'eliminar';
+            form.appendChild(accion);
+
+            var idInput = document.createElement('input');
+            idInput.type = 'hidden';
+            idInput.name = 'id';
+            idInput.value = resenaIdEliminar;
+            form.appendChild(idInput);
+
+            document.body.appendChild(form);
+            form.submit();
+        }
+
+        // Cerrar modal al hacer clic fuera
+        document.getElementById('modal-eliminar').addEventListener('click', function(e) {
+            if (e.target === this) {
+                cerrarModal();
+            }
+        });
 
         // Mobile Menu Toggle
         const mobileMenuBtn = document.querySelector('.mobile-menu-btn');

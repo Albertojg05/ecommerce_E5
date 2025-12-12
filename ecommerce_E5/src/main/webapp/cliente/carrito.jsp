@@ -54,9 +54,9 @@
 
             <!-- Advertencias de productos eliminados o stock ajustado (#19 y #20) -->
             <c:if test="${not empty advertencias}">
-                <div class="alert alert-warning" style="background-color: #fff3cd; color: #856404; border: 1px solid #ffc107;">
+                <div class="alert alert-warning">
                     <strong>Se realizaron ajustes en tu carrito:</strong>
-                    <ul style="margin: 10px 0 0 20px; padding: 0;">
+                    <ul class="alert-list">
                         <c:forEach var="adv" items="${advertencias}">
                             <li>${adv}</li>
                         </c:forEach>

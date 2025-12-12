@@ -168,7 +168,7 @@ main.product-detail-page {
 
 .product-rating .star {
     font-size: var(--font-size-2xl);
-    color: #ddd;
+    color: var(--color-star-empty);
 }
 
 .product-rating .star.filled {
@@ -274,7 +274,7 @@ main.product-detail-page {
 
 .star-rating label {
     font-size: 28px;
-    color: #ddd;
+    color: var(--color-star-empty);
     cursor: pointer;
     transition: color 0.15s ease;
 }
@@ -309,7 +309,7 @@ main.product-detail-page {
 
 .btn-submit-review {
     background-color: var(--color-btn-primary);
-    color: white;
+    color: var(--background);
     border: none;
     padding: 12px 28px;
     font-size: var(--font-size-sm);
@@ -386,7 +386,7 @@ main.product-detail-page {
 
 .review-rating .star {
     font-size: var(--font-size-base);
-    color: #ddd;
+    color: var(--color-star-empty);
 }
 
 .review-rating .star.filled {

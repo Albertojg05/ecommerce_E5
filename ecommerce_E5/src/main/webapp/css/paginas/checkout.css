@@ -253,7 +253,7 @@ main.checkout-page {
     position: absolute;
     top: -10px;
     right: -10px;
-    background-color: #555;
+    background-color: var(--color-quantity-badge);
     color: var(--background);
     width: 22px;
     height: 22px;

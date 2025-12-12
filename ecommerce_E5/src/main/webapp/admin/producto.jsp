@@ -100,12 +100,42 @@
             </table>
         </main>
 
+        <!-- Modal de confirmación para eliminar producto -->
+        <div id="modal-eliminar" class="modal-overlay" style="display: none;">
+            <div class="modal-content">
+                <h3>Eliminar Producto</h3>
+                <p>¿Está seguro de eliminar este producto?</p>
+                <div class="modal-actions">
+                    <button type="button" class="btn-modal btn-cancelar" onclick="cerrarModal()">Retroceder</button>
+                    <button type="button" class="btn-modal btn-confirmar" onclick="ejecutarEliminar()">Confirmar</button>
+                </div>
+            </div>
+        </div>
+
         <script>
+            var productoIdEliminar = null;
+
             function confirmarEliminar(id, nombre) {
-                if (confirm('¿Está seguro de eliminar el producto "' + nombre + '"?')) {
-                    window.location.href = '${pageContext.request.contextPath}/admin/producto?accion=eliminar&id=' + id;
-                }
+                productoIdEliminar = id;
+                document.getElementById('modal-eliminar').style.display = 'flex';
             }
+
+            function cerrarModal() {
+                document.getElementById('modal-eliminar').style.display = 'none';
+                productoIdEliminar = null;
+            }
+
+            function ejecutarEliminar() {
+                if (productoIdEliminar === null) return;
+                window.location.href = '${pageContext.request.contextPath}/admin/producto?accion=eliminar&id=' + productoIdEliminar;
+            }
+
+            // Cerrar modal al hacer clic fuera
+            document.getElementById('modal-eliminar').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    cerrarModal();
+                }
+            });
 
             // Mobile Menu Toggle
             const mobileMenuBtn = document.querySelector('.mobile-menu-btn');

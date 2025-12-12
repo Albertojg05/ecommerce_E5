@@ -118,26 +118,52 @@ public class PedidoServlet extends HttpServlet {
     }
 
     private void actualizarEstadoPedido(HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
+            throws ServletException, IOException {
 
         int id = Integer.parseInt(request.getParameter("id"));
         String nuevoEstadoStr = request.getParameter("nuevoEstado");
 
-        EstadoPedido nuevoEstado = EstadoPedido.valueOf(nuevoEstadoStr);
-        pedidoBO.actualizarEstado(id, nuevoEstado);
+        try {
+            EstadoPedido nuevoEstado = EstadoPedido.valueOf(nuevoEstadoStr);
+            pedidoBO.actualizarEstado(id, nuevoEstado);
 
-        response.sendRedirect(request.getContextPath() +
-                "/admin/pedidos?accion=detalle&id=" + id + "&success=updated");
+            response.sendRedirect(request.getContextPath() +
+                    "/admin/pedidos?accion=detalle&id=" + id + "&success=updated");
+        } catch (Exception e) {
+            // Si hay error, volver al detalle del pedido con el mensaje de error
+            try {
+                Pedido pedido = pedidoBO.obtenerPorId(id);
+                request.setAttribute("pedido", pedido);
+                request.setAttribute("estados", EstadoPedido.values());
+                request.setAttribute("error", e.getMessage());
+                request.getRequestDispatcher("/admin/pedido-detalle.jsp").forward(request, response);
+            } catch (Exception ex) {
+                response.sendRedirect(request.getContextPath() + "/admin/pedidos");
+            }
+        }
     }
 
     private void cancelarPedido(HttpServletRequest request, HttpServletResponse response)
-            throws Exception {
+            throws ServletException, IOException {
 
         int id = Integer.parseInt(request.getParameter("id"));
-        pedidoBO.cancelarPedido(id);
 
-        response.sendRedirect(request.getContextPath() +
-                "/admin/pedidos?accion=detalle&id=" + id + "&success=cancelled");
+        try {
+            pedidoBO.cancelarPedido(id);
+            response.sendRedirect(request.getContextPath() +
+                    "/admin/pedidos?accion=detalle&id=" + id + "&success=cancelled");
+        } catch (Exception e) {
+            // Si hay error, volver al detalle del pedido con el mensaje de error
+            try {
+                Pedido pedido = pedidoBO.obtenerPorId(id);
+                request.setAttribute("pedido", pedido);
+                request.setAttribute("estados", EstadoPedido.values());
+                request.setAttribute("error", e.getMessage());
+                request.getRequestDispatcher("/admin/pedido-detalle.jsp").forward(request, response);
+            } catch (Exception ex) {
+                response.sendRedirect(request.getContextPath() + "/admin/pedidos");
+            }
+        }
     }
 
     @Override

@@ -45,40 +45,7 @@
                         <h2>Dirección de Envío</h2>
                         <!-- Contenedor para direcciones existentes (cargado por JS) -->
                         <div id="direcciones-container">
-                            <noscript>
-                                <!-- Fallback visible cuando JS está deshabilitado (#23) -->
-                                <p class="info-text">Ingresa tu dirección de envío:</p>
-                            </noscript>
                             <p class="loading-text" id="loading-direcciones">Cargando direcciones...</p>
-                        </div>
-
-                        <!-- Formulario para nueva dirección - visible por defecto (#23) -->
-                        <div id="nueva-direccion-fallback" class="direccion-form-fallback">
-                            <h3>Dirección de envío</h3>
-                            <div class="form-group">
-                                <label for="calle">Calle y Número *</label>
-                                <input type="text" id="calle" name="calle" class="form-input" required
-                                       placeholder="Ej: Av. Principal #123">
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label for="ciudad">Ciudad *</label>
-                                    <input type="text" id="ciudad" name="ciudad" class="form-input" required
-                                           placeholder="Ej: Ciudad Obregón">
-                                </div>
-                                <div class="form-group">
-                                    <label for="estado">Estado *</label>
-                                    <input type="text" id="estado" name="estado" class="form-input" required
-                                           placeholder="Ej: Sonora">
-                                </div>
-                            </div>
-                            <div class="form-group form-group-small">
-                                <label for="codigoPostal">Código Postal *</label>
-                                <input type="text" id="codigoPostal" name="codigoPostal" class="form-input" required
-                                       pattern="[0-9]{5}" maxlength="5" inputmode="numeric"
-                                       placeholder="Ej: 85000"
-                                       oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                            </div>
                         </div>
                     </section>
 

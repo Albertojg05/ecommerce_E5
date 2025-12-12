@@ -54,7 +54,15 @@ public class ProductoServlet extends HttpServlet {
                 eliminarProducto(request, response);
             }
         } catch (Exception e) {
-            request.setAttribute("error", "Error: " + e.getMessage());
+            String mensajeError = e.getMessage();
+            // Mensaje amigable para error de foreign key
+            if (mensajeError != null && mensajeError.contains("transaction")) {
+                mensajeError = "No se puede eliminar el producto porque tiene pedidos, reseñas o items en carritos asociados";
+            }
+            request.setAttribute("error", "Error: " + mensajeError);
+            // Cargar productos para mostrar la lista
+            List<Producto> productos = productoBO.obtenerTodos();
+            request.setAttribute("productos", productos);
             request.getRequestDispatcher("/admin/producto.jsp").forward(request, response);
         }
     }
@@ -73,6 +81,28 @@ public class ProductoServlet extends HttpServlet {
             }
         } catch (Exception e) {
             request.setAttribute("error", "Error: " + e.getMessage());
+
+            // Si es actualizar, volver al formulario de edición
+            if (accion.equals("actualizar")) {
+                String idStr = request.getParameter("id");
+                if (idStr != null) {
+                    try {
+                        int id = Integer.parseInt(idStr);
+                        Producto producto = productoBO.obtenerPorId(id);
+                        List<Categoria> categorias = categoriaBO.obtenerTodas();
+                        request.setAttribute("producto", producto);
+                        request.setAttribute("categorias", categorias);
+                        request.getRequestDispatcher("/admin/producto-form.jsp").forward(request, response);
+                        return;
+                    } catch (Exception ex) {
+                        // Si falla, continuar al listado
+                    }
+                }
+            }
+
+            // Para crear o si falla el redirect de actualizar, mostrar listado
+            List<Producto> productos = productoBO.obtenerTodos();
+            request.setAttribute("productos", productos);
             request.getRequestDispatcher("/admin/producto.jsp").forward(request, response);
         }
     }
@@ -144,7 +174,7 @@ public class ProductoServlet extends HttpServlet {
             imagenUrl = imagenUrl.trim();
             if (!imagenUrl.matches("^(https?://.*|imgs/.*|/.*\\.(jpg|jpeg|png|gif|webp))$") &&
                 !imagenUrl.startsWith("imgs/")) {
-                throw new Exception("La URL de imagen no es válida. Use una URL http/https o una ruta relativa (imgs/...)");
+                throw new Exception("La URL de imagen no es válida");
             }
         }
 
@@ -161,15 +191,15 @@ public class ProductoServlet extends HttpServlet {
             throw new Exception("La categoría seleccionada no existe");
         }
 
-        // #44: Validar talla y color (solo letras, comas y espacios)
+        // #44: Validar talla y color (letras, acentos, comas, espacios y /)
         if (talla != null && !talla.trim().isEmpty()) {
-            if (!talla.matches("^[a-zA-Z,\\s]+$")) {
-                throw new Exception("La talla solo puede contener letras, comas y espacios");
+            if (!talla.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ,\\s/]+$")) {
+                throw new Exception("La talla solo puede contener letras, comas, espacios y /");
             }
         }
         if (color != null && !color.trim().isEmpty()) {
-            if (!color.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ,\\s]+$")) {
-                throw new Exception("El color solo puede contener letras, comas y espacios");
+            if (!color.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ,\\s/]+$")) {
+                throw new Exception("El color solo puede contener letras, comas, espacios y /");
             }
         }
 
@@ -228,7 +258,7 @@ public class ProductoServlet extends HttpServlet {
             imagenUrl = imagenUrl.trim();
             if (!imagenUrl.matches("^(https?://.*|imgs/.*|/.*\\.(jpg|jpeg|png|gif|webp))$") &&
                 !imagenUrl.startsWith("imgs/")) {
-                throw new Exception("La URL de imagen no es válida. Use una URL http/https o una ruta relativa (imgs/...)");
+                throw new Exception("La URL de imagen no es válida");
             }
         }
 
@@ -245,15 +275,15 @@ public class ProductoServlet extends HttpServlet {
             throw new Exception("La categoría seleccionada no existe");
         }
 
-        // #44: Validar talla y color
+        // #44: Validar talla y color (letras, acentos, comas, espacios y /)
         if (talla != null && !talla.trim().isEmpty()) {
-            if (!talla.matches("^[a-zA-Z,\\s]+$")) {
-                throw new Exception("La talla solo puede contener letras, comas y espacios");
+            if (!talla.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ,\\s/]+$")) {
+                throw new Exception("La talla solo puede contener letras, comas, espacios y /");
             }
         }
         if (color != null && !color.trim().isEmpty()) {
-            if (!color.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ,\\s]+$")) {
-                throw new Exception("El color solo puede contener letras, comas y espacios");
+            if (!color.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ,\\s/]+$")) {
+                throw new Exception("El color solo puede contener letras, comas, espacios y /");
             }
         }
 
