@@ -2,9 +2,11 @@ package com.mycompany.ecommerce_e5.rest;
 
 import com.mycompany.ecommerce_e5.bo.CategoriaBO;
 import com.mycompany.ecommerce_e5.bo.ProductoBO;
+import com.mycompany.ecommerce_e5.bo.ProductoTallaBO;
 import com.mycompany.ecommerce_e5.bo.ResenaBO;
 import com.mycompany.ecommerce_e5.dominio.Categoria;
 import com.mycompany.ecommerce_e5.dominio.Producto;
+import com.mycompany.ecommerce_e5.dominio.ProductoTalla;
 import com.mycompany.ecommerce_e5.dominio.Resena;
 import com.mycompany.ecommerce_e5.dominio.Usuario;
 import com.mycompany.ecommerce_e5.rest.dto.*;
@@ -36,6 +38,7 @@ import java.util.Map;
 public class ProductoResource {
 
     private final ProductoBO productoBO = new ProductoBO();
+    private final ProductoTallaBO productoTallaBO = new ProductoTallaBO();
     private final CategoriaBO categoriaBO = new CategoriaBO();
     private final ResenaBO resenaBO = new ResenaBO();
 
@@ -181,6 +184,34 @@ public class ProductoResource {
         } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity(ApiResponse.error(e.getMessage()))
+                    .build();
+        }
+    }
+
+    /**
+     * GET /api/productos/{id}/tallas
+     * Obtiene las tallas disponibles de un producto con su stock.
+     */
+    @GET
+    @Path("/{id}/tallas")
+    public Response getTallas(@PathParam("id") int productoId) {
+        try {
+            List<ProductoTalla> tallas = productoTallaBO.obtenerTallasPorProducto(productoId);
+
+            List<ProductoTallaDTO> tallasDTO = new ArrayList<>();
+            for (ProductoTalla t : tallas) {
+                tallasDTO.add(new ProductoTallaDTO(t));
+            }
+
+            Map<String, Object> data = new HashMap<>();
+            data.put("tallas", tallasDTO);
+            data.put("total", tallas.size());
+
+            return Response.ok(ApiResponse.ok(data)).build();
+
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(ApiResponse.error("Error al obtener tallas: " + e.getMessage()))
                     .build();
         }
     }

@@ -91,32 +91,37 @@
                     <c:otherwise>
                         <p class="cart-count">${sessionScope.carrito.size()} producto(s) en tu carrito</p>
                         <c:forEach var="item" items="${sessionScope.carrito}">
-                            <div class="cart-item" data-producto-id="${item.producto.id}">
+                            <div class="cart-item" data-producto-id="${item.producto.id}" data-talla-id="${item.productoTalla.id}">
                                 <img src="${pageContext.request.contextPath}/${not empty item.producto.imagenUrl ? item.producto.imagenUrl : 'imgs/default.png'}" alt="${item.producto.nombre}">
                                 <div class="item-details">
                                     <p class="item-title">${item.producto.nombre}</p>
-                                    <c:if test="${not empty item.producto.talla}">
-                                        <p class="item-spec">Talla: ${item.producto.talla}</p>
+                                    <c:if test="${not empty item.productoTalla}">
+                                        <p class="item-spec">Talla: ${item.productoTalla.talla}</p>
                                     </c:if>
                                     <c:if test="${not empty item.producto.color}">
                                         <p class="item-spec">Color: ${item.producto.color}</p>
                                     </c:if>
                                     <p class="item-price">$<fmt:formatNumber value="${item.precioUnitario}" pattern="#,##0.00"/></p>
-                                    <c:set var="limiteAlcanzado" value="${item.cantidad >= 10 || item.cantidad >= item.producto.existencias}" />
+                                    <c:set var="stockTalla" value="${item.productoTalla != null ? item.productoTalla.stock : 0}" />
+                                    <c:set var="limiteAlcanzado" value="${item.cantidad >= 10 || item.cantidad >= stockTalla}" />
                                     <div class="item-quantity">
                                         <button type="button" class="qty-btn btn-menos-js"
                                                 data-id="${item.producto.id}"
+                                                data-talla-id="${item.productoTalla.id}"
                                                 data-cantidad="${item.cantidad}">−</button>
                                         <span class="qty-value">${item.cantidad}</span>
                                         <button type="button" class="qty-btn btn-mas-js"
                                                 data-id="${item.producto.id}"
+                                                data-talla-id="${item.productoTalla.id}"
                                                 data-cantidad="${item.cantidad}"
-                                                data-stock="${item.producto.existencias}"
+                                                data-stock="${stockTalla}"
                                                 ${limiteAlcanzado ? 'disabled' : ''}
-                                                title="${item.cantidad >= 10 ? 'Máximo 10 unidades por producto' : (item.cantidad >= item.producto.existencias ? 'Stock máximo disponible' : '')}">+</button>
+                                                title="${item.cantidad >= 10 ? 'Máximo 10 unidades por producto' : (item.cantidad >= stockTalla ? 'Stock máximo disponible' : '')}">+</button>
                                     </div>
                                     <p class="item-subtotal">Subtotal: $<fmt:formatNumber value="${item.precioUnitario * item.cantidad}" pattern="#,##0.00"/></p>
-                                    <button type="button" class="remove-btn btn-eliminar-js" data-id="${item.producto.id}">Quitar</button>
+                                    <button type="button" class="remove-btn btn-eliminar-js"
+                                            data-id="${item.producto.id}"
+                                            data-talla-id="${item.productoTalla.id}">Quitar</button>
                                 </div>
                             </div>
                         </c:forEach>

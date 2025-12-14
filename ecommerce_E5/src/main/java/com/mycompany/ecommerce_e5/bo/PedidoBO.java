@@ -7,6 +7,7 @@ package com.mycompany.ecommerce_e5.bo;
 import com.mycompany.ecommerce_e5.dao.DireccionDAO;
 import com.mycompany.ecommerce_e5.dao.PedidoDAO;
 import com.mycompany.ecommerce_e5.dao.ProductoDAO;
+import com.mycompany.ecommerce_e5.dao.ProductoTallaDAO;
 import com.mycompany.ecommerce_e5.dominio.*;
 import com.mycompany.ecommerce_e5.dominio.enums.EstadoPago;
 import com.mycompany.ecommerce_e5.dominio.enums.EstadoPedido;
@@ -32,14 +33,16 @@ import java.util.UUID;
  * @author Freddy Alí Castro Román 252191
  */
 public class PedidoBO {
-    
+
     private final PedidoDAO pedidoDAO;
     private final ProductoDAO productoDAO;
+    private final ProductoTallaDAO productoTallaDAO;
     private final DireccionDAO direccionDAO;
-    
+
     public PedidoBO() {
         this.pedidoDAO = new PedidoDAO();
         this.productoDAO = new ProductoDAO();
+        this.productoTallaDAO = new ProductoTallaDAO();
         this.direccionDAO = new DireccionDAO();
     }
     
@@ -104,22 +107,35 @@ public class PedidoBO {
         
         double total = 0;
         List<DetallePedido> detallesValidados = new ArrayList<>();
-        
+
         for (DetallePedido item : carrito) {
             Producto productoActual = productoDAO.obtenerPorId(item.getProducto().getId());
-            
+
             if (productoActual == null) {
                 throw new Exception("Producto no disponible: " + item.getProducto().getNombre());
             }
-            
-            if (productoActual.getExistencias() < item.getCantidad()) {
-                throw new Exception(Messages.ERROR_STOCK_INSUFICIENTE + 
-                    " para: " + productoActual.getNombre() + 
-                    ". Disponible: " + productoActual.getExistencias());
+
+            // Validar stock por talla
+            ProductoTalla tallaSeleccionada = item.getProductoTalla();
+            if (tallaSeleccionada == null) {
+                throw new Exception("Debe seleccionar una talla para: " + productoActual.getNombre());
             }
-            
+
+            ProductoTalla tallaActual = productoTallaDAO.obtenerPorId(tallaSeleccionada.getId());
+            if (tallaActual == null) {
+                throw new Exception("Talla no disponible para: " + productoActual.getNombre());
+            }
+
+            if (tallaActual.getStock() < item.getCantidad()) {
+                throw new Exception(Messages.ERROR_STOCK_INSUFICIENTE +
+                    " para: " + productoActual.getNombre() +
+                    " talla " + tallaActual.getTalla() +
+                    ". Disponible: " + tallaActual.getStock());
+            }
+
             item.setPrecioUnitario(productoActual.getPrecio());
-            
+            item.setProductoTalla(tallaActual);
+
             total += item.getPrecioUnitario() * item.getCantidad();
             detallesValidados.add(item);
         }
@@ -148,23 +164,27 @@ public class PedidoBO {
         for (DetallePedido item : detallesValidados) {
             DetallePedido detalle = new DetallePedido();
             detalle.setProducto(item.getProducto());
+            detalle.setProductoTalla(item.getProductoTalla());
             detalle.setCantidad(item.getCantidad());
             detalle.setPrecioUnitario(item.getPrecioUnitario());
             detalle.setPedido(pedido);
             detallesPedido.add(detalle);
         }
-        
+
         pedido.setDetalles(detallesPedido);
-        
+
         Pedido pedidoGuardado = pedidoDAO.guardar(pedido);
-        
+
+        // Reducir stock de cada talla
         for (DetallePedido detalle : detallesPedido) {
-            productoDAO.actualizarExistencias(
-                detalle.getProducto().getId(), 
-                -detalle.getCantidad()
-            );
+            if (detalle.getProductoTalla() != null) {
+                productoTallaDAO.reducirStock(
+                    detalle.getProductoTalla().getId(),
+                    detalle.getCantidad()
+                );
+            }
         }
-        
+
         return pedidoGuardado;
     }
     
@@ -205,14 +225,17 @@ public class PedidoBO {
         if (pedido.getEstado() == EstadoPedido.CANCELADO) {
             return;
         }
-        
+
+        // Restaurar stock de cada talla
         for (DetallePedido detalle : pedido.getDetalles()) {
-            productoDAO.actualizarExistencias(
-                detalle.getProducto().getId(), 
-                detalle.getCantidad()
-            );
+            if (detalle.getProductoTalla() != null) {
+                productoTallaDAO.actualizarStock(
+                    detalle.getProductoTalla().getId(),
+                    detalle.getCantidad()
+                );
+            }
         }
-        
+
         pedido.setEstado(EstadoPedido.CANCELADO);
         pedidoDAO.actualizar(pedido);
     }

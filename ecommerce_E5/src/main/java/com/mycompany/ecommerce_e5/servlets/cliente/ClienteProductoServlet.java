@@ -6,9 +6,11 @@ package com.mycompany.ecommerce_e5.servlets.cliente;
 
 import com.mycompany.ecommerce_e5.bo.CategoriaBO;
 import com.mycompany.ecommerce_e5.bo.ProductoBO;
+import com.mycompany.ecommerce_e5.bo.ProductoTallaBO;
 import com.mycompany.ecommerce_e5.bo.ResenaBO;
 import com.mycompany.ecommerce_e5.dominio.Categoria;
 import com.mycompany.ecommerce_e5.dominio.Producto;
+import com.mycompany.ecommerce_e5.dominio.ProductoTalla;
 import com.mycompany.ecommerce_e5.dominio.Resena;
 import com.mycompany.ecommerce_e5.dominio.Usuario;
 import jakarta.servlet.ServletException;
@@ -35,12 +37,14 @@ import java.util.List;
 public class ClienteProductoServlet extends HttpServlet {
 
     private ProductoBO productoBO;
+    private ProductoTallaBO productoTallaBO;
     private CategoriaBO categoriaBO;
     private ResenaBO resenaBO;
 
     @Override
     public void init() throws ServletException {
         productoBO = new ProductoBO();
+        productoTallaBO = new ProductoTallaBO();
         categoriaBO = new CategoriaBO();
         resenaBO = new ResenaBO();
     }
@@ -149,9 +153,13 @@ public class ClienteProductoServlet extends HttpServlet {
                 return;
             }
 
+            // Cargar tallas del producto
+            List<ProductoTalla> tallas = productoTallaBO.obtenerTallasPorProducto(id);
+
             List<Resena> resenas = resenaBO.obtenerPorProducto(id);
             double promedio = resenaBO.calcularPromedioProducto(id);
             request.setAttribute("producto", producto);
+            request.setAttribute("tallasProducto", tallas);
             request.setAttribute("resenas", resenas);
             request.setAttribute("promedioCalificacion", promedio);
             request.setAttribute("totalResenas", resenas.size());

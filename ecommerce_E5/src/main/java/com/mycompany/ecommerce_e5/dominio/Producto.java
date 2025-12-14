@@ -39,14 +39,11 @@ public class Producto implements Serializable {
     @Column(name = "imagen_url", length = 255)
     private String imagenUrl;
 
-    @Column(nullable = false)
-    private int existencias;
-
-    @Column(length = 50)
-    private String talla;
-
     @Column(length = 50)
     private String color;
+
+    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductoTalla> tallas;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "categoria_id", nullable = false)
@@ -59,13 +56,11 @@ public class Producto implements Serializable {
     }
 
     public Producto(String nombre, String descripcion, double precio, String imagenUrl,
-            int existencias, String talla, String color, Categoria categoria) {
+            String color, Categoria categoria) {
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.precio = precio;
         this.imagenUrl = imagenUrl;
-        this.existencias = existencias;
-        this.talla = talla;
         this.color = color;
         this.categoria = categoria;
     }
@@ -111,28 +106,31 @@ public class Producto implements Serializable {
         this.imagenUrl = imagenUrl;
     }
 
-    public int getExistencias() {
-        return existencias;
-    }
-
-    public void setExistencias(int existencias) {
-        this.existencias = existencias;
-    }
-
-    public String getTalla() {
-        return talla;
-    }
-
-    public void setTalla(String talla) {
-        this.talla = talla;
-    }
-
     public String getColor() {
         return color;
     }
 
     public void setColor(String color) {
         this.color = color;
+    }
+
+    public List<ProductoTalla> getTallas() {
+        return tallas;
+    }
+
+    public void setTallas(List<ProductoTalla> tallas) {
+        this.tallas = tallas;
+    }
+
+    /**
+     * Calcula el stock total sumando el stock de todas las tallas disponibles.
+     * @return Stock total del producto
+     */
+    public int getStockTotal() {
+        if (tallas == null || tallas.isEmpty()) {
+            return 0;
+        }
+        return tallas.stream().mapToInt(ProductoTalla::getStock).sum();
     }
 
     public Categoria getCategoria() {

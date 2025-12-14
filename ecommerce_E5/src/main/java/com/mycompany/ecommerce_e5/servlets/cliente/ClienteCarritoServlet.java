@@ -5,8 +5,10 @@
 package com.mycompany.ecommerce_e5.servlets.cliente;
 
 import com.mycompany.ecommerce_e5.bo.ProductoBO;
+import com.mycompany.ecommerce_e5.bo.ProductoTallaBO;
 import com.mycompany.ecommerce_e5.dominio.DetallePedido;
 import com.mycompany.ecommerce_e5.dominio.Producto;
+import com.mycompany.ecommerce_e5.dominio.ProductoTalla;
 import com.mycompany.ecommerce_e5.excepciones.BusinessException;
 import com.mycompany.ecommerce_e5.excepciones.StockInsuficienteException;
 import com.mycompany.ecommerce_e5.util.ConfiguracionTienda;
@@ -34,10 +36,12 @@ import java.util.List;
 public class ClienteCarritoServlet extends HttpServlet {
 
     private ProductoBO productoBO;
+    private ProductoTallaBO productoTallaBO;
 
     @Override
     public void init() throws ServletException {
         productoBO = new ProductoBO();
+        productoTallaBO = new ProductoTallaBO();
     }
 
     @Override
@@ -67,7 +71,7 @@ public class ClienteCarritoServlet extends HttpServlet {
 
     /**
      * Valida y limpia el carrito eliminando productos inexistentes
-     * y ajustando cantidades según stock disponible.
+     * y ajustando cantidades según stock disponible por talla.
      * @return Lista de advertencias para mostrar al usuario
      */
     private List<String> validarYLimpiarCarrito(List<DetallePedido> carrito, HttpSession session) {
@@ -80,7 +84,6 @@ public class ClienteCarritoServlet extends HttpServlet {
                 Producto productoActual = productoBO.obtenerPorId(detalle.getProducto().getId());
 
                 if (productoActual == null) {
-                    // Producto fue eliminado de la BD (#19)
                     advertencias.add("\"" + detalle.getProducto().getNombre() + "\" ya no está disponible y fue eliminado del carrito");
                     itemsAEliminar.add(detalle);
                 } else {
@@ -88,20 +91,31 @@ public class ClienteCarritoServlet extends HttpServlet {
                     detalle.setPrecioUnitario(productoActual.getPrecio());
                     detalle.setProducto(productoActual);
 
-                    // Verificar stock disponible (#20)
-                    if (productoActual.getExistencias() <= 0) {
-                        advertencias.add("\"" + productoActual.getNombre() + "\" está agotado y fue eliminado del carrito");
+                    // Verificar stock disponible por talla
+                    ProductoTalla tallaActual = detalle.getProductoTalla();
+                    if (tallaActual != null) {
+                        try {
+                            ProductoTalla tallaVerificada = productoTallaBO.obtenerPorId(tallaActual.getId());
+                            if (tallaVerificada.getStock() <= 0) {
+                                advertencias.add("\"" + productoActual.getNombre() + "\" talla " + tallaVerificada.getTalla() + " está agotado y fue eliminado del carrito");
+                                itemsAEliminar.add(detalle);
+                            } else if (detalle.getCantidad() > tallaVerificada.getStock()) {
+                                int cantidadAnterior = detalle.getCantidad();
+                                detalle.setCantidad(tallaVerificada.getStock());
+                                advertencias.add("\"" + productoActual.getNombre() + "\" talla " + tallaVerificada.getTalla() + ": cantidad ajustada de "
+                                        + cantidadAnterior + " a " + tallaVerificada.getStock() + " (stock disponible)");
+                            }
+                            detalle.setProductoTalla(tallaVerificada);
+                        } catch (Exception e) {
+                            advertencias.add("\"" + productoActual.getNombre() + "\" talla seleccionada ya no está disponible");
+                            itemsAEliminar.add(detalle);
+                        }
+                    } else {
+                        advertencias.add("\"" + productoActual.getNombre() + "\" no tiene talla seleccionada y fue eliminado del carrito");
                         itemsAEliminar.add(detalle);
-                    } else if (detalle.getCantidad() > productoActual.getExistencias()) {
-                        // Ajustar cantidad al stock disponible
-                        int cantidadAnterior = detalle.getCantidad();
-                        detalle.setCantidad(productoActual.getExistencias());
-                        advertencias.add("\"" + productoActual.getNombre() + "\": cantidad ajustada de "
-                                + cantidadAnterior + " a " + productoActual.getExistencias() + " (stock disponible)");
                     }
                 }
             } catch (Exception e) {
-                // Error al obtener producto, asumimos que no existe
                 advertencias.add("\"" + detalle.getProducto().getNombre() + "\" ya no está disponible");
                 itemsAEliminar.add(detalle);
             }
@@ -156,7 +170,8 @@ public class ClienteCarritoServlet extends HttpServlet {
     }
 
     private void agregar(HttpServletRequest req, HttpSession session) throws BusinessException {
-        int id = Integer.parseInt(req.getParameter("productoId"));
+        int productoId = Integer.parseInt(req.getParameter("productoId"));
+        int tallaId = Integer.parseInt(req.getParameter("tallaId"));
         int cantidad = Integer.parseInt(req.getParameter("cantidad"));
 
         // Validar cantidad dentro de límites
@@ -167,15 +182,25 @@ public class ClienteCarritoServlet extends HttpServlet {
                     ConfiguracionTienda.CANTIDAD_MAXIMA_PRODUCTO));
         }
 
-        Producto producto = productoBO.obtenerPorId(id);
+        Producto producto = productoBO.obtenerPorId(productoId);
+        ProductoTalla talla;
+        try {
+            talla = productoTallaBO.obtenerPorId(tallaId);
+        } catch (Exception e) {
+            throw new BusinessException("Talla no válida");
+        }
+
         List<DetallePedido> carrito = obtenerCarrito(session);
 
-        // Calcular cantidad total (existente + nueva)
-        int cantidadExistente = obtenerCantidadEnCarrito(carrito, id);
+        // Calcular cantidad total (existente + nueva) para el mismo producto+talla
+        int cantidadExistente = obtenerCantidadEnCarrito(carrito, productoId, tallaId);
         int cantidadTotal = cantidadExistente + cantidad;
 
-        // Validar stock para cantidad total
-        productoBO.validarStock(id, cantidadTotal);
+        // Validar stock por talla
+        if (!productoTallaBO.hayStockDisponible(tallaId, cantidadTotal)) {
+            throw new BusinessException("Stock insuficiente para la talla " + talla.getTalla() +
+                    ". Disponible: " + talla.getStock());
+        }
 
         // Validar cantidad máxima por producto
         if (cantidadTotal > ConfiguracionTienda.CANTIDAD_MAXIMA_PRODUCTO) {
@@ -184,10 +209,12 @@ public class ClienteCarritoServlet extends HttpServlet {
                     ConfiguracionTienda.CANTIDAD_MAXIMA_PRODUCTO));
         }
 
-        // Agregar o actualizar en carrito
+        // Agregar o actualizar en carrito (mismo producto + misma talla)
         boolean existe = false;
         for (DetallePedido detalle : carrito) {
-            if (detalle.getProducto().getId() == id) {
+            if (detalle.getProducto().getId() == productoId &&
+                detalle.getProductoTalla() != null &&
+                detalle.getProductoTalla().getId() == tallaId) {
                 detalle.setCantidad(cantidadTotal);
                 existe = true;
                 break;
@@ -197,6 +224,7 @@ public class ClienteCarritoServlet extends HttpServlet {
         if (!existe) {
             DetallePedido detalle = new DetallePedido();
             detalle.setProducto(producto);
+            detalle.setProductoTalla(talla);
             detalle.setCantidad(cantidad);
             detalle.setPrecioUnitario(producto.getPrecio());
             carrito.add(detalle);
@@ -206,7 +234,8 @@ public class ClienteCarritoServlet extends HttpServlet {
     }
 
     private void actualizar(HttpServletRequest req, HttpSession session) throws BusinessException {
-        int id = Integer.parseInt(req.getParameter("productoId"));
+        int productoId = Integer.parseInt(req.getParameter("productoId"));
+        int tallaId = Integer.parseInt(req.getParameter("tallaId"));
         int cantidad = Integer.parseInt(req.getParameter("cantidad"));
 
         // Validar cantidad mínima
@@ -222,13 +251,23 @@ public class ClienteCarritoServlet extends HttpServlet {
                     ConfiguracionTienda.CANTIDAD_MAXIMA_PRODUCTO));
         }
 
-        // Validar stock disponible
-        productoBO.validarStock(id, cantidad);
+        // Validar stock disponible por talla
+        if (!productoTallaBO.hayStockDisponible(tallaId, cantidad)) {
+            try {
+                ProductoTalla talla = productoTallaBO.obtenerPorId(tallaId);
+                throw new BusinessException("Stock insuficiente para la talla " + talla.getTalla() +
+                        ". Disponible: " + talla.getStock());
+            } catch (Exception e) {
+                throw new BusinessException("Talla no válida");
+            }
+        }
 
-        // Actualizar cantidad en carrito
+        // Actualizar cantidad en carrito (mismo producto + misma talla)
         List<DetallePedido> carrito = obtenerCarrito(session);
         for (DetallePedido detalle : carrito) {
-            if (detalle.getProducto().getId() == id) {
+            if (detalle.getProducto().getId() == productoId &&
+                detalle.getProductoTalla() != null &&
+                detalle.getProductoTalla().getId() == tallaId) {
                 detalle.setCantidad(cantidad);
                 break;
             }
@@ -238,9 +277,13 @@ public class ClienteCarritoServlet extends HttpServlet {
     }
 
     private void eliminar(HttpServletRequest req, HttpSession session) {
-        int id = Integer.parseInt(req.getParameter("productoId"));
+        int productoId = Integer.parseInt(req.getParameter("productoId"));
+        int tallaId = Integer.parseInt(req.getParameter("tallaId"));
         List<DetallePedido> carrito = obtenerCarrito(session);
-        carrito.removeIf(detalle -> detalle.getProducto().getId() == id);
+        carrito.removeIf(detalle ->
+            detalle.getProducto().getId() == productoId &&
+            detalle.getProductoTalla() != null &&
+            detalle.getProductoTalla().getId() == tallaId);
         session.setAttribute("carrito", carrito);
     }
 
@@ -269,11 +312,13 @@ public class ClienteCarritoServlet extends HttpServlet {
     }
 
     /**
-     * Obtiene la cantidad actual de un producto en el carrito.
+     * Obtiene la cantidad actual de un producto+talla en el carrito.
      */
-    private int obtenerCantidadEnCarrito(List<DetallePedido> carrito, int productoId) {
+    private int obtenerCantidadEnCarrito(List<DetallePedido> carrito, int productoId, int tallaId) {
         for (DetallePedido detalle : carrito) {
-            if (detalle.getProducto().getId() == productoId) {
+            if (detalle.getProducto().getId() == productoId &&
+                detalle.getProductoTalla() != null &&
+                detalle.getProductoTalla().getId() == tallaId) {
                 return detalle.getCantidad();
             }
         }

@@ -10,6 +10,9 @@ public class CarritoItemDTO {
     private int cantidad;
     private String imagenUrl;
     private double subtotal;
+    private int tallaId;
+    private String talla;
+    private String color;
 
     public CarritoItemDTO() {}
 
@@ -20,6 +23,19 @@ public class CarritoItemDTO {
         this.cantidad = cantidad;
         this.imagenUrl = imagenUrl;
         this.subtotal = precio * cantidad;
+    }
+
+    public CarritoItemDTO(int productoId, String nombre, double precio, int cantidad, String imagenUrl,
+                          int tallaId, String talla, String color) {
+        this.productoId = productoId;
+        this.nombre = nombre;
+        this.precio = precio;
+        this.cantidad = cantidad;
+        this.imagenUrl = imagenUrl;
+        this.subtotal = precio * cantidad;
+        this.tallaId = tallaId;
+        this.talla = talla;
+        this.color = color;
     }
 
     public int getProductoId() {
@@ -69,5 +85,29 @@ public class CarritoItemDTO {
 
     public void setSubtotal(double subtotal) {
         this.subtotal = subtotal;
+    }
+
+    public int getTallaId() {
+        return tallaId;
+    }
+
+    public void setTallaId(int tallaId) {
+        this.tallaId = tallaId;
+    }
+
+    public String getTalla() {
+        return talla;
+    }
+
+    public void setTalla(String talla) {
+        this.talla = talla;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
     }
 }

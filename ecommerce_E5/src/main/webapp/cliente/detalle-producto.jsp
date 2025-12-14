@@ -67,27 +67,63 @@
 
                     <p class="product-description">${producto.descripcion}</p>
 
-                    <p class="product-stock">
-                        <c:choose>
-                            <c:when test="${producto.existencias > 0}">
-                                <strong>En stock: ${producto.existencias} disponibles</strong>
-                            </c:when>
-                            <c:otherwise>
-                                <strong>Agotado</strong>
-                            </c:otherwise>
-                        </c:choose>
-                    </p>
+                    <c:if test="${not empty producto.color}">
+                        <p class="product-color"><strong>Color:</strong> ${producto.color}</p>
+                    </c:if>
 
-                    <c:if test="${producto.existencias > 0}">
+                    <!-- Selector de tallas -->
+                    <c:if test="${not empty tallasProducto}">
+                        <%-- Contar tallas disponibles (con stock > 0) --%>
+                        <c:set var="tallasDisponibles" value="0"/>
+                        <c:set var="tallaUnicaId" value=""/>
+                        <c:set var="tallaUnicaStock" value="0"/>
+                        <c:forEach var="t" items="${tallasProducto}">
+                            <c:if test="${t.stock > 0}">
+                                <c:set var="tallasDisponibles" value="${tallasDisponibles + 1}"/>
+                                <c:set var="tallaUnicaId" value="${t.id}"/>
+                                <c:set var="tallaUnicaStock" value="${t.stock}"/>
+                            </c:if>
+                        </c:forEach>
+
+                        <div class="talla-selector">
+                            <label><strong>Selecciona tu talla:</strong></label>
+                            <div class="tallas-grid">
+                                <c:forEach var="talla" items="${tallasProducto}">
+                                    <button type="button"
+                                            class="talla-btn ${talla.stock <= 0 ? 'agotada' : ''} ${tallasDisponibles == 1 && talla.stock > 0 ? 'selected' : ''}"
+                                            data-talla-id="${talla.id}"
+                                            data-stock="${talla.stock}"
+                                            ${talla.stock <= 0 ? 'disabled' : ''}>
+                                        ${talla.talla}
+                                        <c:if test="${talla.stock <= 0}">
+                                            <span class="agotado-text">Agotado</span>
+                                        </c:if>
+                                    </button>
+                                </c:forEach>
+                            </div>
+                            <input type="hidden" id="talla-seleccionada" value="${tallasDisponibles == 1 ? tallaUnicaId : ''}">
+                        </div>
+
+                        <p class="product-stock" id="stock-info" style="${tallasDisponibles == 1 ? '' : 'display: none;'}">
+                            <strong>Stock disponible: <span id="stock-cantidad">${tallasDisponibles == 1 ? tallaUnicaStock : '0'}</span></strong>
+                        </p>
+
                         <div class="add-to-cart-section">
                             <div class="quantity-selector">
                                 <label>Cantidad:</label>
-                                <input type="number" id="cantidad-producto" value="1" min="1" max="${producto.existencias}">
+                                <input type="number" id="cantidad-producto" value="1" min="1"
+                                       max="${tallasDisponibles == 1 ? (tallaUnicaStock > 10 ? 10 : tallaUnicaStock) : 1}"
+                                       ${tallasDisponibles == 1 ? '' : 'disabled'}>
                             </div>
-                            <button class="add-to-cart-btn" id="btn-agregar-carrito" data-id="${producto.id}">
-                                AGREGAR AL CARRITO
+                            <button class="add-to-cart-btn" id="btn-agregar-carrito" data-id="${producto.id}"
+                                    ${tallasDisponibles == 1 ? '' : 'disabled'}>
+                                ${tallasDisponibles == 1 ? 'AGREGAR AL CARRITO' : 'SELECCIONA UNA TALLA'}
                             </button>
                         </div>
+                    </c:if>
+
+                    <c:if test="${empty tallasProducto}">
+                        <p class="product-stock"><strong>Producto sin tallas disponibles</strong></p>
                     </c:if>
                 </section>
             </div>
@@ -166,6 +202,17 @@
             </section>
         </main>
 
+        <!-- Modal de error/info -->
+        <div id="modal-mensaje" class="modal-overlay" style="display: none;">
+            <div class="modal-contenido">
+                <h3 id="modal-titulo">Aviso</h3>
+                <p id="modal-texto"></p>
+                <div class="modal-botones">
+                    <button id="modal-cerrar" class="btn-modal btn-confirmar">Aceptar</button>
+                </div>
+            </div>
+        </div>
+
         <footer>
             <div class="footer-content">
                 <div class="footer-section">
@@ -227,6 +274,162 @@
                     btnEnviarResena.textContent = 'Enviando...';
                     btnEnviarResena.style.opacity = '0.7';
                     btnEnviarResena.style.cursor = 'not-allowed';
+                });
+            }
+
+            // Selector de tallas
+            const tallaBtns = document.querySelectorAll('.talla-btn:not(.agotada)');
+            const tallaInput = document.getElementById('talla-seleccionada');
+            const stockInfo = document.getElementById('stock-info');
+            const stockCantidad = document.getElementById('stock-cantidad');
+            const cantidadInput = document.getElementById('cantidad-producto');
+            const btnAgregarCarrito = document.getElementById('btn-agregar-carrito');
+
+            tallaBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Quitar seleccion anterior
+                    document.querySelectorAll('.talla-btn').forEach(b => b.classList.remove('selected'));
+
+                    // Seleccionar esta talla
+                    this.classList.add('selected');
+                    const tallaId = this.dataset.tallaId;
+                    const stock = parseInt(this.dataset.stock);
+
+                    // Actualizar input oculto
+                    tallaInput.value = tallaId;
+
+                    // Mostrar stock disponible
+                    stockInfo.style.display = 'block';
+                    stockCantidad.textContent = stock;
+
+                    // Habilitar y configurar selector de cantidad
+                    cantidadInput.disabled = false;
+                    cantidadInput.max = Math.min(stock, 10);
+                    cantidadInput.value = 1;
+
+                    // Habilitar boton de agregar al carrito
+                    btnAgregarCarrito.disabled = false;
+                    btnAgregarCarrito.textContent = 'AGREGAR AL CARRITO';
+                });
+            });
+
+            // Validar cantidad al cambiar y al escribir
+            if (cantidadInput) {
+                // Validar en tiempo real mientras escribe
+                cantidadInput.addEventListener('input', function() {
+                    const max = parseInt(this.max) || 10;
+                    const min = parseInt(this.min) || 1;
+                    let val = parseInt(this.value);
+
+                    if (!isNaN(val)) {
+                        if (val > max) {
+                            this.value = max;
+                        } else if (val < min) {
+                            this.value = min;
+                        }
+                    }
+                });
+
+                // Validar al perder foco (para valores vacíos)
+                cantidadInput.addEventListener('blur', function() {
+                    const max = parseInt(this.max) || 10;
+                    const min = parseInt(this.min) || 1;
+                    let val = parseInt(this.value);
+
+                    if (isNaN(val) || val < min) {
+                        this.value = min;
+                    } else if (val > max) {
+                        this.value = max;
+                    }
+                });
+            }
+
+            // Modal de mensajes
+            const modalMensaje = document.getElementById('modal-mensaje');
+            const modalTitulo = document.getElementById('modal-titulo');
+            const modalTexto = document.getElementById('modal-texto');
+            const modalCerrar = document.getElementById('modal-cerrar');
+
+            function mostrarModal(titulo, mensaje) {
+                modalTitulo.textContent = titulo;
+                modalTexto.textContent = mensaje;
+                modalMensaje.style.display = 'flex';
+            }
+
+            if (modalCerrar) {
+                modalCerrar.addEventListener('click', function() {
+                    modalMensaje.style.display = 'none';
+                });
+            }
+
+            // Cerrar modal al hacer clic fuera
+            if (modalMensaje) {
+                modalMensaje.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        this.style.display = 'none';
+                    }
+                });
+            }
+
+            // Agregar al carrito via API REST
+            if (btnAgregarCarrito) {
+                btnAgregarCarrito.addEventListener('click', async function() {
+                    const productoId = parseInt(this.dataset.id);
+                    const tallaId = parseInt(tallaInput.value);
+
+                    if (!tallaId) {
+                        mostrarModal('Selecciona una talla', 'Por favor selecciona una talla antes de agregar al carrito.');
+                        return;
+                    }
+
+                    // Validar y ajustar cantidad antes de enviar
+                    const maxCantidad = parseInt(cantidadInput.max) || 10;
+                    let cantidad = parseInt(cantidadInput.value) || 1;
+
+                    // Forzar limites
+                    if (cantidad < 1) cantidad = 1;
+                    if (cantidad > maxCantidad) cantidad = maxCantidad;
+                    cantidadInput.value = cantidad;
+
+                    // Deshabilitar boton mientras procesa
+                    this.disabled = true;
+                    const textoOriginal = this.textContent;
+                    this.textContent = 'AGREGANDO...';
+
+                    try {
+                        const response = await fetch('${pageContext.request.contextPath}/api/carrito', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                productoId: productoId,
+                                tallaId: tallaId,
+                                cantidad: cantidad
+                            })
+                        });
+
+                        const data = await response.json();
+
+                        if (data.success) {
+                            this.textContent = 'AGREGADO';
+                            setTimeout(() => {
+                                this.textContent = textoOriginal;
+                                this.disabled = false;
+                            }, 1500);
+                        } else {
+                            const mensaje = data.message || 'Error al agregar al carrito';
+                            const titulo = mensaje.toLowerCase().includes('stock') ? 'Stock Insuficiente' : 'Error';
+                            mostrarModal(titulo, mensaje);
+                            this.textContent = textoOriginal;
+                            this.disabled = false;
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        mostrarModal('Error de conexión', 'No se pudo conectar con el servidor. Intenta de nuevo.');
+                        this.textContent = textoOriginal;
+                        this.disabled = false;
+                    }
                 });
             }
         </script>

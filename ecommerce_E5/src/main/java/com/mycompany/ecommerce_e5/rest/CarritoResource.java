@@ -1,8 +1,10 @@
 package com.mycompany.ecommerce_e5.rest;
 
 import com.mycompany.ecommerce_e5.bo.ProductoBO;
+import com.mycompany.ecommerce_e5.bo.ProductoTallaBO;
 import com.mycompany.ecommerce_e5.dominio.DetallePedido;
 import com.mycompany.ecommerce_e5.dominio.Producto;
+import com.mycompany.ecommerce_e5.dominio.ProductoTalla;
 import com.mycompany.ecommerce_e5.rest.dto.ApiResponse;
 import com.mycompany.ecommerce_e5.rest.dto.CarritoItemDTO;
 import com.mycompany.ecommerce_e5.util.ConfiguracionTienda;
@@ -34,6 +36,7 @@ import java.util.Map;
 public class CarritoResource {
 
     private final ProductoBO productoBO = new ProductoBO();
+    private final ProductoTallaBO productoTallaBO = new ProductoTallaBO();
 
     @Context
     private HttpServletRequest request;
@@ -52,12 +55,16 @@ public class CarritoResource {
         double subtotal = 0;
 
         for (DetallePedido detalle : carrito) {
+            ProductoTalla talla = detalle.getProductoTalla();
             CarritoItemDTO item = new CarritoItemDTO(
                     detalle.getProducto().getId(),
                     detalle.getProducto().getNombre(),
                     detalle.getPrecioUnitario(),
                     detalle.getCantidad(),
-                    detalle.getProducto().getImagenUrl()
+                    detalle.getProducto().getImagenUrl(),
+                    talla != null ? talla.getId() : 0,
+                    talla != null ? talla.getTalla() : "",
+                    detalle.getProducto().getColor()
             );
             items.add(item);
             subtotal += detalle.getPrecioUnitario() * detalle.getCantidad();
@@ -80,17 +87,18 @@ public class CarritoResource {
     /**
      * POST /api/carrito
      * Agrega un producto al carrito.
-     * Body: { "productoId": 1, "cantidad": 2 }
+     * Body: { "productoId": 1, "tallaId": 1, "cantidad": 2 }
      */
     @POST
     public Response agregarAlCarrito(Map<String, Integer> body) {
         try {
             Integer productoId = body.get("productoId");
+            Integer tallaId = body.get("tallaId");
             Integer cantidad = body.get("cantidad");
 
-            if (productoId == null || cantidad == null || cantidad <= 0) {
+            if (productoId == null || tallaId == null || cantidad == null || cantidad <= 0) {
                 return Response.status(Response.Status.BAD_REQUEST)
-                        .entity(ApiResponse.error("Producto y cantidad son requeridos"))
+                        .entity(ApiResponse.error("Producto, talla y cantidad son requeridos"))
                         .build();
             }
 
@@ -109,17 +117,26 @@ public class CarritoResource {
                         .build();
             }
 
+            ProductoTalla talla;
+            try {
+                talla = productoTallaBO.obtenerPorId(tallaId);
+            } catch (Exception e) {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity(ApiResponse.error("Talla no encontrada"))
+                        .build();
+            }
+
             HttpSession session = request.getSession(true);
             List<DetallePedido> carrito = obtenerCarritoFromSession(session);
 
-            // Calcular cantidad total (existente + nueva)
-            int cantidadExistente = obtenerCantidadEnCarrito(carrito, productoId);
+            // Calcular cantidad total (existente + nueva) para mismo producto+talla
+            int cantidadExistente = obtenerCantidadEnCarrito(carrito, productoId, tallaId);
             int cantidadTotal = cantidadExistente + cantidad;
 
-            // Validar stock
-            if (producto.getExistencias() < cantidadTotal) {
+            // Validar stock por talla
+            if (!productoTallaBO.hayStockDisponible(tallaId, cantidadTotal)) {
                 return Response.status(Response.Status.BAD_REQUEST)
-                        .entity(ApiResponse.error("Stock insuficiente. Disponible: " + producto.getExistencias()))
+                        .entity(ApiResponse.error("Stock insuficiente para talla " + talla.getTalla() + "."))
                         .build();
             }
 
@@ -131,10 +148,12 @@ public class CarritoResource {
                         .build();
             }
 
-            // Agregar o actualizar en carrito
+            // Agregar o actualizar en carrito (mismo producto + misma talla)
             boolean existe = false;
             for (DetallePedido detalle : carrito) {
-                if (detalle.getProducto().getId() == productoId) {
+                if (detalle.getProducto().getId() == productoId &&
+                    detalle.getProductoTalla() != null &&
+                    detalle.getProductoTalla().getId() == tallaId) {
                     detalle.setCantidad(cantidadTotal);
                     existe = true;
                     break;
@@ -144,6 +163,7 @@ public class CarritoResource {
             if (!existe) {
                 DetallePedido detalle = new DetallePedido();
                 detalle.setProducto(producto);
+                detalle.setProductoTalla(talla);
                 detalle.setCantidad(cantidad);
                 detalle.setPrecioUnitario(producto.getPrecio());
                 carrito.add(detalle);
@@ -157,7 +177,10 @@ public class CarritoResource {
                     producto.getNombre(),
                     producto.getPrecio(),
                     cantidadTotal,
-                    producto.getImagenUrl()
+                    producto.getImagenUrl(),
+                    talla.getId(),
+                    talla.getTalla(),
+                    producto.getColor()
             );
 
             return Response.status(Response.Status.CREATED)
@@ -172,13 +195,15 @@ public class CarritoResource {
     }
 
     /**
-     * PUT /api/carrito/{productoId}
-     * Actualiza la cantidad de un producto en el carrito.
+     * PUT /api/carrito/{productoId}/{tallaId}
+     * Actualiza la cantidad de un producto+talla en el carrito.
      * Body: { "cantidad": 3 }
      */
     @PUT
-    @Path("/{productoId}")
-    public Response actualizarCantidad(@PathParam("productoId") int productoId, Map<String, Integer> body) {
+    @Path("/{productoId}/{tallaId}")
+    public Response actualizarCantidad(@PathParam("productoId") int productoId,
+                                       @PathParam("tallaId") int tallaId,
+                                       Map<String, Integer> body) {
         try {
             Integer cantidad = body.get("cantidad");
 
@@ -195,9 +220,18 @@ public class CarritoResource {
             }
 
             Producto producto = productoBO.obtenerPorId(productoId);
-            if (producto.getExistencias() < cantidad) {
+            ProductoTalla talla;
+            try {
+                talla = productoTallaBO.obtenerPorId(tallaId);
+            } catch (Exception e) {
+                return Response.status(Response.Status.NOT_FOUND)
+                        .entity(ApiResponse.error("Talla no encontrada"))
+                        .build();
+            }
+
+            if (!productoTallaBO.hayStockDisponible(tallaId, cantidad)) {
                 return Response.status(Response.Status.BAD_REQUEST)
-                        .entity(ApiResponse.error("Stock insuficiente. Disponible: " + producto.getExistencias()))
+                        .entity(ApiResponse.error("Stock insuficiente para talla " + talla.getTalla() + "."))
                         .build();
             }
 
@@ -212,7 +246,9 @@ public class CarritoResource {
             boolean encontrado = false;
 
             for (DetallePedido detalle : carrito) {
-                if (detalle.getProducto().getId() == productoId) {
+                if (detalle.getProducto().getId() == productoId &&
+                    detalle.getProductoTalla() != null &&
+                    detalle.getProductoTalla().getId() == tallaId) {
                     detalle.setCantidad(cantidad);
                     encontrado = true;
                     break;
@@ -232,7 +268,10 @@ public class CarritoResource {
                     producto.getNombre(),
                     producto.getPrecio(),
                     cantidad,
-                    producto.getImagenUrl()
+                    producto.getImagenUrl(),
+                    talla.getId(),
+                    talla.getTalla(),
+                    producto.getColor()
             );
 
             return Response.ok(ApiResponse.ok("Cantidad actualizada", itemDTO)).build();
@@ -245,12 +284,13 @@ public class CarritoResource {
     }
 
     /**
-     * DELETE /api/carrito/{productoId}
-     * Elimina un producto del carrito.
+     * DELETE /api/carrito/{productoId}/{tallaId}
+     * Elimina un producto+talla del carrito.
      */
     @DELETE
-    @Path("/{productoId}")
-    public Response eliminarDelCarrito(@PathParam("productoId") int productoId) {
+    @Path("/{productoId}/{tallaId}")
+    public Response eliminarDelCarrito(@PathParam("productoId") int productoId,
+                                       @PathParam("tallaId") int tallaId) {
         HttpSession session = request.getSession(false);
         if (session == null) {
             return Response.status(Response.Status.BAD_REQUEST)
@@ -259,7 +299,10 @@ public class CarritoResource {
         }
 
         List<DetallePedido> carrito = obtenerCarritoFromSession(session);
-        boolean removed = carrito.removeIf(detalle -> detalle.getProducto().getId() == productoId);
+        boolean removed = carrito.removeIf(detalle ->
+            detalle.getProducto().getId() == productoId &&
+            detalle.getProductoTalla() != null &&
+            detalle.getProductoTalla().getId() == tallaId);
 
         if (!removed) {
             return Response.status(Response.Status.NOT_FOUND)
@@ -298,11 +341,13 @@ public class CarritoResource {
     }
 
     /**
-     * Obtiene la cantidad actual de un producto en el carrito.
+     * Obtiene la cantidad actual de un producto+talla en el carrito.
      */
-    private int obtenerCantidadEnCarrito(List<DetallePedido> carrito, int productoId) {
+    private int obtenerCantidadEnCarrito(List<DetallePedido> carrito, int productoId, int tallaId) {
         for (DetallePedido detalle : carrito) {
-            if (detalle.getProducto().getId() == productoId) {
+            if (detalle.getProducto().getId() == productoId &&
+                detalle.getProductoTalla() != null &&
+                detalle.getProductoTalla().getId() == tallaId) {
                 return detalle.getCantidad();
             }
         }

@@ -90,48 +90,69 @@
                 <div class="form-group-inline">
                     <div class="form-group">
                         <label for="precio">Precio *</label>
-                        <input type="number" 
-                               id="precio" 
-                               name="precio" 
-                               value="${producto.precio}" 
-                               step="0.01" 
-                               min="0" 
+                        <input type="number"
+                               id="precio"
+                               name="precio"
+                               value="${producto.precio}"
+                               step="0.01"
+                               min="0"
                                required>
                     </div>
                     <div class="form-group">
-                        <label for="existencias">Stock *</label>
-                        <input type="number" 
-                               id="existencias" 
-                               name="existencias" 
-                               value="${producto.existencias}" 
-                               min="0" 
-                               required>
-                    </div>
-                </div>
-
-                <div class="form-group-inline">
-                    <div class="form-group">
-                        <label for="talla">Talla *</label>
-                        <input type="text"
-                               id="talla"
-                               name="talla"
-                               value="${producto.talla}"
-                               placeholder="XS, S, M, L, XL"
-                               pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s,/]+"
-                               title="Solo letras, espacios, comas y /"
-                               required>
-                    </div>
-                    <div class="form-group">
-                        <label for="color">Color *</label>
+                        <label for="color">Color</label>
                         <input type="text"
                                id="color"
                                name="color"
                                value="${producto.color}"
                                placeholder="Negro, Blanco, Azul"
                                pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s,/]+"
-                               title="Solo letras, espacios, comas y /"
-                               required>
+                               title="Solo letras, espacios, comas y /">
                     </div>
+                </div>
+
+                <div class="form-group tallas-section">
+                    <label>Tallas y Stock *</label>
+                    <p class="form-help">Agrega al menos una talla con su stock disponible.</p>
+                    <div id="tallas-container">
+                        <c:choose>
+                            <c:when test="${not empty tallasProducto}">
+                                <c:forEach var="talla" items="${tallasProducto}" varStatus="status">
+                                    <div class="talla-row">
+                                        <input type="hidden" name="tallaIds[]" value="${talla.id}">
+                                        <input type="text"
+                                               name="tallas[]"
+                                               value="${talla.talla}"
+                                               placeholder="Ej: S, M, L, XL, 28, 30..."
+                                               required>
+                                        <input type="number"
+                                               name="stocks[]"
+                                               value="${talla.stock}"
+                                               min="0"
+                                               placeholder="Stock"
+                                               required>
+                                        <button type="button" class="btn-remove-talla" onclick="removeTalla(this)" title="Eliminar talla">×</button>
+                                    </div>
+                                </c:forEach>
+                            </c:when>
+                            <c:otherwise>
+                                <div class="talla-row">
+                                    <input type="hidden" name="tallaIds[]" value="">
+                                    <input type="text"
+                                           name="tallas[]"
+                                           placeholder="Ej: S, M, L, XL, 28, 30..."
+                                           required>
+                                    <input type="number"
+                                           name="stocks[]"
+                                           value="0"
+                                           min="0"
+                                           placeholder="Stock"
+                                           required>
+                                    <button type="button" class="btn-remove-talla" onclick="removeTalla(this)" title="Eliminar talla">×</button>
+                                </div>
+                            </c:otherwise>
+                        </c:choose>
+                    </div>
+                    <button type="button" class="btn btn-add-talla" onclick="addTalla()">+ Agregar Talla</button>
                 </div>
 
                 <div class="form-group">
@@ -160,13 +181,69 @@
     </main>
 
     <script>
-        // Bloquear números en Talla y Color
-        document.getElementById('talla').addEventListener('input', function(e) {
-            this.value = this.value.replace(/[0-9]/g, '');
-        });
+        // Bloquear números en Color
+        const colorInput = document.getElementById('color');
+        if (colorInput) {
+            colorInput.addEventListener('input', function(e) {
+                this.value = this.value.replace(/[0-9]/g, '');
+            });
+        }
 
-        document.getElementById('color').addEventListener('input', function(e) {
-            this.value = this.value.replace(/[0-9]/g, '');
+        // Funciones para gestionar tallas dinamicamente
+        function addTalla() {
+            const container = document.getElementById('tallas-container');
+            const newRow = document.createElement('div');
+            newRow.className = 'talla-row';
+            newRow.innerHTML = `
+                <input type="hidden" name="tallaIds[]" value="">
+                <input type="text"
+                       name="tallas[]"
+                       placeholder="Ej: S, M, L, XL, 28, 30..."
+                       required>
+                <input type="number"
+                       name="stocks[]"
+                       value="0"
+                       min="0"
+                       placeholder="Stock"
+                       required>
+                <button type="button" class="btn-remove-talla" onclick="removeTalla(this)" title="Eliminar talla">×</button>
+            `;
+            container.appendChild(newRow);
+        }
+
+        function removeTalla(btn) {
+            const container = document.getElementById('tallas-container');
+            const rows = container.querySelectorAll('.talla-row');
+
+            // Mantener al menos una fila
+            if (rows.length > 1) {
+                btn.closest('.talla-row').remove();
+            } else {
+                alert('Debe haber al menos una talla');
+            }
+        }
+
+        // Validar antes de enviar el formulario
+        document.querySelector('.product-edit-form').addEventListener('submit', function(e) {
+            const tallasInputs = document.querySelectorAll('input[name="tallas[]"]');
+            const tallas = [];
+
+            for (let input of tallasInputs) {
+                const valor = input.value.trim();
+                if (valor === '') {
+                    e.preventDefault();
+                    alert('Todas las tallas deben tener un nombre');
+                    input.focus();
+                    return false;
+                }
+                if (tallas.includes(valor.toUpperCase())) {
+                    e.preventDefault();
+                    alert('No puede haber tallas duplicadas: ' + valor);
+                    input.focus();
+                    return false;
+                }
+                tallas.push(valor.toUpperCase());
+            }
         });
 
         // Mobile Menu Toggle

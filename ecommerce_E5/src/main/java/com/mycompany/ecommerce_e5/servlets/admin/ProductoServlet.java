@@ -6,8 +6,10 @@ package com.mycompany.ecommerce_e5.servlets.admin;
 
 import com.mycompany.ecommerce_e5.bo.CategoriaBO;
 import com.mycompany.ecommerce_e5.bo.ProductoBO;
+import com.mycompany.ecommerce_e5.bo.ProductoTallaBO;
 import com.mycompany.ecommerce_e5.dominio.Categoria;
 import com.mycompany.ecommerce_e5.dominio.Producto;
+import com.mycompany.ecommerce_e5.dominio.ProductoTalla;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -30,11 +32,13 @@ public class ProductoServlet extends HttpServlet {
 
     private ProductoBO productoBO;
     private CategoriaBO categoriaBO;
+    private ProductoTallaBO productoTallaBO;
 
     @Override
     public void init() throws ServletException {
         productoBO = new ProductoBO();
         categoriaBO = new CategoriaBO();
+        productoTallaBO = new ProductoTallaBO();
     }
 
     @Override
@@ -61,7 +65,7 @@ public class ProductoServlet extends HttpServlet {
             }
             request.setAttribute("error", "Error: " + mensajeError);
             // Cargar productos para mostrar la lista
-            List<Producto> productos = productoBO.obtenerTodos();
+            List<Producto> productos = productoBO.obtenerTodosConTallas();
             request.setAttribute("productos", productos);
             request.getRequestDispatcher("/admin/producto.jsp").forward(request, response);
         }
@@ -101,7 +105,7 @@ public class ProductoServlet extends HttpServlet {
             }
 
             // Para crear o si falla el redirect de actualizar, mostrar listado
-            List<Producto> productos = productoBO.obtenerTodos();
+            List<Producto> productos = productoBO.obtenerTodosConTallas();
             request.setAttribute("productos", productos);
             request.getRequestDispatcher("/admin/producto.jsp").forward(request, response);
         }
@@ -110,7 +114,7 @@ public class ProductoServlet extends HttpServlet {
     private void listarProductos(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        List<Producto> productos = productoBO.obtenerTodos();
+        List<Producto> productos = productoBO.obtenerTodosConTallas();
         request.setAttribute("productos", productos);
         request.getRequestDispatcher("/admin/producto.jsp").forward(request, response);
     }
@@ -129,9 +133,11 @@ public class ProductoServlet extends HttpServlet {
         int id = Integer.parseInt(request.getParameter("id"));
         Producto producto = productoBO.obtenerPorId(id);
         List<Categoria> categorias = categoriaBO.obtenerTodas();
+        List<ProductoTalla> tallas = productoTallaBO.obtenerTallasPorProducto(id);
 
         request.setAttribute("producto", producto);
         request.setAttribute("categorias", categorias);
+        request.setAttribute("tallasProducto", tallas);
         request.getRequestDispatcher("/admin/producto-form.jsp").forward(request, response);
     }
 
@@ -142,12 +148,14 @@ public class ProductoServlet extends HttpServlet {
         String descripcion = request.getParameter("descripcion");
         String precioStr = request.getParameter("precio");
         String imagenUrl = request.getParameter("imagenUrl");
-        String existenciasStr = request.getParameter("existencias");
-        String talla = request.getParameter("talla");
         String color = request.getParameter("color");
         String categoriaIdStr = request.getParameter("categoriaId");
 
-        // #41: Validar precio positivo
+        // Obtener tallas y stocks del formulario
+        String[] tallasArr = request.getParameterValues("tallas[]");
+        String[] stocksArr = request.getParameterValues("stocks[]");
+
+        // Validar precio positivo
         double precio;
         try {
             precio = Double.parseDouble(precioStr);
@@ -158,18 +166,7 @@ public class ProductoServlet extends HttpServlet {
             throw new Exception("El precio debe ser un número válido");
         }
 
-        // Validar existencias
-        int existencias;
-        try {
-            existencias = Integer.parseInt(existenciasStr);
-            if (existencias < 0) {
-                throw new Exception("Las existencias no pueden ser negativas");
-            }
-        } catch (NumberFormatException e) {
-            throw new Exception("Las existencias deben ser un número válido");
-        }
-
-        // #40: Validar URL de imagen (formato básico)
+        // Validar URL de imagen
         if (imagenUrl != null && !imagenUrl.trim().isEmpty()) {
             imagenUrl = imagenUrl.trim();
             if (!imagenUrl.matches("^(https?://.*|imgs/.*|/.*\\.(jpg|jpeg|png|gif|webp))$") &&
@@ -178,7 +175,7 @@ public class ProductoServlet extends HttpServlet {
             }
         }
 
-        // #42: Validar categoría
+        // Validar categoría
         int categoriaId;
         try {
             categoriaId = Integer.parseInt(categoriaIdStr);
@@ -191,16 +188,16 @@ public class ProductoServlet extends HttpServlet {
             throw new Exception("La categoría seleccionada no existe");
         }
 
-        // #44: Validar talla y color (letras, acentos, comas, espacios y /)
-        if (talla != null && !talla.trim().isEmpty()) {
-            if (!talla.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ,\\s/]+$")) {
-                throw new Exception("La talla solo puede contener letras, comas, espacios y /");
-            }
-        }
+        // Validar color
         if (color != null && !color.trim().isEmpty()) {
             if (!color.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ,\\s/]+$")) {
                 throw new Exception("El color solo puede contener letras, comas, espacios y /");
             }
+        }
+
+        // Validar que haya al menos una talla
+        if (tallasArr == null || tallasArr.length == 0) {
+            throw new Exception("Debe agregar al menos una talla");
         }
 
         Producto producto = new Producto();
@@ -208,12 +205,27 @@ public class ProductoServlet extends HttpServlet {
         producto.setDescripcion(descripcion);
         producto.setPrecio(precio);
         producto.setImagenUrl(imagenUrl);
-        producto.setExistencias(existencias);
-        producto.setTalla(talla != null ? talla.trim() : null);
         producto.setColor(color != null ? color.trim() : null);
         producto.setCategoria(categoria);
 
-        productoBO.crear(producto);
+        Producto productoGuardado = productoBO.crear(producto);
+
+        // Guardar las tallas
+        for (int i = 0; i < tallasArr.length; i++) {
+            String tallaNombre = tallasArr[i];
+            if (tallaNombre != null && !tallaNombre.trim().isEmpty()) {
+                int stock = 0;
+                if (stocksArr != null && i < stocksArr.length) {
+                    try {
+                        stock = Integer.parseInt(stocksArr[i]);
+                        if (stock < 0) stock = 0;
+                    } catch (NumberFormatException e) {
+                        stock = 0;
+                    }
+                }
+                productoTallaBO.guardarTalla(productoGuardado, tallaNombre.trim(), stock);
+            }
+        }
 
         response.sendRedirect(request.getContextPath() + "/admin/producto?success=created");
     }
@@ -226,12 +238,15 @@ public class ProductoServlet extends HttpServlet {
         String descripcion = request.getParameter("descripcion");
         String precioStr = request.getParameter("precio");
         String imagenUrl = request.getParameter("imagenUrl");
-        String existenciasStr = request.getParameter("existencias");
-        String talla = request.getParameter("talla");
         String color = request.getParameter("color");
         String categoriaIdStr = request.getParameter("categoriaId");
 
-        // #41: Validar precio positivo
+        // Obtener tallas y stocks del formulario
+        String[] tallasArr = request.getParameterValues("tallas[]");
+        String[] stocksArr = request.getParameterValues("stocks[]");
+        String[] tallaIdsArr = request.getParameterValues("tallaIds[]");
+
+        // Validar precio positivo
         double precio;
         try {
             precio = Double.parseDouble(precioStr);
@@ -242,18 +257,7 @@ public class ProductoServlet extends HttpServlet {
             throw new Exception("El precio debe ser un número válido");
         }
 
-        // Validar existencias
-        int existencias;
-        try {
-            existencias = Integer.parseInt(existenciasStr);
-            if (existencias < 0) {
-                throw new Exception("Las existencias no pueden ser negativas");
-            }
-        } catch (NumberFormatException e) {
-            throw new Exception("Las existencias deben ser un número válido");
-        }
-
-        // #40: Validar URL de imagen
+        // Validar URL de imagen
         if (imagenUrl != null && !imagenUrl.trim().isEmpty()) {
             imagenUrl = imagenUrl.trim();
             if (!imagenUrl.matches("^(https?://.*|imgs/.*|/.*\\.(jpg|jpeg|png|gif|webp))$") &&
@@ -262,7 +266,7 @@ public class ProductoServlet extends HttpServlet {
             }
         }
 
-        // #42: Validar categoría
+        // Validar categoría
         int categoriaId;
         try {
             categoriaId = Integer.parseInt(categoriaIdStr);
@@ -275,16 +279,16 @@ public class ProductoServlet extends HttpServlet {
             throw new Exception("La categoría seleccionada no existe");
         }
 
-        // #44: Validar talla y color (letras, acentos, comas, espacios y /)
-        if (talla != null && !talla.trim().isEmpty()) {
-            if (!talla.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ,\\s/]+$")) {
-                throw new Exception("La talla solo puede contener letras, comas, espacios y /");
-            }
-        }
+        // Validar color
         if (color != null && !color.trim().isEmpty()) {
             if (!color.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ,\\s/]+$")) {
                 throw new Exception("El color solo puede contener letras, comas, espacios y /");
             }
+        }
+
+        // Validar que haya al menos una talla
+        if (tallasArr == null || tallasArr.length == 0) {
+            throw new Exception("Debe agregar al menos una talla");
         }
 
         Producto producto = productoBO.obtenerPorId(id);
@@ -292,12 +296,38 @@ public class ProductoServlet extends HttpServlet {
         producto.setDescripcion(descripcion);
         producto.setPrecio(precio);
         producto.setImagenUrl(imagenUrl);
-        producto.setExistencias(existencias);
-        producto.setTalla(talla != null ? talla.trim() : null);
         producto.setColor(color != null ? color.trim() : null);
         producto.setCategoria(categoria);
 
         productoBO.actualizar(producto);
+
+        // Actualizar las tallas
+        for (int i = 0; i < tallasArr.length; i++) {
+            String tallaNombre = tallasArr[i];
+            if (tallaNombre != null && !tallaNombre.trim().isEmpty()) {
+                int stock = 0;
+                if (stocksArr != null && i < stocksArr.length) {
+                    try {
+                        stock = Integer.parseInt(stocksArr[i]);
+                        if (stock < 0) stock = 0;
+                    } catch (NumberFormatException e) {
+                        stock = 0;
+                    }
+                }
+
+                // Si tiene ID, actualizar; si no, crear nueva
+                if (tallaIdsArr != null && i < tallaIdsArr.length && !tallaIdsArr[i].isEmpty()) {
+                    try {
+                        int tallaId = Integer.parseInt(tallaIdsArr[i]);
+                        productoTallaBO.actualizarStock(tallaId, stock);
+                    } catch (NumberFormatException e) {
+                        productoTallaBO.guardarOActualizarTalla(producto, tallaNombre.trim(), stock);
+                    }
+                } else {
+                    productoTallaBO.guardarOActualizarTalla(producto, tallaNombre.trim(), stock);
+                }
+            }
+        }
 
         response.sendRedirect(request.getContextPath() + "/admin/producto?success=updated");
     }

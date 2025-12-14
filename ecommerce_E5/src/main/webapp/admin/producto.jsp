@@ -87,7 +87,7 @@
                             <td data-label="Nombre">${producto.nombre}</td>
                             <td data-label="Categoría">${producto.categoria.nombre}</td>
                             <td data-label="Precio">$<fmt:formatNumber value="${producto.precio}" pattern="#,##0.00"/></td>
-                            <td data-label="Stock">${producto.existencias}</td>
+                            <td data-label="Stock">${producto.stockTotal}</td>
                             <td data-label="Acciones">
                                 <a href="${pageContext.request.contextPath}/admin/producto?accion=editar&id=${producto.id}"
                                    class="btn btn-edit">Editar</a>

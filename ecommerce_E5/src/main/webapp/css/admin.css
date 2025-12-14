@@ -425,6 +425,80 @@
     margin-bottom: var(--spacing-md);
 }
 
+/* SECCION DE TALLAS */
+.tallas-section {
+    margin-top: var(--spacing-md);
+}
+
+.tallas-section > label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: var(--spacing-xs);
+}
+
+.tallas-section .form-help {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-light);
+    margin-bottom: var(--spacing-md);
+}
+
+#tallas-container {
+    margin-bottom: var(--spacing-md);
+}
+
+.talla-row {
+    display: flex;
+    gap: var(--spacing-sm);
+    align-items: center;
+    margin-bottom: var(--spacing-sm);
+}
+
+.talla-row input[type="text"] {
+    flex: 2;
+}
+
+.talla-row input[type="number"] {
+    flex: 1;
+    max-width: 100px;
+}
+
+.btn-remove-talla {
+    background-color: var(--color-btn-delete);
+    color: var(--background);
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-lg);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color var(--transition-fast);
+    flex-shrink: 0;
+}
+
+.btn-remove-talla:hover {
+    background-color: var(--color-btn-delete-hover);
+}
+
+.btn-add-talla {
+    background-color: transparent;
+    color: var(--color-btn-primary);
+    border: 1px dashed var(--color-btn-primary);
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.btn-add-talla:hover {
+    background-color: var(--color-btn-primary);
+    color: var(--background);
+    border-style: solid;
+}
+
 /*RESPONSIVE - Tablet (900px)*/
 @media (max-width: 900px) {
     .product-edit-form {

@@ -37,6 +37,10 @@ public class DetallePedido implements Serializable {
     private Producto producto;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "producto_talla_id")
+    private ProductoTalla productoTalla;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pedido_id", nullable = false)
     private Pedido pedido;
 
@@ -47,6 +51,14 @@ public class DetallePedido implements Serializable {
         this.cantidad = cantidad;
         this.precioUnitario = precioUnitario;
         this.producto = producto;
+        this.pedido = pedido;
+    }
+
+    public DetallePedido(int cantidad, double precioUnitario, Producto producto, ProductoTalla productoTalla, Pedido pedido) {
+        this.cantidad = cantidad;
+        this.precioUnitario = precioUnitario;
+        this.producto = producto;
+        this.productoTalla = productoTalla;
         this.pedido = pedido;
     }
 
@@ -81,6 +93,14 @@ public class DetallePedido implements Serializable {
 
     public void setProducto(Producto producto) {
         this.producto = producto;
+    }
+
+    public ProductoTalla getProductoTalla() {
+        return productoTalla;
+    }
+
+    public void setProductoTalla(ProductoTalla productoTalla) {
+        this.productoTalla = productoTalla;
     }
 
     public Pedido getPedido() {

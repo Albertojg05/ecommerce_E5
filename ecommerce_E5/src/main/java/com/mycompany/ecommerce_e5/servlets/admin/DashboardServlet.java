@@ -8,7 +8,6 @@ import com.mycompany.ecommerce_e5.bo.PedidoBO;
 import com.mycompany.ecommerce_e5.bo.ProductoBO;
 import com.mycompany.ecommerce_e5.bo.ResenaBO;
 import com.mycompany.ecommerce_e5.dominio.Pedido;
-import com.mycompany.ecommerce_e5.dominio.Producto;
 import com.mycompany.ecommerce_e5.dominio.Resena;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -46,20 +45,18 @@ public class DashboardServlet extends HttpServlet {
             throws ServletException, IOException {
 
         try {
-            // Obtener datos para el dashboard
-            List<Producto> productos = productoBO.obtenerTodos();
+            // Obtener conteos para el dashboard (evita cargar todos los registros)
+            long totalProductos = productoBO.contarProductos();
             List<Pedido> pedidos = pedidoBO.obtenerTodos();
             List<Resena> resenas = resenaBO.obtenerTodas();
 
             // Calcular estadísticas
-            int totalProductos = productos.size();
             int totalPedidos = pedidos.size();
             int totalResenas = resenas.size();
 
-            // Productos con bajo stock (menos de 10)
-            long productosStockBajo = productos.stream()
-                    .filter(p -> p.getExistencias() < 10)
-                    .count();
+            // Productos con bajo stock (menos de 10 unidades en total)
+            // Usa consulta directa para evitar LazyInitializationException
+            long productosStockBajo = productoBO.contarProductosStockBajo(10);
 
             // Pasar datos a la vista
             request.setAttribute("totalProductos", totalProductos);

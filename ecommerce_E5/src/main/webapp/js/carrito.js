@@ -23,11 +23,12 @@ function initBotonesCarritoJSP() {
     document.querySelectorAll('.btn-menos-js').forEach(btn => {
         btn.addEventListener('click', async function() {
             const productoId = parseInt(this.dataset.id);
+            const tallaId = parseInt(this.dataset.tallaId);
             const cantidadActual = parseInt(this.dataset.cantidad);
             if (cantidadActual <= 1) {
-                await eliminarDelCarritoJSP(productoId);
+                await eliminarDelCarritoJSP(productoId, tallaId);
             } else {
-                await actualizarCantidadJSP(productoId, cantidadActual - 1);
+                await actualizarCantidadJSP(productoId, tallaId, cantidadActual - 1);
             }
         });
     });
@@ -36,8 +37,9 @@ function initBotonesCarritoJSP() {
     document.querySelectorAll('.btn-mas-js').forEach(btn => {
         btn.addEventListener('click', async function() {
             const productoId = parseInt(this.dataset.id);
+            const tallaId = parseInt(this.dataset.tallaId);
             const cantidadActual = parseInt(this.dataset.cantidad);
-            await actualizarCantidadJSP(productoId, cantidadActual + 1);
+            await actualizarCantidadJSP(productoId, tallaId, cantidadActual + 1);
         });
     });
 
@@ -45,7 +47,8 @@ function initBotonesCarritoJSP() {
     document.querySelectorAll('.btn-eliminar-js').forEach(btn => {
         btn.addEventListener('click', async function() {
             const productoId = parseInt(this.dataset.id);
-            await eliminarDelCarritoJSP(productoId);
+            const tallaId = parseInt(this.dataset.tallaId);
+            await eliminarDelCarritoJSP(productoId, tallaId);
         });
     });
 
@@ -157,9 +160,9 @@ function initModalEventos() {
 /**
  * Actualiza cantidad usando API y recarga pagina.
  */
-async function actualizarCantidadJSP(productoId, nuevaCantidad) {
+async function actualizarCantidadJSP(productoId, tallaId, nuevaCantidad) {
     try {
-        const response = await carritoApi.actualizar(productoId, nuevaCantidad);
+        const response = await carritoApi.actualizar(productoId, tallaId, nuevaCantidad);
         if (response.success) {
             mostrarNotificacion('Cantidad actualizada', 'success');
             location.reload();
@@ -174,9 +177,9 @@ async function actualizarCantidadJSP(productoId, nuevaCantidad) {
 /**
  * Elimina producto usando API y recarga pagina.
  */
-async function eliminarDelCarritoJSP(productoId) {
+async function eliminarDelCarritoJSP(productoId, tallaId) {
     try {
-        const response = await carritoApi.eliminar(productoId);
+        const response = await carritoApi.eliminar(productoId, tallaId);
         if (response.success) {
             mostrarNotificacion('Producto eliminado', 'success');
             location.reload();
@@ -261,7 +264,7 @@ function renderCarrito(container, data) {
  */
 function renderCarritoItem(item) {
     return `
-        <div class="carrito-item" data-id="${item.productoId}">
+        <div class="carrito-item" data-id="${item.productoId}" data-talla-id="${item.tallaId}">
             <div class="item-imagen">
                 <img src="${item.imagenUrl || '/' + contextPath + '/imgs/default.png'}"
                      alt="${item.nombre}"
@@ -269,19 +272,21 @@ function renderCarritoItem(item) {
             </div>
             <div class="item-info">
                 <h3 class="item-nombre">${item.nombre}</h3>
+                ${item.talla ? `<p class="item-talla">Talla: ${item.talla}</p>` : ''}
+                ${item.color ? `<p class="item-color">Color: ${item.color}</p>` : ''}
                 <p class="item-precio">${formatearPrecio(item.precio)}</p>
             </div>
             <div class="item-cantidad">
-                <button class="btn-cantidad btn-menos" data-id="${item.productoId}">-</button>
+                <button class="btn-cantidad btn-menos" data-id="${item.productoId}" data-talla-id="${item.tallaId}">-</button>
                 <input type="number" class="input-cantidad"
                        value="${item.cantidad}" min="1"
-                       data-id="${item.productoId}">
-                <button class="btn-cantidad btn-mas" data-id="${item.productoId}">+</button>
+                       data-id="${item.productoId}" data-talla-id="${item.tallaId}">
+                <button class="btn-cantidad btn-mas" data-id="${item.productoId}" data-talla-id="${item.tallaId}">+</button>
             </div>
             <div class="item-subtotal">
                 <span>${formatearPrecio(item.subtotal)}</span>
             </div>
-            <button class="btn-eliminar" data-id="${item.productoId}" title="Eliminar">
+            <button class="btn-eliminar" data-id="${item.productoId}" data-talla-id="${item.tallaId}" title="Eliminar">
                 &times;
             </button>
         </div>
@@ -334,13 +339,14 @@ function initCarritoEventos() {
     document.querySelectorAll('.btn-menos').forEach(btn => {
         btn.addEventListener('click', async function() {
             const productoId = parseInt(this.dataset.id);
-            const input = document.querySelector(`.input-cantidad[data-id="${productoId}"]`);
+            const tallaId = parseInt(this.dataset.tallaId);
+            const input = document.querySelector(`.input-cantidad[data-id="${productoId}"][data-talla-id="${tallaId}"]`);
             const nuevaCantidad = parseInt(input.value) - 1;
 
             if (nuevaCantidad < 1) {
-                await eliminarDelCarrito(productoId);
+                await eliminarDelCarrito(productoId, tallaId);
             } else {
-                await actualizarCantidad(productoId, nuevaCantidad);
+                await actualizarCantidad(productoId, tallaId, nuevaCantidad);
             }
         });
     });
@@ -349,9 +355,10 @@ function initCarritoEventos() {
     document.querySelectorAll('.btn-mas').forEach(btn => {
         btn.addEventListener('click', async function() {
             const productoId = parseInt(this.dataset.id);
-            const input = document.querySelector(`.input-cantidad[data-id="${productoId}"]`);
+            const tallaId = parseInt(this.dataset.tallaId);
+            const input = document.querySelector(`.input-cantidad[data-id="${productoId}"][data-talla-id="${tallaId}"]`);
             const nuevaCantidad = parseInt(input.value) + 1;
-            await actualizarCantidad(productoId, nuevaCantidad);
+            await actualizarCantidad(productoId, tallaId, nuevaCantidad);
         });
     });
 
@@ -359,6 +366,7 @@ function initCarritoEventos() {
     document.querySelectorAll('.input-cantidad').forEach(input => {
         input.addEventListener('change', async function() {
             const productoId = parseInt(this.dataset.id);
+            const tallaId = parseInt(this.dataset.tallaId);
             const nuevaCantidad = parseInt(this.value);
 
             if (nuevaCantidad < 1) {
@@ -366,7 +374,7 @@ function initCarritoEventos() {
                 return;
             }
 
-            await actualizarCantidad(productoId, nuevaCantidad);
+            await actualizarCantidad(productoId, tallaId, nuevaCantidad);
         });
     });
 
@@ -374,7 +382,8 @@ function initCarritoEventos() {
     document.querySelectorAll('.btn-eliminar').forEach(btn => {
         btn.addEventListener('click', async function() {
             const productoId = parseInt(this.dataset.id);
-            await eliminarDelCarrito(productoId);
+            const tallaId = parseInt(this.dataset.tallaId);
+            await eliminarDelCarrito(productoId, tallaId);
         });
     });
 }
@@ -382,9 +391,9 @@ function initCarritoEventos() {
 /**
  * Actualiza la cantidad de un producto.
  */
-async function actualizarCantidad(productoId, cantidad) {
+async function actualizarCantidad(productoId, tallaId, cantidad) {
     try {
-        const response = await carritoApi.actualizar(productoId, cantidad);
+        const response = await carritoApi.actualizar(productoId, tallaId, cantidad);
 
         if (response.success) {
             await cargarCarrito();
@@ -400,9 +409,9 @@ async function actualizarCantidad(productoId, cantidad) {
 /**
  * Elimina un producto del carrito.
  */
-async function eliminarDelCarrito(productoId) {
+async function eliminarDelCarrito(productoId, tallaId) {
     try {
-        const response = await carritoApi.eliminar(productoId);
+        const response = await carritoApi.eliminar(productoId, tallaId);
 
         if (response.success) {
             mostrarNotificacion('Producto eliminado del carrito', 'success');

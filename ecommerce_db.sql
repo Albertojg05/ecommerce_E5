@@ -56,8 +56,6 @@ CREATE TABLE producto (
     descripcion VARCHAR(500),
     precio DECIMAL(10,2) NOT NULL,
     imagen_url VARCHAR(255),
-    existencias INT NOT NULL DEFAULT 0,
-    talla VARCHAR(50),
     color VARCHAR(50),
     categoria_id INT NOT NULL,
 
@@ -69,8 +67,25 @@ CREATE TABLE producto (
         FOREIGN KEY (categoria_id) REFERENCES categoria(id)
         ON DELETE RESTRICT ON UPDATE CASCADE,
 
-    CONSTRAINT chk_producto_precio CHECK (precio >= 0),
-    CONSTRAINT chk_producto_existencias CHECK (existencias >= 0)
+    CONSTRAINT chk_producto_precio CHECK (precio >= 0)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Tabla producto_talla - tallas disponibles por producto con stock individual
+CREATE TABLE producto_talla (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    producto_id INT NOT NULL,
+    talla VARCHAR(20) NOT NULL,
+    stock INT NOT NULL DEFAULT 0,
+
+    INDEX idx_producto_talla_producto (producto_id),
+    INDEX idx_producto_talla_talla (talla),
+
+    CONSTRAINT fk_producto_talla_producto
+        FOREIGN KEY (producto_id) REFERENCES producto(id)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+
+    CONSTRAINT chk_producto_talla_stock CHECK (stock >= 0),
+    UNIQUE KEY uk_producto_talla (producto_id, talla)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tabla pago - info de los pagos (tarjeta o paypal)
@@ -125,9 +140,11 @@ CREATE TABLE detalle_pedido (
     precio_unitario DECIMAL(10,2) NOT NULL,
     pedido_id INT NOT NULL,
     producto_id INT NOT NULL,
+    producto_talla_id INT,
 
     INDEX idx_detalle_pedido (pedido_id),
     INDEX idx_detalle_producto (producto_id),
+    INDEX idx_detalle_producto_talla (producto_talla_id),
 
     CONSTRAINT fk_detalle_pedido
         FOREIGN KEY (pedido_id) REFERENCES pedido(id)
@@ -136,6 +153,10 @@ CREATE TABLE detalle_pedido (
     CONSTRAINT fk_detalle_producto
         FOREIGN KEY (producto_id) REFERENCES producto(id)
         ON DELETE RESTRICT ON UPDATE CASCADE,
+
+    CONSTRAINT fk_detalle_producto_talla
+        FOREIGN KEY (producto_talla_id) REFERENCES producto_talla(id)
+        ON DELETE SET NULL ON UPDATE CASCADE,
 
     CONSTRAINT chk_detalle_cantidad CHECK (cantidad > 0),
     CONSTRAINT chk_detalle_precio CHECK (precio_unitario >= 0)
@@ -201,46 +222,97 @@ INSERT INTO direccion (calle, ciudad, estado, codigo_postal, usuario_id) VALUES
     ('Calle Juárez #321', 'Navojoa', 'Sonora', '85800', 4);
 
 -- Productos de la tienda (ropa y accesorios)
-INSERT INTO producto (nombre, descripcion, precio, imagen_url, existencias, talla, color, categoria_id) VALUES
+INSERT INTO producto (nombre, descripcion, precio, imagen_url, color, categoria_id) VALUES
     -- Vestidos (categoria_id = 1)
-    ('Vestido Azul Largo', 'Elegante vestido largo en tono azul, perfecto para eventos formales y ocasiones especiales.', 899.00, 'imgs/vestidos/vestidoAzulLargo.png', 15, 'M', 'Azul', 1),
-    ('Vestido Negro Corto', 'Vestido negro corto y versátil, ideal para salidas nocturnas o cenas elegantes.', 750.00, 'imgs/vestidos/vestidoNegroCorto.png', 20, 'S', 'Negro', 1),
+    ('Vestido Azul Largo', 'Elegante vestido largo en tono azul, perfecto para eventos formales y ocasiones especiales.', 899.00, 'imgs/vestidos/vestidoAzulLargo.png', 'Azul', 1),
+    ('Vestido Negro Corto', 'Vestido negro corto y versátil, ideal para salidas nocturnas o cenas elegantes.', 750.00, 'imgs/vestidos/vestidoNegroCorto.png', 'Negro', 1),
 
     -- Blusas (categoria_id = 2)
-    ('Blusa Cruzada Estampado Gris', 'Blusa con diseño cruzado y estampado en tonos grises, elegante y moderna.', 420.00, 'imgs/blusas/blusaCruzadaEstampadoGris.png', 25, 'M', 'Gris', 2),
-    ('Blusa Dorada Metálica', 'Blusa con acabado metálico dorado, perfecta para fiestas y eventos especiales.', 550.00, 'imgs/blusas/blusaDoradaMetalica.png', 18, 'S', 'Dorado', 2),
-    ('Blusa Rayas Azules', 'Blusa fresca con patrón de rayas azules, ideal para el día a día.', 350.00, 'imgs/blusas/blusaRayasAzules.png', 30, 'L', 'Azul/Blanco', 2),
+    ('Blusa Cruzada Estampado Gris', 'Blusa con diseño cruzado y estampado en tonos grises, elegante y moderna.', 420.00, 'imgs/blusas/blusaCruzadaEstampadoGris.png', 'Gris', 2),
+    ('Blusa Dorada Metálica', 'Blusa con acabado metálico dorado, perfecta para fiestas y eventos especiales.', 550.00, 'imgs/blusas/blusaDoradaMetalica.png', 'Dorado', 2),
+    ('Blusa Rayas Azules', 'Blusa fresca con patrón de rayas azules, ideal para el día a día.', 350.00, 'imgs/blusas/blusaRayasAzules.png', 'Azul/Blanco', 2),
 
     -- Pantalones (categoria_id = 3)
-    ('Pantalón Estampado Beige Negro', 'Pantalón con estampado elegante en tonos beige y negro, perfecto para oficina.', 680.00, 'imgs/pantalones/pantalonEstampadoBeigeNegro.png', 22, 'M', 'Beige/Negro', 3),
-    ('Pantalón Negro Fluido', 'Pantalón negro de tela fluida, cómodo y elegante para cualquier ocasión.', 520.00, 'imgs/pantalones/pantalonNegroFluido.png', 35, '28', 'Negro', 3),
-    ('Pantalón Negro Sastre Ancho', 'Pantalón de sastre negro con corte ancho, estilo profesional y sofisticado.', 750.00, 'imgs/pantalones/pantalonNegroSastreAncho.png', 20, '30', 'Negro', 3),
+    ('Pantalón Estampado Beige Negro', 'Pantalón con estampado elegante en tonos beige y negro, perfecto para oficina.', 680.00, 'imgs/pantalones/pantalonEstampadoBeigeNegro.png', 'Beige/Negro', 3),
+    ('Pantalón Negro Fluido', 'Pantalón negro de tela fluida, cómodo y elegante para cualquier ocasión.', 520.00, 'imgs/pantalones/pantalonNegroFluido.png', 'Negro', 3),
+    ('Pantalón Negro Sastre Ancho', 'Pantalón de sastre negro con corte ancho, estilo profesional y sofisticado.', 750.00, 'imgs/pantalones/pantalonNegroSastreAncho.png', 'Negro', 3),
 
     -- Faldas (categoria_id = 4)
-    ('Falda Beige Midi con Abertura', 'Falda midi en tono beige con abertura lateral, elegante y femenina.', 480.00, 'imgs/faldas/faldaBeigeMidiAbertura.png', 25, 'M', 'Beige', 4),
-    ('Falda Negra Corta', 'Falda negra corta, básico versátil para combinar con cualquier outfit.', 350.00, 'imgs/faldas/faldaNegraCorta.png', 40, 'S', 'Negro', 4),
-    ('Falda Plisada Estampado Café', 'Falda plisada con elegante estampado en tonos café, perfecta para looks sofisticados.', 420.00, 'imgs/faldas/faldaPlisadaEstampadoCafe.png', 30, 'M', 'Café', 4),
+    ('Falda Beige Midi con Abertura', 'Falda midi en tono beige con abertura lateral, elegante y femenina.', 480.00, 'imgs/faldas/faldaBeigeMidiAbertura.png', 'Beige', 4),
+    ('Falda Negra Corta', 'Falda negra corta, básico versátil para combinar con cualquier outfit.', 350.00, 'imgs/faldas/faldaNegraCorta.png', 'Negro', 4),
+    ('Falda Plisada Estampado Café', 'Falda plisada con elegante estampado en tonos café, perfecta para looks sofisticados.', 420.00, 'imgs/faldas/faldaPlisadaEstampadoCafe.png', 'Café', 4),
 
     -- Conjuntos (categoria_id = 5)
-    ('Conjunto Azul con Volantes', 'Conjunto azul con detalles de volantes, perfecto para ocasiones especiales.', 1350.00, 'imgs/conjuntos/conjuntoAzulVolantes.png', 12, 'M', 'Azul', 5),
-    ('Conjunto Estampado Beige Negro', 'Conjunto coordinado con estampado en beige y negro, elegante y moderno.', 1200.00, 'imgs/conjuntos/conjuntoEstampadoBeigeNegro.png', 15, 'S', 'Beige/Negro', 5),
-    ('Conjunto Negro Casual', 'Conjunto negro casual de dos piezas, cómodo y estiloso.', 980.00, 'imgs/conjuntos/conjuntoNegroCasual.png', 20, 'M', 'Negro', 5),
-    ('Conjunto Rayas Naranja', 'Conjunto con patrón de rayas en tonos naranja, vibrante y moderno.', 1100.00, 'imgs/conjuntos/conjuntoRayasNaranja.png', 18, 'L', 'Naranja', 5),
-    ('Conjunto Rojo con Pantalón', 'Conjunto rojo de blusa y pantalón, ideal para eventos y fiestas.', 1450.00, 'imgs/conjuntos/conjuntoRojoPantalon.png', 10, 'M', 'Rojo', 5),
+    ('Conjunto Azul con Volantes', 'Conjunto azul con detalles de volantes, perfecto para ocasiones especiales.', 1350.00, 'imgs/conjuntos/conjuntoAzulVolantes.png', 'Azul', 5),
+    ('Conjunto Estampado Beige Negro', 'Conjunto coordinado con estampado en beige y negro, elegante y moderno.', 1200.00, 'imgs/conjuntos/conjuntoEstampadoBeigeNegro.png', 'Beige/Negro', 5),
+    ('Conjunto Negro Casual', 'Conjunto negro casual de dos piezas, cómodo y estiloso.', 980.00, 'imgs/conjuntos/conjuntoNegroCasual.png', 'Negro', 5),
+    ('Conjunto Rayas Naranja', 'Conjunto con patrón de rayas en tonos naranja, vibrante y moderno.', 1100.00, 'imgs/conjuntos/conjuntoRayasNaranja.png', 'Naranja', 5),
+    ('Conjunto Rojo con Pantalón', 'Conjunto rojo de blusa y pantalón, ideal para eventos y fiestas.', 1450.00, 'imgs/conjuntos/conjuntoRojoPantalon.png', 'Rojo', 5),
 
     -- Blazers (categoria_id = 6)
-    ('Blazer Azul Rayas', 'Blazer azul con patrón de rayas sutiles, perfecto para oficina o eventos.', 950.00, 'imgs/blazers/blazerAzulRayas.png', 15, 'M', 'Azul', 6),
-    ('Blazer Gris Rayas', 'Blazer gris con rayas elegantes, estilo profesional y sofisticado.', 920.00, 'imgs/blazers/blazerGrisRayas.png', 18, 'S', 'Gris', 6),
-    ('Blazer Negro Casual', 'Blazer negro de corte casual, versátil para cualquier ocasión.', 850.00, 'imgs/blazers/blazerNegroCasual.png', 22, 'M', 'Negro', 6),
+    ('Blazer Azul Rayas', 'Blazer azul con patrón de rayas sutiles, perfecto para oficina o eventos.', 950.00, 'imgs/blazers/blazerAzulRayas.png', 'Azul', 6),
+    ('Blazer Gris Rayas', 'Blazer gris con rayas elegantes, estilo profesional y sofisticado.', 920.00, 'imgs/blazers/blazerGrisRayas.png', 'Gris', 6),
+    ('Blazer Negro Casual', 'Blazer negro de corte casual, versátil para cualquier ocasión.', 850.00, 'imgs/blazers/blazerNegroCasual.png', 'Negro', 6),
 
     -- Tops (categoria_id = 7)
-    ('Top Beige Cuello Alto', 'Top beige con cuello alto, elegante y minimalista.', 280.00, 'imgs/tops/topBeigeCuelloAlto.png', 35, 'S', 'Beige', 7),
-    ('Top Negro Escote Drapeado', 'Top negro con escote drapeado, sofisticado y femenino.', 320.00, 'imgs/tops/topNegroEscoteDrapeado.png', 30, 'M', 'Negro', 7),
+    ('Top Beige Cuello Alto', 'Top beige con cuello alto, elegante y minimalista.', 280.00, 'imgs/tops/topBeigeCuelloAlto.png', 'Beige', 7),
+    ('Top Negro Escote Drapeado', 'Top negro con escote drapeado, sofisticado y femenino.', 320.00, 'imgs/tops/topNegroEscoteDrapeado.png', 'Negro', 7),
 
     -- Accesorios (categoria_id = 8)
-    ('Bolsa Beige Asa Trenzada', 'Bolsa en tono beige con asa trenzada, elegante y práctica.', 650.00, 'imgs/accesorios/bolsaBeigeAsaTrenzada.png', 20, 'Única', 'Beige', 8),
-    ('Bolsa Rosa Estructurada', 'Bolsa rosa con diseño estructurado, perfecta para ocasiones especiales.', 720.00, 'imgs/accesorios/bolsaRosaEstructurada.png', 15, 'Única', 'Rosa', 8),
-    ('Bolsa Vino Grande', 'Bolsa grande en color vino, espaciosa y elegante para el día a día.', 580.00, 'imgs/accesorios/bolsaVinoGrande.png', 25, 'Única', 'Vino', 8);
+    ('Bolsa Beige Asa Trenzada', 'Bolsa en tono beige con asa trenzada, elegante y práctica.', 650.00, 'imgs/accesorios/bolsaBeigeAsaTrenzada.png', 'Beige', 8),
+    ('Bolsa Rosa Estructurada', 'Bolsa rosa con diseño estructurado, perfecta para ocasiones especiales.', 720.00, 'imgs/accesorios/bolsaRosaEstructurada.png', 'Rosa', 8),
+    ('Bolsa Vino Grande', 'Bolsa grande en color vino, espaciosa y elegante para el día a día.', 580.00, 'imgs/accesorios/bolsaVinoGrande.png', 'Vino', 8);
+
+-- Tallas disponibles por producto
+INSERT INTO producto_talla (producto_id, talla, stock) VALUES
+    -- Vestido Azul Largo (id=1)
+    (1, 'XS', 3), (1, 'S', 5), (1, 'M', 4), (1, 'L', 3),
+    -- Vestido Negro Corto (id=2)
+    (2, 'XS', 4), (2, 'S', 6), (2, 'M', 5), (2, 'L', 5),
+    -- Blusa Cruzada Estampado Gris (id=3)
+    (3, 'S', 8), (3, 'M', 10), (3, 'L', 7),
+    -- Blusa Dorada Metálica (id=4)
+    (4, 'XS', 4), (4, 'S', 6), (4, 'M', 5), (4, 'L', 3),
+    -- Blusa Rayas Azules (id=5)
+    (5, 'S', 10), (5, 'M', 12), (5, 'L', 8),
+    -- Pantalón Estampado Beige Negro (id=6)
+    (6, '26', 4), (6, '28', 6), (6, '30', 7), (6, '32', 5),
+    -- Pantalón Negro Fluido (id=7)
+    (7, '26', 8), (7, '28', 10), (7, '30', 10), (7, '32', 7),
+    -- Pantalón Negro Sastre Ancho (id=8)
+    (8, '28', 5), (8, '30', 8), (8, '32', 7),
+    -- Falda Beige Midi con Abertura (id=9)
+    (9, 'S', 8), (9, 'M', 10), (9, 'L', 7),
+    -- Falda Negra Corta (id=10)
+    (10, 'XS', 10), (10, 'S', 12), (10, 'M', 10), (10, 'L', 8),
+    -- Falda Plisada Estampado Café (id=11)
+    (11, 'S', 10), (11, 'M', 12), (11, 'L', 8),
+    -- Conjunto Azul con Volantes (id=12)
+    (12, 'S', 3), (12, 'M', 5), (12, 'L', 4),
+    -- Conjunto Estampado Beige Negro (id=13)
+    (13, 'XS', 3), (13, 'S', 5), (13, 'M', 4), (13, 'L', 3),
+    -- Conjunto Negro Casual (id=14)
+    (14, 'S', 6), (14, 'M', 8), (14, 'L', 6),
+    -- Conjunto Rayas Naranja (id=15)
+    (15, 'S', 5), (15, 'M', 7), (15, 'L', 6),
+    -- Conjunto Rojo con Pantalón (id=16)
+    (16, 'S', 2), (16, 'M', 5), (16, 'L', 3),
+    -- Blazer Azul Rayas (id=17)
+    (17, 'S', 4), (17, 'M', 6), (17, 'L', 5),
+    -- Blazer Gris Rayas (id=18)
+    (18, 'XS', 4), (18, 'S', 6), (18, 'M', 5), (18, 'L', 3),
+    -- Blazer Negro Casual (id=19)
+    (19, 'S', 7), (19, 'M', 8), (19, 'L', 7),
+    -- Top Beige Cuello Alto (id=20)
+    (20, 'XS', 8), (20, 'S', 10), (20, 'M', 10), (20, 'L', 7),
+    -- Top Negro Escote Drapeado (id=21)
+    (21, 'S', 10), (21, 'M', 12), (21, 'L', 8),
+    -- Bolsa Beige Asa Trenzada (id=22) - Talla única
+    (22, 'Única', 20),
+    -- Bolsa Rosa Estructurada (id=23) - Talla única
+    (23, 'Única', 15),
+    -- Bolsa Vino Grande (id=24) - Talla única
+    (24, 'Única', 25);
 
 -- Pagos de ejemplo
 INSERT INTO pago (monto, fecha, metodo, estado) VALUES
@@ -286,12 +358,11 @@ SELECT
     p.descripcion,
     p.precio,
     p.imagen_url,
-    p.existencias,
-    p.talla,
     p.color,
     c.nombre AS categoria,
     COALESCE(AVG(r.calificacion), 0) AS calificacion_promedio,
-    COUNT(r.id) AS total_resenas
+    COUNT(r.id) AS total_resenas,
+    (SELECT SUM(pt.stock) FROM producto_talla pt WHERE pt.producto_id = p.id) AS stock_total
 FROM producto p
 INNER JOIN categoria c ON p.categoria_id = c.id
 LEFT JOIN resena r ON p.id = r.producto_id
@@ -371,21 +442,21 @@ BEGIN
     LIMIT limite;
 END //
 
--- Reduce el stock cuando alguien compra un producto
-CREATE PROCEDURE sp_reducir_stock(IN p_producto_id INT, IN p_cantidad INT)
+-- Reduce el stock de una talla específica cuando alguien compra un producto
+CREATE PROCEDURE sp_reducir_stock(IN p_producto_talla_id INT, IN p_cantidad INT)
 BEGIN
     DECLARE stock_actual INT;
 
-    SELECT existencias INTO stock_actual
-    FROM producto WHERE id = p_producto_id;
+    SELECT stock INTO stock_actual
+    FROM producto_talla WHERE id = p_producto_talla_id;
 
     IF stock_actual >= p_cantidad THEN
-        UPDATE producto
-        SET existencias = existencias - p_cantidad
-        WHERE id = p_producto_id;
+        UPDATE producto_talla
+        SET stock = stock - p_cantidad
+        WHERE id = p_producto_talla_id;
     ELSE
         SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Stock insuficiente para el producto';
+        SET MESSAGE_TEXT = 'Stock insuficiente para la talla seleccionada';
     END IF;
 END //
 
@@ -431,6 +502,8 @@ UNION ALL
 SELECT CONCAT('Direcciones: ', COUNT(*)) FROM direccion
 UNION ALL
 SELECT CONCAT('Productos: ', COUNT(*)) FROM producto
+UNION ALL
+SELECT CONCAT('Tallas de productos: ', COUNT(*)) FROM producto_talla
 UNION ALL
 SELECT CONCAT('Pedidos: ', COUNT(*)) FROM pedido
 UNION ALL

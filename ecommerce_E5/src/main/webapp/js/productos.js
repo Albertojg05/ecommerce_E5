@@ -345,27 +345,19 @@ function renderResenas(container, data) {
 
 /**
  * Inicializa los botones de agregar al carrito.
+ * NOTA: El boton de detalle (btn-agregar-carrito) tiene su propio handler
+ * en detalle-producto.jsp que maneja la seleccion de tallas.
  */
 function initBotonesCarrito() {
-    // Boton especifico de la pagina de detalle
-    const btnDetalle = document.getElementById('btn-agregar-carrito');
-    if (btnDetalle && !btnDetalle.dataset.initialized) {
-        btnDetalle.dataset.initialized = 'true';
-        btnDetalle.addEventListener('click', async function() {
-            const productoId = parseInt(this.dataset.id);
-            const cantidadInput = document.getElementById('cantidad-producto');
-            const cantidad = cantidadInput ? parseInt(cantidadInput.value) : 1;
-            await agregarAlCarrito(productoId, cantidad);
-        });
-    }
-
-    // Botones en listado de productos (cantidad = 1)
+    // NO inicializar el boton de detalle - tiene su propio handler con tallas
+    // Solo inicializar botones en el listado de productos
     document.querySelectorAll('.btn-agregar-carrito:not(#btn-agregar-carrito)').forEach(btn => {
         if (!btn.dataset.initialized) {
             btn.dataset.initialized = 'true';
             btn.addEventListener('click', async function() {
+                // En el listado, redirigir al detalle para seleccionar talla
                 const productoId = parseInt(this.dataset.id);
-                await agregarAlCarrito(productoId, 1);
+                window.location.href = '/' + contextPath + '/cliente/productos?accion=detalle&id=' + productoId;
             });
         }
     });

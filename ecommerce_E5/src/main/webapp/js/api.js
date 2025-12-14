@@ -178,27 +178,30 @@ const carritoApi = {
     /**
      * Agrega un producto al carrito.
      * @param {number} productoId
+     * @param {number} tallaId
      * @param {number} cantidad
      */
-    agregar: async (productoId, cantidad = 1) => {
-        return api.post('/carrito', { productoId, cantidad });
+    agregar: async (productoId, tallaId, cantidad = 1) => {
+        return api.post('/carrito', { productoId, tallaId, cantidad });
     },
 
     /**
-     * Actualiza la cantidad de un producto en el carrito.
+     * Actualiza la cantidad de un producto+talla en el carrito.
      * @param {number} productoId
+     * @param {number} tallaId
      * @param {number} cantidad
      */
-    actualizar: async (productoId, cantidad) => {
-        return api.put(`/carrito/${productoId}`, { cantidad });
+    actualizar: async (productoId, tallaId, cantidad) => {
+        return api.put(`/carrito/${productoId}/${tallaId}`, { cantidad });
     },
 
     /**
-     * Elimina un producto del carrito.
+     * Elimina un producto+talla del carrito.
      * @param {number} productoId
+     * @param {number} tallaId
      */
-    eliminar: async (productoId) => {
-        return api.delete(`/carrito/${productoId}`);
+    eliminar: async (productoId, tallaId) => {
+        return api.delete(`/carrito/${productoId}/${tallaId}`);
     },
 
     /**
