@@ -20,18 +20,13 @@ const API_BASE = '/' + contextPath + '/api';
 async function apiFetch(endpoint, options = {}) {
     const url = API_BASE + endpoint;
 
-    const token = localStorage.getItem('jwt');
-
     const defaultOptions = {
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
-        }
+        },
+        credentials: 'same-origin'
     };
-
-    if (token) {
-        defaultOptions.headers['Authorization'] = `Bearer ${token}`;
-    }
 
     const config = {
         ...defaultOptions,
@@ -44,12 +39,6 @@ async function apiFetch(endpoint, options = {}) {
 
     try {
         const response = await fetch(url, config);
-
-        if (response.status === 401) {
-            console.warn('Sesión expirada o inválida');
-            localStorage.removeItem('jwt');
-        }
-
         const data = await response.json();
 
         if (!response.ok) {
@@ -57,30 +46,29 @@ async function apiFetch(endpoint, options = {}) {
         }
 
         return data;
-        
     } catch (error) {
         console.error('API Error:', error);
         throw error;
-}
+    }
 }
 
 /**
  * Metodos GET.
  */
 const api = {
-    get: (endpoint) => apiFetch(endpoint, {method: 'GET'}),
+    get: (endpoint) => apiFetch(endpoint, { method: 'GET' }),
 
     post: (endpoint, body) => apiFetch(endpoint, {
-            method: 'POST',
-            body: JSON.stringify(body)
-        }),
+        method: 'POST',
+        body: JSON.stringify(body)
+    }),
 
     put: (endpoint, body) => apiFetch(endpoint, {
-            method: 'PUT',
-            body: JSON.stringify(body)
-        }),
+        method: 'PUT',
+        body: JSON.stringify(body)
+    }),
 
-    delete: (endpoint) => apiFetch(endpoint, {method: 'DELETE'})
+    delete: (endpoint) => apiFetch(endpoint, { method: 'DELETE' })
 };
 
 // AUTH
@@ -92,7 +80,7 @@ const authApi = {
      * @param {string} contrasena
      */
     login: async (correo, contrasena) => {
-        return api.post('/auth/login', {correo, contrasena});
+        return api.post('/auth/login', { correo, contrasena });
     },
 
     /**
@@ -162,7 +150,7 @@ const productosApi = {
      * @param {string} comentario
      */
     agregarResena: async (productoId, calificacion, comentario) => {
-        return api.post(`/productos/${productoId}/resenas`, {calificacion, comentario});
+        return api.post(`/productos/${productoId}/resenas`, { calificacion, comentario });
     }
 };
 
@@ -193,7 +181,7 @@ const carritoApi = {
      * @param {number} cantidad
      */
     agregar: async (productoId, cantidad = 1) => {
-        return api.post('/carrito', {productoId, cantidad});
+        return api.post('/carrito', { productoId, cantidad });
     },
 
     /**
@@ -202,7 +190,7 @@ const carritoApi = {
      * @param {number} cantidad
      */
     actualizar: async (productoId, cantidad) => {
-        return api.put(`/carrito/${productoId}`, {cantidad});
+        return api.put(`/carrito/${productoId}`, { cantidad });
     },
 
     /**
@@ -245,7 +233,7 @@ const pedidosApi = {
      * @param {string} metodoPago - 'TARJETA' o 'PAYPAL'
      */
     crear: async (direccionId, metodoPago) => {
-        return api.post('/pedidos', {direccionId, metodoPago});
+        return api.post('/pedidos', { direccionId, metodoPago });
     },
 
     /**
@@ -338,8 +326,7 @@ function formatearPrecio(precio) {
  * @param {string|Date|number} fecha
  */
 function formatearFecha(fecha) {
-    if (!fecha)
-        return 'Sin fecha';
+    if (!fecha) return 'Sin fecha';
 
     let date;
 
@@ -361,7 +348,8 @@ function formatearFecha(fecha) {
     // Si ya es Date
     else if (fecha instanceof Date) {
         date = fecha;
-    } else {
+    }
+    else {
         return 'Fecha inválida';
     }
 
