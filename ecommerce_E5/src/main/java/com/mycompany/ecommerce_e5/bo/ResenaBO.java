@@ -62,13 +62,39 @@ public class ResenaBO {
         if (id <= 0) {
             throw new Exception(Messages.ERROR_PARAMETROS_INVALIDOS);
         }
-        
+
         Resena resena = resenaDAO.obtenerPorId(id);
         if (resena == null) {
             throw new Exception("Reseña no encontrada");
         }
-        
+
         resenaDAO.eliminar(id);
+    }
+
+    public Resena actualizar(int id, int calificacion, String comentario) throws Exception {
+        if (id <= 0) {
+            throw new Exception(Messages.ERROR_PARAMETROS_INVALIDOS);
+        }
+
+        if (calificacion < 1 || calificacion > 5) {
+            throw new Exception("La calificación debe estar entre 1 y 5");
+        }
+
+        if (comentario != null && !comentario.trim().isEmpty()) {
+            if (comentario.trim().length() < 10) {
+                throw new Exception("El comentario debe tener al menos 10 caracteres");
+            }
+        }
+
+        Resena resena = resenaDAO.obtenerPorId(id);
+        if (resena == null) {
+            throw new Exception("Reseña no encontrada");
+        }
+
+        resena.setCalificacion(calificacion);
+        resena.setComentario(comentario != null ? comentario.trim() : null);
+
+        return resenaDAO.actualizar(resena);
     }
     
     public double calcularPromedioProducto(int productoId) {

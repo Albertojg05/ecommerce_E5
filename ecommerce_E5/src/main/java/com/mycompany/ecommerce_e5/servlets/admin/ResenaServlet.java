@@ -58,8 +58,10 @@ public class ResenaServlet extends HttpServlet {
         String accion = request.getParameter("accion");
 
         try {
-            if (accion.equals("eliminar")) {
+            if ("eliminar".equals(accion)) {
                 eliminarResena(request, response);
+            } else if ("editar".equals(accion)) {
+                editarResena(request, response);
             }
         } catch (Exception e) {
             request.setAttribute("error", "Error: " + e.getMessage());
@@ -93,6 +95,18 @@ public class ResenaServlet extends HttpServlet {
         resenaBO.eliminar(id);
 
         response.sendRedirect(request.getContextPath() + "/admin/resenas?success=deleted");
+    }
+
+    private void editarResena(HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+
+        int id = Integer.parseInt(request.getParameter("id"));
+        int calificacion = Integer.parseInt(request.getParameter("calificacion"));
+        String comentario = request.getParameter("comentario");
+
+        resenaBO.actualizar(id, calificacion, comentario);
+
+        response.sendRedirect(request.getContextPath() + "/admin/resenas?success=edited");
     }
 
     @Override

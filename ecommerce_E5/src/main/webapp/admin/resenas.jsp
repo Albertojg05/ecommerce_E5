@@ -7,6 +7,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fmt" uri="jakarta.tags.fmt" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -14,6 +15,62 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Moderación de Reseñas - Admin</title>
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/admin.css">
+    <style>
+        .resena-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .btn-edit {
+            background-color: #222;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-edit:hover {
+            background-color: #444;
+        }
+        .star-rating {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+            gap: 4px;
+        }
+        .star-rating input {
+            display: none;
+        }
+        .star-rating label {
+            font-size: 28px;
+            color: #ddd;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .star-rating input:checked ~ label,
+        .star-rating label:hover,
+        .star-rating label:hover ~ label {
+            color: #222;
+        }
+        .form-group {
+            margin-bottom: 16px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: vertical;
+            font-family: inherit;
+        }
+        #modal-editar .modal-content {
+            max-width: 450px;
+        }
+    </style>
 </head>
 <body>
     <header class="header-productos">
@@ -39,6 +96,9 @@
         <c:if test="${param.success == 'deleted'}">
             <div class="success-message">Reseña eliminada exitosamente</div>
         </c:if>
+        <c:if test="${param.success == 'edited'}">
+            <div class="success-message">Reseña actualizada exitosamente</div>
+        </c:if>
 
         <c:choose>
             <c:when test="${empty resenas}">
@@ -54,8 +114,12 @@
                                     <fmt:formatDate value="${resena.fecha}" pattern="dd/MM/yyyy"/>
                                 </div>
                             </div>
-                            <div>
-                                <button onclick="confirmarEliminar(${resena.id})" 
+                            <div class="resena-actions">
+                                <button class="btn btn-edit btn-editar-resena"
+                                        data-id="${resena.id}"
+                                        data-calificacion="${resena.calificacion}"
+                                        data-comentario="${fn:escapeXml(resena.comentario)}">Editar</button>
+                                <button onclick="confirmarEliminar(${resena.id})"
                                         class="btn btn-delete">Eliminar</button>
                             </div>
                         </div>
@@ -100,6 +164,39 @@
         </div>
     </div>
 
+    <!-- Modal de edición de reseña -->
+    <div id="modal-editar" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <h3>Editar Reseña</h3>
+            <form id="form-editar" method="post" action="${pageContext.request.contextPath}/admin/resenas">
+                <input type="hidden" name="accion" value="editar">
+                <input type="hidden" name="id" id="editar-id">
+
+                <div class="form-group">
+                    <label>Calificación:</label>
+                    <div class="star-rating">
+                        <input type="radio" name="calificacion" value="5" id="star5"><label for="star5">★</label>
+                        <input type="radio" name="calificacion" value="4" id="star4"><label for="star4">★</label>
+                        <input type="radio" name="calificacion" value="3" id="star3"><label for="star3">★</label>
+                        <input type="radio" name="calificacion" value="2" id="star2"><label for="star2">★</label>
+                        <input type="radio" name="calificacion" value="1" id="star1"><label for="star1">★</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="editar-comentario">Comentario:</label>
+                    <textarea name="comentario" id="editar-comentario" rows="4"
+                              placeholder="Mínimo 10 caracteres si se proporciona"></textarea>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-modal btn-cancelar" onclick="cerrarModalEditar()">Cancelar</button>
+                    <button type="submit" class="btn-modal btn-confirmar">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         var resenaIdEliminar = null;
 
@@ -136,10 +233,42 @@
             form.submit();
         }
 
+        // Funciones para modal de edición
+        function cerrarModalEditar() {
+            document.getElementById('modal-editar').style.display = 'none';
+            document.getElementById('form-editar').reset();
+        }
+
+        // Event listeners para botones de editar
+        document.querySelectorAll('.btn-editar-resena').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var id = this.getAttribute('data-id');
+                var calificacion = this.getAttribute('data-calificacion');
+                var comentario = this.getAttribute('data-comentario') || '';
+
+                document.getElementById('editar-id').value = id;
+                document.getElementById('editar-comentario').value = comentario;
+
+                // Seleccionar la calificación actual
+                var radioBtn = document.getElementById('star' + calificacion);
+                if (radioBtn) {
+                    radioBtn.checked = true;
+                }
+
+                document.getElementById('modal-editar').style.display = 'flex';
+            });
+        });
+
         // Cerrar modal al hacer clic fuera
         document.getElementById('modal-eliminar').addEventListener('click', function(e) {
             if (e.target === this) {
                 cerrarModal();
+            }
+        });
+
+        document.getElementById('modal-editar').addEventListener('click', function(e) {
+            if (e.target === this) {
+                cerrarModalEditar();
             }
         });
 
