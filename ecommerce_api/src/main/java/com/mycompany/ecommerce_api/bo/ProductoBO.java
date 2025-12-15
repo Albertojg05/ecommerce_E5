@@ -1,3 +1,7 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.mycompany.ecommerce_api.bo;
 
 import com.mycompany.ecommerce_api.dao.ProductoDAO;
@@ -31,28 +35,12 @@ public class ProductoBO {
         return productoDAO.obtenerTodos();
     }
 
-    /**
-     * Obtiene todos los productos con sus tallas cargadas (para admin).
-     */
-    public List<Producto> obtenerTodosConTallas() {
-        return productoDAO.obtenerTodosConTallas();
-    }
-
     public List<Producto> obtenerPaginados(int pagina, int tamano) {
         return productoDAO.obtenerPaginados(pagina, tamano);
     }
 
     public long contarProductos() {
         return productoDAO.contarProductos();
-    }
-
-    /**
-     * Cuenta los productos con stock total menor al umbral especificado.
-     * @param umbral Cantidad mínima de stock
-     * @return Número de productos con stock bajo
-     */
-    public long contarProductosStockBajo(int umbral) {
-        return productoDAO.contarProductosStockBajo(umbral);
     }
 
     public Producto obtenerPorId(int id) throws BusinessException {
@@ -109,22 +97,20 @@ public class ProductoBO {
     }
 
     /**
-     * Verifica si hay suficiente stock total para la cantidad solicitada.
-     * NOTA: Para validación específica por talla, usar ProductoTallaBO.
+     * Verifica si hay suficiente stock para la cantidad solicitada.
      *
      * @param productoId ID del producto
      * @param cantidad   Cantidad solicitada
-     * @return true si hay stock suficiente en total
+     * @return true si hay stock suficiente
      * @throws BusinessException si el producto no existe
      */
     public boolean verificarStock(int productoId, int cantidad) throws BusinessException {
         Producto producto = obtenerPorId(productoId);
-        return producto.getStockTotal() >= cantidad;
+        return producto.getExistencias() >= cantidad;
     }
 
     /**
-     * Valida el stock total y lanza excepción detallada si es insuficiente.
-     * NOTA: Para validación específica por talla, usar ProductoTallaBO.
+     * Valida el stock y lanza excepción detallada si es insuficiente.
      *
      * @param productoId ID del producto
      * @param cantidad   Cantidad solicitada
@@ -133,14 +119,47 @@ public class ProductoBO {
      */
     public void validarStock(int productoId, int cantidad) throws BusinessException {
         Producto producto = obtenerPorId(productoId);
-        if (producto.getStockTotal() < cantidad) {
+        if (producto.getExistencias() < cantidad) {
             throw new StockInsuficienteException(
                     producto.getId(),
                     producto.getNombre(),
-                    producto.getStockTotal(),
+                    producto.getExistencias(),
                     cantidad
             );
         }
+    }
+
+    public void reducirExistencias(int productoId, int cantidad) throws BusinessException {
+        if (cantidad <= 0) {
+            throw new ValidacionException("cantidad", "La cantidad debe ser mayor a 0");
+        }
+
+        Producto producto = obtenerPorId(productoId);
+
+        if (producto.getExistencias() < cantidad) {
+            throw new StockInsuficienteException(
+                    producto.getId(),
+                    producto.getNombre(),
+                    producto.getExistencias(),
+                    cantidad
+            );
+        }
+
+        int nuevasExistencias = producto.getExistencias() - cantidad;
+        producto.setExistencias(nuevasExistencias);
+        productoDAO.actualizar(producto);
+    }
+
+    public void aumentarExistencias(int productoId, int cantidad) throws BusinessException {
+        if (cantidad <= 0) {
+            throw new ValidacionException("cantidad", "La cantidad debe ser mayor a 0");
+        }
+
+        Producto producto = obtenerPorId(productoId);
+
+        int nuevasExistencias = producto.getExistencias() + cantidad;
+        producto.setExistencias(nuevasExistencias);
+        productoDAO.actualizar(producto);
     }
 
     private void validarProducto(Producto producto) throws ValidacionException {
@@ -158,6 +177,10 @@ public class ProductoBO {
 
         if (!ValidationUtil.isPositive(producto.getPrecio())) {
             throw new ValidacionException("precio", "El precio debe ser mayor a 0");
+        }
+
+        if (!ValidationUtil.isNonNegative(producto.getExistencias())) {
+            throw new ValidacionException("existencias", "Las existencias no pueden ser negativas");
         }
 
         if (producto.getCategoria() == null || producto.getCategoria().getId() <= 0) {

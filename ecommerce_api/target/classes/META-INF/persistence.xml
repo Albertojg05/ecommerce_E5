@@ -9,15 +9,14 @@
         
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         
-        <class>com.mycompany.ecommerce_api.dominio.Usuario</class>
-        <class>com.mycompany.ecommerce_api.dominio.Producto</class>
-        <class>com.mycompany.ecommerce_api.dominio.Categoria</class>
-        <class>com.mycompany.ecommerce_api.dominio.Pedido</class>
-        <class>com.mycompany.ecommerce_api.dominio.DetallePedido</class>
-        <class>com.mycompany.ecommerce_api.dominio.Pago</class>
-        <class>com.mycompany.ecommerce_api.dominio.Direccion</class>
-        <class>com.mycompany.ecommerce_api.dominio.Resena</class>
-        <class>com.mycompany.ecommerce_api.dominio.ProductoTalla</class>
+        <class>com.mycompany.ecommerce_e5.dominio.Usuario</class>
+        <class>com.mycompany.ecommerce_e5.dominio.Producto</class>
+        <class>com.mycompany.ecommerce_e5.dominio.Categoria</class>
+        <class>com.mycompany.ecommerce_e5.dominio.Pedido</class>
+        <class>com.mycompany.ecommerce_e5.dominio.DetallePedido</class>
+        <class>com.mycompany.ecommerce_e5.dominio.Pago</class>
+        <class>com.mycompany.ecommerce_e5.dominio.Direccion</class>
+        <class>com.mycompany.ecommerce_e5.dominio.Resena</class>
         
         <properties>
             <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/ecommerce_db?useSSL=false&amp;serverTimezone=UTC&amp;allowPublicKeyRetrieval=true"/>

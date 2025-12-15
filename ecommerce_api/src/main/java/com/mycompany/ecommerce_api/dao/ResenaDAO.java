@@ -112,7 +112,7 @@ public class ResenaDAO {
         if (id <= 0) {
             throw new IllegalArgumentException("ID inválido");
         }
-
+        
         EntityManager em = JPAUtil.getEntityManager();
         try {
             em.getTransaction().begin();
@@ -126,27 +126,6 @@ public class ResenaDAO {
                 em.getTransaction().rollback();
             }
             throw new RuntimeException("Error al eliminar reseña: " + e.getMessage(), e);
-        } finally {
-            em.close();
-        }
-    }
-
-    public Resena actualizar(Resena resena) {
-        if (resena == null || resena.getId() <= 0) {
-            throw new IllegalArgumentException("Reseña inválida para actualizar");
-        }
-
-        EntityManager em = JPAUtil.getEntityManager();
-        try {
-            em.getTransaction().begin();
-            Resena resenaActualizada = em.merge(resena);
-            em.getTransaction().commit();
-            return resenaActualizada;
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            throw new RuntimeException("Error al actualizar reseña: " + e.getMessage(), e);
         } finally {
             em.close();
         }

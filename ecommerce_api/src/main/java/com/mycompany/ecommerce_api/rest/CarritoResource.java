@@ -117,9 +117,9 @@ public class CarritoResource {
             int cantidadTotal = cantidadExistente + cantidad;
 
             // Validar stock
-            if (producto.getStockTotal() < cantidadTotal) {
+            if (producto.getExistencias() < cantidadTotal) {
                 return Response.status(Response.Status.BAD_REQUEST)
-                        .entity(ApiResponse.error("Stock insuficiente. Disponible: " + producto.getStockTotal()))
+                        .entity(ApiResponse.error("Stock insuficiente. Disponible: " + producto.getExistencias()))
                         .build();
             }
 
@@ -195,9 +195,9 @@ public class CarritoResource {
             }
 
             Producto producto = productoBO.obtenerPorId(productoId);
-            if (producto.getStockTotal() < cantidad) {
+            if (producto.getExistencias() < cantidad) {
                 return Response.status(Response.Status.BAD_REQUEST)
-                        .entity(ApiResponse.error("Stock insuficiente. Disponible: " + producto.getStockTotal()))
+                        .entity(ApiResponse.error("Stock insuficiente. Disponible: " + producto.getExistencias()))
                         .build();
             }
 

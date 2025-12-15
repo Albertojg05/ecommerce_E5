@@ -1,3 +1,7 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package com.mycompany.ecommerce_api.dominio;
 
 import jakarta.persistence.*;
@@ -6,12 +10,12 @@ import java.util.List;
 
 /**
  * Entidad que representa un producto de la tienda de ropa.
- * Contiene informacion como nombre, descripcion, precio, color y tallas con stock.
+ * Contiene informacion como nombre, descripcion, precio, talla, color y existencias.
  * Cada producto pertenece a una categoria y puede tener varias resenas de clientes.
  *
- * @author Alberto Jimenez Garcia 252595
+ * @author Alberto Jiménez García 252595
  * @author Rene Ezequiel Figueroa Lopez 228691
- * @author Freddy Ali Castro Roman 252191
+ * @author Freddy Alí Castro Román 252191
  */
 @Entity
 @Table(name = "producto")
@@ -35,11 +39,14 @@ public class Producto implements Serializable {
     @Column(name = "imagen_url", length = 255)
     private String imagenUrl;
 
+    @Column(nullable = false)
+    private int existencias;
+
+    @Column(length = 50)
+    private String talla;
+
     @Column(length = 50)
     private String color;
-
-    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProductoTalla> tallas;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "categoria_id", nullable = false)
@@ -52,15 +59,18 @@ public class Producto implements Serializable {
     }
 
     public Producto(String nombre, String descripcion, double precio, String imagenUrl,
-            String color, Categoria categoria) {
+            int existencias, String talla, String color, Categoria categoria) {
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.precio = precio;
         this.imagenUrl = imagenUrl;
+        this.existencias = existencias;
+        this.talla = talla;
         this.color = color;
         this.categoria = categoria;
     }
 
+    // Getters y Setters
     public int getId() {
         return id;
     }
@@ -101,31 +111,28 @@ public class Producto implements Serializable {
         this.imagenUrl = imagenUrl;
     }
 
+    public int getExistencias() {
+        return existencias;
+    }
+
+    public void setExistencias(int existencias) {
+        this.existencias = existencias;
+    }
+
+    public String getTalla() {
+        return talla;
+    }
+
+    public void setTalla(String talla) {
+        this.talla = talla;
+    }
+
     public String getColor() {
         return color;
     }
 
     public void setColor(String color) {
         this.color = color;
-    }
-
-    public List<ProductoTalla> getTallas() {
-        return tallas;
-    }
-
-    public void setTallas(List<ProductoTalla> tallas) {
-        this.tallas = tallas;
-    }
-
-    /**
-     * Calcula el stock total sumando el stock de todas las tallas disponibles.
-     * @return Stock total del producto
-     */
-    public int getStockTotal() {
-        if (tallas == null || tallas.isEmpty()) {
-            return 0;
-        }
-        return tallas.stream().mapToInt(ProductoTalla::getStock).sum();
     }
 
     public Categoria getCategoria() {

@@ -173,7 +173,7 @@ public class PedidoDAO {
         if (id <= 0) {
             throw new IllegalArgumentException("ID inválido");
         }
-
+        
         EntityManager em = JPAUtil.getEntityManager();
         try {
             em.getTransaction().begin();
@@ -187,31 +187,6 @@ public class PedidoDAO {
                 em.getTransaction().rollback();
             }
             throw new RuntimeException("Error al eliminar pedido: " + e.getMessage(), e);
-        } finally {
-            em.close();
-        }
-    }
-
-    /**
-     * Verifica si un usuario ha comprado un producto (pedido ENTREGADO).
-     * Usado para validar que solo pueda dejar reseña quien compró el producto.
-     */
-    public boolean usuarioComproProducto(int usuarioId, int productoId) {
-        if (usuarioId <= 0 || productoId <= 0) {
-            return false;
-        }
-
-        EntityManager em = JPAUtil.getEntityManager();
-        try {
-            TypedQuery<Long> query = em.createQuery(
-                    "SELECT COUNT(dp) FROM DetallePedido dp " +
-                    "WHERE dp.pedido.usuario.id = :usuarioId " +
-                    "AND dp.producto.id = :productoId " +
-                    "AND dp.pedido.estado = :estado", Long.class);
-            query.setParameter("usuarioId", usuarioId);
-            query.setParameter("productoId", productoId);
-            query.setParameter("estado", EstadoPedido.ENTREGADO);
-            return query.getSingleResult() > 0;
         } finally {
             em.close();
         }

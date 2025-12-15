@@ -26,26 +26,7 @@ public class ProductoDAO {
         EntityManager em = JPAUtil.getEntityManager();
         try {
             TypedQuery<Producto> query = em.createQuery(
-                    "SELECT p FROM Producto p LEFT JOIN FETCH p.categoria ORDER BY p.id DESC",
-                    Producto.class);
-            return query.getResultList();
-        } finally {
-            em.close();
-        }
-    }
-
-    /**
-     * Obtiene todos los productos con sus tallas cargadas (para admin).
-     * Usa JOIN FETCH para evitar LazyInitializationException.
-     */
-    public List<Producto> obtenerTodosConTallas() {
-        EntityManager em = JPAUtil.getEntityManager();
-        try {
-            TypedQuery<Producto> query = em.createQuery(
-                    "SELECT DISTINCT p FROM Producto p " +
-                    "LEFT JOIN FETCH p.categoria " +
-                    "LEFT JOIN FETCH p.tallas " +
-                    "ORDER BY p.id DESC",
+                    "SELECT p FROM Producto p LEFT JOIN FETCH p.categoria ORDER BY p.id DESC", 
                     Producto.class);
             return query.getResultList();
         } finally {
@@ -79,26 +60,6 @@ public class ProductoDAO {
         try {
             TypedQuery<Long> query = em.createQuery(
                     "SELECT COUNT(p) FROM Producto p", Long.class);
-            return query.getSingleResult();
-        } finally {
-            em.close();
-        }
-    }
-
-    /**
-     * Cuenta los productos con stock total menor al umbral especificado.
-     * Usa una subconsulta para calcular el stock total de cada producto.
-     * @param umbral Cantidad mínima de stock
-     * @return Número de productos con stock bajo
-     */
-    public long contarProductosStockBajo(int umbral) {
-        EntityManager em = JPAUtil.getEntityManager();
-        try {
-            TypedQuery<Long> query = em.createQuery(
-                    "SELECT COUNT(p) FROM Producto p WHERE " +
-                    "(SELECT COALESCE(SUM(t.stock), 0) FROM ProductoTalla t WHERE t.producto = p) < :umbral",
-                    Long.class);
-            query.setParameter("umbral", umbral);
             return query.getSingleResult();
         } finally {
             em.close();
@@ -208,7 +169,7 @@ public class ProductoDAO {
         if (id <= 0) {
             throw new IllegalArgumentException("ID inválido");
         }
-
+        
         EntityManager em = JPAUtil.getEntityManager();
         try {
             em.getTransaction().begin();
@@ -222,6 +183,34 @@ public class ProductoDAO {
                 em.getTransaction().rollback();
             }
             throw new RuntimeException("Error al eliminar producto: " + e.getMessage(), e);
+        } finally {
+            em.close();
+        }
+    }
+
+    public void actualizarExistencias(int productoId, int cantidad) {
+        if (productoId <= 0) {
+            throw new IllegalArgumentException("ID de producto inválido");
+        }
+        
+        EntityManager em = JPAUtil.getEntityManager();
+        try {
+            em.getTransaction().begin();
+            Producto producto = em.find(Producto.class, productoId);
+            if (producto != null) {
+                int nuevasExistencias = producto.getExistencias() + cantidad;
+                if (nuevasExistencias < 0) {
+                    throw new IllegalStateException("Las existencias no pueden ser negativas");
+                }
+                producto.setExistencias(nuevasExistencias);
+                em.merge(producto);
+            }
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw new RuntimeException("Error al actualizar existencias: " + e.getMessage(), e);
         } finally {
             em.close();
         }
