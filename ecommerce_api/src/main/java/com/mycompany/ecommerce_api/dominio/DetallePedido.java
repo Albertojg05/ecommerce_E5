@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.mycompany.ecommerce_api.dominio;
 
 import jakarta.persistence.*;
@@ -12,9 +8,9 @@ import java.io.Serializable;
  * Guarda la informacion de cada producto comprado: cantidad y precio unitario
  * al momento de la compra. Esto es importante porque el precio puede cambiar despues.
  *
- * @author Alberto Jiménez García 252595
+ * @author Alberto Jimenez Garcia 252595
  * @author Rene Ezequiel Figueroa Lopez 228691
- * @author Freddy Alí Castro Román 252191
+ * @author Freddy Ali Castro Roman 252191
  */
 @Entity
 @Table(name = "detalle_pedido")
@@ -37,6 +33,10 @@ public class DetallePedido implements Serializable {
     private Producto producto;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "producto_talla_id")
+    private ProductoTalla productoTalla;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pedido_id", nullable = false)
     private Pedido pedido;
 
@@ -50,7 +50,14 @@ public class DetallePedido implements Serializable {
         this.pedido = pedido;
     }
 
-    // Getters y Setters
+    public DetallePedido(int cantidad, double precioUnitario, Producto producto, ProductoTalla productoTalla, Pedido pedido) {
+        this.cantidad = cantidad;
+        this.precioUnitario = precioUnitario;
+        this.producto = producto;
+        this.productoTalla = productoTalla;
+        this.pedido = pedido;
+    }
+
     public int getId() {
         return id;
     }
@@ -81,6 +88,14 @@ public class DetallePedido implements Serializable {
 
     public void setProducto(Producto producto) {
         this.producto = producto;
+    }
+
+    public ProductoTalla getProductoTalla() {
+        return productoTalla;
+    }
+
+    public void setProductoTalla(ProductoTalla productoTalla) {
+        this.productoTalla = productoTalla;
     }
 
     public Pedido getPedido() {

@@ -1,6 +1,9 @@
 package com.mycompany.ecommerce_api.rest.dto;
 
 import com.mycompany.ecommerce_api.dominio.Producto;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * DTO para datos de producto.
@@ -11,13 +14,15 @@ public class ProductoDTO {
     private String descripcion;
     private double precio;
     private String imagenUrl;
-    private int existencias;
-    private String talla;
+    private int stockTotal;
+    private List<ProductoTallaDTO> tallas;
     private String color;
     private int categoriaId;
     private String categoriaNombre;
 
-    public ProductoDTO() {}
+    public ProductoDTO() {
+        this.tallas = new ArrayList<>();
+    }
 
     public ProductoDTO(Producto producto) {
         this.id = producto.getId();
@@ -25,9 +30,17 @@ public class ProductoDTO {
         this.descripcion = producto.getDescripcion();
         this.precio = producto.getPrecio();
         this.imagenUrl = producto.getImagenUrl();
-        this.existencias = producto.getExistencias();
-        this.talla = producto.getTalla();
+        this.stockTotal = producto.getStockTotal();
         this.color = producto.getColor();
+
+        if (producto.getTallas() != null) {
+            this.tallas = producto.getTallas().stream()
+                    .map(ProductoTallaDTO::new)
+                    .collect(Collectors.toList());
+        } else {
+            this.tallas = new ArrayList<>();
+        }
+
         if (producto.getCategoria() != null) {
             this.categoriaId = producto.getCategoria().getId();
             this.categoriaNombre = producto.getCategoria().getNombre();
@@ -74,20 +87,20 @@ public class ProductoDTO {
         this.imagenUrl = imagenUrl;
     }
 
-    public int getExistencias() {
-        return existencias;
+    public int getStockTotal() {
+        return stockTotal;
     }
 
-    public void setExistencias(int existencias) {
-        this.existencias = existencias;
+    public void setStockTotal(int stockTotal) {
+        this.stockTotal = stockTotal;
     }
 
-    public String getTalla() {
-        return talla;
+    public List<ProductoTallaDTO> getTallas() {
+        return tallas;
     }
 
-    public void setTalla(String talla) {
-        this.talla = talla;
+    public void setTallas(List<ProductoTallaDTO> tallas) {
+        this.tallas = tallas;
     }
 
     public String getColor() {

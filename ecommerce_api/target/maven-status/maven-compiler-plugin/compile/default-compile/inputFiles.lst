@@ -1,59 +1,69 @@
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\dominio\Direccion.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\bo\CategoriaBO.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\excepciones\ValidacionException.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\rest\dto\ProductoDTO.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\rest\dto\CategoriaDTO.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\rest\dto\ApiResponse.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\filters\AdminAuthFilter.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\dao\ProductoDAO.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\dominio\Pedido.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\JakartaRestConfiguration.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\util\ConfiguracionTienda.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\dao\DireccionDAO.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\dao\ResenaDAO.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\rest\dto\ResenaRequest.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\bo\UsuarioBO.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\dao\UsuarioDAO.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\rest\ProductoResource.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\dominio\Pago.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\filters\CorsFilter.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\dominio\Usuario.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\util\JwtUtil.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\util\Messages.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\bo\PedidoBO.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\bo\ProductoBO.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\excepciones\BusinessException.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\rest\dto\PedidoDTO.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\dominio\enums\EstadoPago.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\excepciones\OperacionNoPermitidaException.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\resources\JakartaEE10Resource.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\excepciones\RecursoNoEncontradoException.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\dao\PedidoDAO.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\rest\dto\DireccionDTO.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\dominio\enums\MetodoPago.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\dominio\Resena.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\dominio\Categoria.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\rest\PerfilResource.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\util\SessionAttributes.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\dao\CategoriaDAO.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\rest\dto\CarritoItemDTO.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\rest\dto\ResenaDTO.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\rest\AuthResource.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\rest\dto\UsuarioDTO.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\rest\CategoriaResource.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\filters\ClienteAuthFilter.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\dominio\enums\RolUsuario.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\rest\CarritoResource.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\util\ValidationUtil.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\dominio\DetallePedido.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\util\JPAUtil.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\excepciones\AutenticacionException.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\dominio\Producto.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\rest\dto\DetallePedidoDTO.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\dominio\enums\EstadoPedido.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\rest\dto\LoginRequest.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\bo\ResenaBO.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\rest\dto\CheckoutRequest.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\rest\PedidoResource.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\rest\dto\PerfilUpdateRequest.java
-C:\Users\Alberto Jimenez\OneDrive\Escritorio\git\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\excepciones\StockInsuficienteException.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\rest\dto\RegistroRequest.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\util\JwtUtil.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\JakartaRestConfiguration.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\rest\dto\DireccionDTO.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\dominio\Pedido.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\filters\ClienteAuthFilter.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\rest\dto\AuthResponse.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\bo\CategoriaBO.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\dominio\Usuario.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\dao\ProductoDAO.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\dominio\Direccion.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\bo\PedidoBO.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\dominio\Resena.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\dominio\ProductoTalla.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\rest\dto\PerfilUpdateRequest.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\rest\dto\ResenaDTO.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\filters\AdminAuthFilter.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\filters\CorsFilter.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\util\Messages.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\dao\PedidoDAO.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\excepciones\StockInsuficienteException.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\dao\UsuarioDAO.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\rest\AuthResource.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\excepciones\OperacionNoPermitidaException.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\dominio\Producto.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\util\ValidationUtil.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\dao\ProductoTallaDAO.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\rest\CategoriaResource.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\security\AdminAuthFilter.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\dominio\enums\RolUsuario.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\util\ConfiguracionTienda.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\dao\CategoriaDAO.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\rest\ProductoResource.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\rest\dto\ApiResponse.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\rest\PerfilResource.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\security\AdminOnly.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\dominio\Categoria.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\rest\dto\CategoriaDTO.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\rest\dto\UsuarioDTO.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\dominio\enums\MetodoPago.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\rest\PedidoResource.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\rest\dto\DetallePedidoDTO.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\excepciones\AutenticacionException.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\bo\ProductoTallaBO.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\dominio\enums\EstadoPago.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\rest\dto\ResenaRequest.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\bo\UsuarioBO.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\dominio\Pago.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\excepciones\RecursoNoEncontradoException.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\rest\dto\CarritoItemDTO.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\rest\dto\ProductoDTO.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\util\JPAUtil.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\rest\dto\PedidoDTO.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\dao\ResenaDAO.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\security\JwtAuthFilter.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\rest\dto\CheckoutRequest.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\rest\dto\ProductoTallaDTO.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\resources\JakartaEE10Resource.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\bo\ProductoBO.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\bo\ResenaBO.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\excepciones\ValidacionException.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\rest\dto\LoginRequest.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\rest\CarritoResource.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\util\SessionAttributes.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\dominio\enums\EstadoPedido.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\security\Secured.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\excepciones\BusinessException.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\dao\DireccionDAO.java
+C:\Users\I-Fre\Documents\GitHub\ecommerce_E5\ecommerce_api\src\main\java\com\mycompany\ecommerce_api\dominio\DetallePedido.java
