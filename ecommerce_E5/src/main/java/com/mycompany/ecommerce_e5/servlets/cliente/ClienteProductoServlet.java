@@ -158,11 +158,18 @@ public class ClienteProductoServlet extends HttpServlet {
 
             List<Resena> resenas = resenaBO.obtenerPorProducto(id);
             double promedio = resenaBO.calcularPromedioProducto(id);
+
+            // Verificar si el usuario puede escribir reseña (ha comprado el producto)
+            HttpSession session = request.getSession(false);
+            Usuario usuario = (session != null) ? (Usuario) session.getAttribute("usuarioLogueado") : null;
+            boolean puedeResenar = (usuario != null) && resenaBO.puedeEscribirResena(usuario.getId(), id);
+
             request.setAttribute("producto", producto);
             request.setAttribute("tallasProducto", tallas);
             request.setAttribute("resenas", resenas);
             request.setAttribute("promedioCalificacion", promedio);
             request.setAttribute("totalResenas", resenas.size());
+            request.setAttribute("puedeResenar", puedeResenar);
             request.getRequestDispatcher("/cliente/detalle-producto.jsp").forward(request, response);
         } catch (Exception e) {
             request.setAttribute("error", "Error al cargar el producto: " + e.getMessage());

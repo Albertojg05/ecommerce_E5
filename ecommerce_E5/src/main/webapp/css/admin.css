@@ -187,6 +187,98 @@
     border: 1px solid var(--color-border-card);
 }
 
+/* PREVIEW DE IMAGEN */
+.imagen-preview-container {
+    background: var(--background-light);
+    border: 2px dashed var(--color-border-light);
+    border-radius: var(--radius-md);
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--spacing-md);
+    overflow: hidden;
+    position: relative;
+}
+
+.imagen-preview {
+    max-width: 100%;
+    max-height: 300px;
+    object-fit: contain;
+    border-radius: var(--radius-sm);
+}
+
+.imagen-preview-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-light);
+    text-align: center;
+    padding: var(--spacing-lg);
+}
+
+.imagen-preview-placeholder span {
+    font-size: var(--font-size-base);
+    margin-bottom: var(--spacing-xs);
+}
+
+.imagen-preview-placeholder small {
+    font-size: var(--font-size-sm);
+    opacity: 0.7;
+}
+
+.imagen-preview-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-sm);
+    color: var(--color-text-light);
+}
+
+.loading-spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--color-border-light);
+    border-top-color: var(--color-btn-primary);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.imagen-preview-error {
+    background: var(--color-error-bg);
+    color: var(--color-error-text);
+    border: 1px solid var(--color-error-border);
+    padding: var(--spacing-md);
+    border-radius: var(--radius-sm);
+    text-align: center;
+    font-size: var(--font-size-sm);
+    margin: var(--spacing-md);
+}
+
+/* Estados de validacion del input */
+.product-edit-form input.input-valid {
+    border-color: var(--color-success-border);
+    background-color: var(--color-success-bg);
+}
+
+.product-edit-form input.input-invalid {
+    border-color: var(--color-error-border);
+    background-color: var(--color-error-bg);
+}
+
+/* Hint del formulario */
+.form-hint {
+    display: block;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-light);
+    margin-top: var(--spacing-xs);
+}
+
 /*FILTROS*/
 .filter-section {
     background: var(--background-light);

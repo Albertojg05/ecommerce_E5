@@ -49,7 +49,7 @@
 
             <div class="product-detail-container">
                 <div class="product-main-image">
-                    <img src="${pageContext.request.contextPath}/${not empty producto.imagenUrl ? producto.imagenUrl : 'imgs/default.png'}" alt="${producto.nombre}">
+                    <img src="${(not empty producto.imagenUrl and producto.imagenUrl.startsWith('http')) ? producto.imagenUrl : pageContext.request.contextPath.concat('/').concat(not empty producto.imagenUrl ? producto.imagenUrl : 'imgs/default.png')}" alt="${producto.nombre}">
                 </div>
                 <section class="product-info">
                     <h1 class="product-title">${producto.nombre}</h1>
@@ -132,46 +132,53 @@
             <section class="reviews-section">
                 <h2>Reseñas de Clientes</h2>
 
-                <!-- Formulario para agregar reseña (solo usuarios logueados) -->
-                <c:if test="${not empty sessionScope.usuarioLogueado}">
-                    <div class="add-review-form">
-                        <h3>Escribe tu reseña</h3>
-                        <form id="form-resena" action="${pageContext.request.contextPath}/cliente/productos" method="post">
-                            <input type="hidden" name="accion" value="agregarResena">
-                            <input type="hidden" name="productoId" value="${producto.id}">
+                <!-- Formulario para agregar reseña (solo usuarios que compraron el producto) -->
+                <c:choose>
+                    <c:when test="${empty sessionScope.usuarioLogueado}">
+                        <div class="login-to-review">
+                            <p><a href="${pageContext.request.contextPath}/login?redirect=cliente/productos?accion=detalle%26id=${producto.id}">Inicia sesión</a> para escribir una reseña.</p>
+                        </div>
+                    </c:when>
+                    <c:when test="${puedeResenar}">
+                        <div class="add-review-form">
+                            <h3>Escribe tu reseña</h3>
+                            <form id="form-resena" action="${pageContext.request.contextPath}/cliente/productos" method="post">
+                                <input type="hidden" name="accion" value="agregarResena">
+                                <input type="hidden" name="productoId" value="${producto.id}">
 
-                            <div class="form-group">
-                                <label>Calificacion:</label>
-                                <div class="star-rating">
-                                    <input type="radio" id="star5" name="calificacion" value="5" required>
-                                    <label for="star5">★</label>
-                                    <input type="radio" id="star4" name="calificacion" value="4">
-                                    <label for="star4">★</label>
-                                    <input type="radio" id="star3" name="calificacion" value="3">
-                                    <label for="star3">★</label>
-                                    <input type="radio" id="star2" name="calificacion" value="2">
-                                    <label for="star2">★</label>
-                                    <input type="radio" id="star1" name="calificacion" value="1">
-                                    <label for="star1">★</label>
+                                <div class="form-group">
+                                    <label>Calificacion:</label>
+                                    <div class="star-rating">
+                                        <input type="radio" id="star5" name="calificacion" value="5" required>
+                                        <label for="star5">★</label>
+                                        <input type="radio" id="star4" name="calificacion" value="4">
+                                        <label for="star4">★</label>
+                                        <input type="radio" id="star3" name="calificacion" value="3">
+                                        <label for="star3">★</label>
+                                        <input type="radio" id="star2" name="calificacion" value="2">
+                                        <label for="star2">★</label>
+                                        <input type="radio" id="star1" name="calificacion" value="1">
+                                        <label for="star1">★</label>
+                                    </div>
                                 </div>
-                            </div>
 
-                            <div class="form-group">
-                                <label for="comentario">Comentario:</label>
-                                <textarea id="comentario" name="comentario" rows="4"
-                                          placeholder="Escribe tu opinión sobre este producto..."
-                                          minlength="10" required></textarea>
-                            </div>
+                                <div class="form-group">
+                                    <label for="comentario">Comentario:</label>
+                                    <textarea id="comentario" name="comentario" rows="4"
+                                              placeholder="Escribe tu opinión sobre este producto..."
+                                              minlength="10" required></textarea>
+                                </div>
 
-                            <button type="submit" class="btn-submit-review" id="btn-enviar-resena">Enviar Reseña</button>
-                        </form>
-                    </div>
-                </c:if>
-                <c:if test="${empty sessionScope.usuarioLogueado}">
-                    <div class="login-to-review">
-                        <p><a href="${pageContext.request.contextPath}/login?redirect=cliente/productos?accion=detalle%26id=${producto.id}">Inicia sesión</a> para escribir una reseña.</p>
-                    </div>
-                </c:if>
+                                <button type="submit" class="btn-submit-review" id="btn-enviar-resena">Enviar Reseña</button>
+                            </form>
+                        </div>
+                    </c:when>
+                    <c:otherwise>
+                        <div class="login-to-review">
+                            <p>Debes comprar este producto para poder escribir una reseña.</p>
+                        </div>
+                    </c:otherwise>
+                </c:choose>
 
                 <!-- Lista de reseñas existentes -->
                 <div class="reviews-list">

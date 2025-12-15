@@ -62,7 +62,7 @@
                     <c:forEach var="p" items="${productos}">
                         <div class="product-card" data-id="${p.id}">
                             <a href="${pageContext.request.contextPath}/cliente/productos?accion=detalle&id=${p.id}" style="text-decoration:none; color:inherit;">
-                                <img src="${pageContext.request.contextPath}/${not empty p.imagenUrl ? p.imagenUrl : 'imgs/default.png'}"
+                                <img src="${(not empty p.imagenUrl and p.imagenUrl.startsWith('http')) ? p.imagenUrl : pageContext.request.contextPath.concat('/').concat(not empty p.imagenUrl ? p.imagenUrl : 'imgs/default.png')}"
                                      alt="${p.nombre}"
                                      onerror="this.src='${pageContext.request.contextPath}/imgs/default.png'"
                                      width="100%">

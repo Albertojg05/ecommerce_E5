@@ -4,6 +4,7 @@
  */
 package com.mycompany.ecommerce_e5.bo;
 
+import com.mycompany.ecommerce_e5.dao.PedidoDAO;
 import com.mycompany.ecommerce_e5.dao.ResenaDAO;
 import com.mycompany.ecommerce_e5.dominio.Resena;
 import com.mycompany.ecommerce_e5.util.Messages;
@@ -21,11 +22,13 @@ import java.util.List;
  * @author Freddy Alí Castro Román 252191
  */
 public class ResenaBO {
-    
+
     private final ResenaDAO resenaDAO;
-    
+    private final PedidoDAO pedidoDAO;
+
     public ResenaBO() {
         this.resenaDAO = new ResenaDAO();
+        this.pedidoDAO = new PedidoDAO();
     }
     
     public List<Resena> obtenerTodas() {
@@ -55,7 +58,26 @@ public class ResenaBO {
     
     public Resena crear(Resena resena) throws Exception {
         validarResena(resena);
+
+        // Validar que el usuario haya comprado el producto (pedido ENTREGADO)
+        int usuarioId = resena.getUsuario().getId();
+        int productoId = resena.getProducto().getId();
+        if (!pedidoDAO.usuarioComproProducto(usuarioId, productoId)) {
+            throw new Exception("Debes comprar este producto para poder escribir una reseña");
+        }
+
         return resenaDAO.guardar(resena);
+    }
+
+    /**
+     * Verifica si un usuario puede escribir una reseña para un producto.
+     * Retorna true si el usuario tiene al menos un pedido ENTREGADO con ese producto.
+     */
+    public boolean puedeEscribirResena(int usuarioId, int productoId) {
+        if (usuarioId <= 0 || productoId <= 0) {
+            return false;
+        }
+        return pedidoDAO.usuarioComproProducto(usuarioId, productoId);
     }
     
     public void eliminar(int id) throws Exception {

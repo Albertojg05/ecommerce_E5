@@ -92,7 +92,7 @@
                         <p class="cart-count">${sessionScope.carrito.size()} producto(s) en tu carrito</p>
                         <c:forEach var="item" items="${sessionScope.carrito}">
                             <div class="cart-item" data-producto-id="${item.producto.id}" data-talla-id="${item.productoTalla.id}">
-                                <img src="${pageContext.request.contextPath}/${not empty item.producto.imagenUrl ? item.producto.imagenUrl : 'imgs/default.png'}" alt="${item.producto.nombre}">
+                                <img src="${(not empty item.producto.imagenUrl and item.producto.imagenUrl.startsWith('http')) ? item.producto.imagenUrl : pageContext.request.contextPath.concat('/').concat(not empty item.producto.imagenUrl ? item.producto.imagenUrl : 'imgs/default.png')}" alt="${item.producto.nombre}">
                                 <div class="item-details">
                                     <p class="item-title">${item.producto.nombre}</p>
                                     <c:if test="${not empty item.productoTalla}">

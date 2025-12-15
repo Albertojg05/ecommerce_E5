@@ -75,7 +75,7 @@
                             <td data-label="Imagen">
                                 <c:choose>
                                     <c:when test="${not empty producto.imagenUrl}">
-                                        <img src="${pageContext.request.contextPath}/${producto.imagenUrl}"
+                                        <img src="${producto.imagenUrl.startsWith('http') ? producto.imagenUrl : pageContext.request.contextPath.concat('/').concat(producto.imagenUrl)}"
                                              alt="${producto.nombre}"
                                              style="width: 60px; height: auto;">
                                     </c:when>

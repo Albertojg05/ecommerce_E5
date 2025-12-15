@@ -70,7 +70,7 @@
                         <div class="order-items">
                             <c:forEach var="item" items="${sessionScope.carrito}">
                                 <div class="order-item">
-                                    <img src="${pageContext.request.contextPath}/${not empty item.producto.imagenUrl ? item.producto.imagenUrl : 'imgs/default.png'}" alt="${item.producto.nombre}">
+                                    <img src="${(not empty item.producto.imagenUrl and item.producto.imagenUrl.startsWith('http')) ? item.producto.imagenUrl : pageContext.request.contextPath.concat('/').concat(not empty item.producto.imagenUrl ? item.producto.imagenUrl : 'imgs/default.png')}" alt="${item.producto.nombre}">
                                     <div class="order-item-info">
                                         <span class="item-name">${item.producto.nombre}</span>
                                         <span class="item-qty">Cant: ${item.cantidad}</span>

@@ -78,7 +78,7 @@
                                         <div class="order-body">
                                             <div class="order-items-preview">
                                                 <c:forEach var="detalle" items="${ped.detalles}" end="2">
-                                                    <img src="${pageContext.request.contextPath}/${not empty detalle.producto.imagenUrl ? detalle.producto.imagenUrl : 'imgs/default.png'}"
+                                                    <img src="${(not empty detalle.producto.imagenUrl and detalle.producto.imagenUrl.startsWith('http')) ? detalle.producto.imagenUrl : pageContext.request.contextPath.concat('/').concat(not empty detalle.producto.imagenUrl ? detalle.producto.imagenUrl : 'imgs/default.png')}"
                                                          alt="${detalle.producto.nombre}" class="item-thumbnail">
                                                 </c:forEach>
                                                 <c:if test="${ped.detalles.size() > 3}">
