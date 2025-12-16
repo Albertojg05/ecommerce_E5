@@ -8,25 +8,40 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 
 /**
+ * Entidad que representa un item dentro de un pedido.
+ * Guarda la informacion de cada producto comprado: cantidad y precio unitario
+ * al momento de la compra. Esto es importante porque el precio puede cambiar despues.
  *
- * @author Alberto Jiménez García 252595 
- * Rene Ezequiel Figueroa Lopez 228691
- * Freddy Alí Castro Román 252191
+ * @author Alberto Jiménez García 252595
+ * @author Rene Ezequiel Figueroa Lopez 228691
+ * @author Freddy Alí Castro Román 252191
  */
 @Entity
+@Table(name = "detalle_pedido")
 public class DetallePedido implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private int id;
 
+    @Column(nullable = false)
     private int cantidad;
+
+    @Column(name = "precio_unitario", nullable = false)
     private double precioUnitario;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "producto_id", nullable = false)
     private Producto producto;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "producto_talla_id")
+    private ProductoTalla productoTalla;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pedido_id", nullable = false)
     private Pedido pedido;
 
     public DetallePedido() {
@@ -39,11 +54,20 @@ public class DetallePedido implements Serializable {
         this.pedido = pedido;
     }
 
-    public Long getId() {
+    public DetallePedido(int cantidad, double precioUnitario, Producto producto, ProductoTalla productoTalla, Pedido pedido) {
+        this.cantidad = cantidad;
+        this.precioUnitario = precioUnitario;
+        this.producto = producto;
+        this.productoTalla = productoTalla;
+        this.pedido = pedido;
+    }
+
+    // Getters y Setters
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -71,6 +95,14 @@ public class DetallePedido implements Serializable {
         this.producto = producto;
     }
 
+    public ProductoTalla getProductoTalla() {
+        return productoTalla;
+    }
+
+    public void setProductoTalla(ProductoTalla productoTalla) {
+        this.productoTalla = productoTalla;
+    }
+
     public Pedido getPedido() {
         return pedido;
     }
@@ -78,5 +110,4 @@ public class DetallePedido implements Serializable {
     public void setPedido(Pedido pedido) {
         this.pedido = pedido;
     }
-
 }

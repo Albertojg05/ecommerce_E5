@@ -1,10 +1,144 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>Start Page</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    </head>
-    <body>
-        <h1>Hello World!</h1>
-    </body>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MiTienda - E-commerce</title>
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+
+<body>
+
+    <header>
+        <div class="logo">
+            <a href="index.html">MiTienda</a>
+        </div>
+
+
+        <form class="search-bar">
+            <input type="text" placeholder="Lorem ipsum has">
+            <button type="submit">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                    <path
+                        d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                </svg>
+            </button>
+        </form>
+
+        <nav class="main-nav">
+            <a href="product.html">Tienda</a>
+            <a href="login.html">Cuenta</a>
+            <a href="carrito.html">Carrito</a>
+        </nav>
+    </header>
+
+    <main>
+
+        <section class="hero-section">
+        </section>
+
+        <section class="featured-categories">
+            <h2>Destacados</h2>
+            <div class="categories-container">
+
+                <div class="category-item">
+                    <img src="./imgs/vestidos.png" width="300px" height="400px" alt="Vestidos" >
+                    <span>Vestidos</span>
+                </div>
+
+                <div class="category-item">
+                    <img src="./imgs/tops.png" width="300px" height="400px" alt="Tops">
+                    <span>Tops</span>
+                </div>
+
+                <div class="category-item">
+                    <img src="./imgs/blusas.png" width="300px" height="400px" alt="Blusas">
+                    <span>Blusas</span>
+                </div>
+
+                <div class="category-item">
+                    <img src="./imgs/blazers.png" width="300px" height="400px" alt="Blazers">
+                    <span>Blazers</span>
+                </div>
+
+                <div class="category-item">
+                    <img src="./imgs/rebajas.png" width="300px" height="400px" alt="Rebajas">
+                    <span>Rebajas</span>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="product-section">
+            <h2>Categorías</h2>
+
+            <div class="filter-buttons">
+                <button type="button">Vestidos</button>
+                <button type="button" class="active">Conjuntos</button>
+                <button type="button">Novedades</button>
+                <button type="button">Tops</button>
+                <button type="button">Invierno</button>
+            </div>
+
+            <div class="product-list-wrapper">
+                <div class="product-list">
+
+                    <div class="product-item">
+                        <img src="./imgs/producto1.png" width="250px" height="350px" alt="Producto">
+                        <p class="product-title">Short vestir pinza doble</p>
+                        <p class="product-price">
+                            <span class="original-price">$999.00</span>
+                            <span class="sale-price">$649.00</span>
+                        </p>
+                    </div>
+
+                    <div class="product-item">
+                        <img src="./imgs/producto2.png" width="250px" height="350px" alt="Producto">
+                        <p class="product-title">Blazer crop rayas</p>
+                        <p class="product-price">
+                            <span class="sale-price">$999.00</span>
+                        </p>
+                    </div>
+
+                    <div class="product-item">
+                        <img src="./imgs/producto3.png" width="250px" height="350px" alt="Producto">
+                        <p class="product-title">Pantalón Zenda fit fluido</p>
+                        <p class="product-price">
+                            <span class="sale-price">$699.00</span>
+                        </p>
+                    </div>
+
+                    <div class="product-item">
+                        <img src="./imgs/producto4.png" width="250px" height="350px" alt="Producto">
+                        <p class="product-title">Blusa Zenda sin mangas</p>
+                        <p class="product-price">
+                            <span class="sale-price">$399.00</span>
+                        </p>
+                    </div>
+
+                    <div class="product-item">
+                        <img src="./imgs/producto5.png" width="250px" height="350px" alt="Producto">
+                        <p class="product-title">Top halter lino cuello fluido</p>
+                        <p class="product-price">
+                            <span class="sale-price">$389.00</span>
+                        </p>
+                    </div>
+
+                    <div class="product-item">
+                        <img src="./imgs/producto6.png" width="250px" height="350px" alt="Producto">
+                        <p class="product-title">Pantalón lino fit fluido</p>
+                        <p class="product-price">
+                            <span class="sale-price">$699.00</span>
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+</body>
+
 </html>

@@ -8,24 +8,38 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 
 /**
+ * Entidad que representa una direccion de envio de un usuario.
+ * Un usuario puede tener varias direcciones guardadas para elegir
+ * al momento de hacer un pedido. Incluye calle, ciudad, estado y codigo postal.
  *
- * @author Alberto Jiménez García 252595 
- * Rene Ezequiel Figueroa Lopez 228691
- * Freddy Alí Castro Román 252191
+ * @author Alberto Jiménez García 252595
+ * @author Rene Ezequiel Figueroa Lopez 228691
+ * @author Freddy Alí Castro Román 252191
  */
 @Entity
+@Table(name = "direccion")
 public class Direccion implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Column(nullable = false, length = 200)
     private String calle;
+
+    @Column(nullable = false, length = 100)
     private String ciudad;
+
+    @Column(nullable = false, length = 100)
     private String estado;
+
+    @Column(name = "codigo_postal", nullable = false, length = 10)
     private String codigoPostal;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 
     public Direccion() {
@@ -39,6 +53,7 @@ public class Direccion implements Serializable {
         this.usuario = usuario;
     }
 
+    // Getters y Setters
     public int getId() {
         return id;
     }
@@ -86,5 +101,4 @@ public class Direccion implements Serializable {
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
     }
-    
 }

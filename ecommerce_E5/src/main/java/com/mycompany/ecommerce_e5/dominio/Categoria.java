@@ -9,18 +9,26 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
+ * Entidad que representa una categoria de productos.
+ * Las categorias sirven para clasificar los productos de la tienda
+ * (ej: Vestidos, Blusas, Pantalones, etc.)
+ * Una categoria puede tener muchos productos asociados.
  *
- * @author Alberto Jiménez García 252595 
- * Rene Ezequiel Figueroa Lopez 228691
- * Freddy Alí Castro Román 252191
+ * @author Alberto Jiménez García 252595
+ * @author Rene Ezequiel Figueroa Lopez 228691
+ * @author Freddy Alí Castro Román 252191
  */
 @Entity
+@Table(name = "categoria")
 public class Categoria implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Column(nullable = false, unique = true, length = 50)
     private String nombre;
 
     @OneToMany(mappedBy = "categoria")
@@ -33,6 +41,7 @@ public class Categoria implements Serializable {
         this.nombre = nombre;
     }
 
+    // Getters y Setters
     public int getId() {
         return id;
     }
@@ -56,6 +65,4 @@ public class Categoria implements Serializable {
     public void setProductos(List<Producto> productos) {
         this.productos = productos;
     }
-    
-    
 }

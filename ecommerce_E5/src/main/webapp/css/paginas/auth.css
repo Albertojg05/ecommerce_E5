@@ -1,0 +1,163 @@
+/*
+ * auth.css
+ * Login y registro
+ *
+ * @author Alberto Jimenez Garcia 252595
+ * @author Rene Ezequiel Figueroa Lopez 228691
+ * @author Freddy Ali Castro Roman 252191
+ */
+
+/* Contenedor */
+.login-container,
+.register-container {
+    max-width: var(--max-width-sm);
+    margin: 0 auto;
+    padding: 100px 5%;
+    box-sizing: border-box;
+}
+
+.register-container {
+    padding: 80px 5% 120px 5%;
+}
+
+/* Titulos */
+.login-title,
+.register-title {
+    text-align: center;
+    font-size: var(--font-size-4xl);
+    font-weight: 600;
+    margin-bottom: 50px;
+    color: var(--color-title);
+}
+
+/* Formularios */
+.login-form,
+.register-form {
+    width: 100%;
+}
+
+.login-form .form-group,
+.register-form .form-group {
+    margin-bottom: var(--spacing-xl);
+}
+
+.login-form .form-group label,
+.register-form .form-group label {
+    display: block;
+    font-size: var(--font-size-2xl);
+    font-weight: 600;
+    color: var(--color-title);
+    margin-bottom: var(--spacing-sm);
+}
+
+/* Botones de submit */
+.login-btn,
+.register-btn {
+    width: 100%;
+    background-color: var(--color-btn-primary);
+    color: var(--background);
+    border: none;
+    padding: 18px;
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: var(--spacing-lg);
+    transition: opacity var(--transition-fast);
+}
+
+.login-btn:hover,
+.register-btn:hover {
+    opacity: 0.85;
+}
+
+/* Link de crear cuenta / ya tengo cuenta */
+.create-account-link {
+    display: block;
+    text-align: center;
+    margin-top: var(--spacing-xl);
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--color-title);
+    text-decoration: none;
+}
+
+.create-account-link:hover {
+    text-decoration: underline;
+}
+
+/* Links entre login y register */
+.register-link,
+.login-link {
+    text-align: center;
+    margin-top: var(--spacing-xl);
+    font-size: var(--font-size-lg);
+    color: var(--color-text);
+}
+
+.register-link a,
+.login-link a {
+    color: var(--color-title);
+    text-decoration: underline;
+    font-weight: 600;
+}
+
+.register-link a:hover,
+.login-link a:hover {
+    text-decoration: none;
+}
+
+/* RESPONSIVE - Tablet (900px) */
+@media (max-width: 900px) {
+    .login-container {
+        padding-top: 60px;
+    }
+
+    .register-container {
+        padding-top: 60px;
+        padding-bottom: 80px;
+    }
+}
+
+/* RESPONSIVE - Celular (480px) */
+@media (max-width: 480px) {
+    .login-container,
+    .register-container {
+        max-width: 100%;
+        padding: 40px 5% 60px 5%;
+    }
+
+    .register-container {
+        padding: 30px 5% 50px 5%;
+    }
+
+    .login-title,
+    .register-title {
+        font-size: var(--font-size-3xl);
+        margin-bottom: 35px;
+    }
+
+    .login-form .form-group,
+    .register-form .form-group {
+        margin-bottom: var(--spacing-lg);
+    }
+
+    .login-form .form-group label,
+    .register-form .form-group label {
+        font-size: var(--font-size-lg);
+        margin-bottom: 8px;
+    }
+
+    .login-btn,
+    .register-btn {
+        padding: 16px;
+        font-size: var(--font-size-md);
+        margin-top: var(--spacing-md);
+    }
+
+    .create-account-link,
+    .register-link,
+    .login-link {
+        margin-top: var(--spacing-lg);
+        font-size: var(--font-size-base);
+    }
+}

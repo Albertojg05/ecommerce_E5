@@ -10,27 +10,41 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
+ * Entidad que representa a un usuario del sistema.
+ * Puede ser un cliente que realiza compras o un administrador que gestiona la tienda.
+ * Cada usuario tiene sus propias direcciones de envio y un historial de pedidos.
  *
- * @author Alberto Jiménez García 252595 
- * Rene Ezequiel Figueroa Lopez 228691
- * Freddy Alí Castro Román 252191
+ * @author Alberto Jiménez García 252595
+ * @author Rene Ezequiel Figueroa Lopez 228691
+ * @author Freddy Alí Castro Román 252191
  */
 @Entity
+@Table(name = "usuario")
 public class Usuario implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Column(nullable = false, length = 100)
     private String nombre;
+
+    @Column(unique = true, nullable = false, length = 100)
     private String correo;
+
+    @Column(nullable = false, length = 255)
     private String contrasena;
+
+    @Column(length = 15)
     private String telefono;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
     private RolUsuario rol;
 
-    @OneToMany(mappedBy = "usuario")
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Direccion> direcciones;
 
     @OneToMany(mappedBy = "usuario")
@@ -47,6 +61,7 @@ public class Usuario implements Serializable {
         this.rol = rol;
     }
 
+    // Getters y Setters
     public int getId() {
         return id;
     }
@@ -109,5 +124,5 @@ public class Usuario implements Serializable {
 
     public void setPedidos(List<Pedido> pedidos) {
         this.pedidos = pedidos;
-    }    
+    }
 }

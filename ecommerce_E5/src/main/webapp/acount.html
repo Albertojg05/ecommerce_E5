@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Cuenta - MiTienda</title>
+    <link rel="stylesheet" href="css/acount.css">
+</head>
+
+<body>
+
+    <header class="header-productos">
+        <div class="logo">
+            <a href="index.html">MiTienda</a>
+        </div>
+
+        <form class="search-bar-centered">
+            <input type="text" placeholder="Lorem ipsum has">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path
+                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+            </svg>
+        </form>
+
+        <nav class="main-nav">
+            <a href="product.html">Tienda</a>
+            <a href="login.html">Cuenta</a>
+            <a href="carrito.html">Carrito</a>
+        </nav>
+    </header>
+
+    <main class="account-page">
+        <h1 class="account-title">Cuenta</h1>
+
+        <div class="account-grid">
+
+            <section class="account-info">
+                <div class="user-details">
+                    <div class="user-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor"
+                            viewBox="0 0 16 16">
+                            <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
+                            <path fill-rule="evenodd"
+                                d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z" />
+                        </svg>
+                    </div>
+                    <div class="user-name-details">
+                        <h2>Rene Figueroa</h2>
+                        <div class="info-row">
+                            <span>Rene@gmail.com</span>
+                        </div>
+                        <div class="info-row">
+                            <span>6444232014</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="address-details">
+                    <h3>Dirección</h3>
+                    <p><strong>Ciudad:</strong> México</p>
+                    <p><strong>Calle:</strong> Rio Amacuzac 819</p>
+                    <p><strong>Código Postal:</strong> 85000</p>
+                    <p><strong>Estado:</strong> Sonora</p>
+                    <a href="acount-edit.html" class="edit-btn">Editar</a>
+                </div>
+            </section>
+
+            <section class="order-history">
+                <h2>Pedidos</h2>
+                <div class="order-list">
+                    <div class="order-item">
+                        <img src="./imgs/producto1.png" width="80px" height="100px" alt="Producto del pedido">
+                        <div class="order-details">
+                            <p class="order-title">Short vestir pinza doble</p>
+                            <p class="order-spec"><strong>Color:</strong> NEGRO</p>
+                            <p class="order-spec"><strong>Talla:</strong> S</p>
+                        </div>
+                        <span class="order-price">849.00</span>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+</body>
+
+</html>

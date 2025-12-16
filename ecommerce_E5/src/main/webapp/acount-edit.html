@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Cuenta - MiTienda</title>
+    <link rel="stylesheet" href="css/acount-edit.css">
+</head>
+
+<body>
+
+    <header class="header-productos">
+        <div class="logo">
+            <a href="index.html">MiTienda</a>
+        </div>
+
+        <form class="search-bar-centered">
+            <input type="text" placeholder="Lorem ipsum has">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <path
+                    d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+            </svg>
+        </form>
+
+        <nav class="main-nav">
+            <a href="product.html">Tienda</a>
+            <a href="login.html">Cuenta</a>
+            <a href="carrito.html">Carrito</a>
+        </nav>
+    </header>
+
+
+    <main class="account-edit-page">
+        <h1>Editar Cuenta</h1>
+
+        <form class="edit-form">
+            <h2>Detalles del Perfil</h2>
+            <div class="form-group">
+                <label for="nombre">Nombre</label>
+                <input type="text" id="nombre" class="form-input" value="Rene">
+            </div>
+            <div class="form-group">
+                <label for="apellido">Apellido</label>
+                <input type="text" id="apellido" class="form-input" value="Figueroa">
+            </div>
+            <div class="form-group">
+                <label for="email">Correo Electrónico</label>
+                <input type="email" id="email" class="form-input" value="Rene@gmail.com">
+            </div>
+            <div class="form-group">
+                <label for="telefono">Teléfono</label>
+                <input type="tel" id="telefono" class="form-input" value="6444232014">
+            </div>
+            <button type="submit" class="btn-save">Guardar Perfil</button>
+        </form>
+
+        <form class="edit-form">
+            <h2>Dirección de Envío</h2>
+            <div class="form-group">
+                <label for="calle">Calle y Número</label>
+                <input type="text" id="calle" class="form-input" value="Rio Amacuzac 819">
+            </div>
+            <div class="form-grid-3">
+                <div class="form-group">
+                    <label for="ciudad">Ciudad</label>
+                    <input type="text" id="ciudad" class="form-input" value="México">
+                </div>
+                <div class="form-group">
+                    <label for="estado">Estado</label>
+                    <input type="text" id="estado" class="form-input" value="Sonora">
+                </div>
+                <div class="form-group">
+                    <label for="cp">Código Postal</label>
+                    <input type="text" id="cp" class="form-input" value="85000">
+                </div>
+            </div>
+            <button type="submit" class="btn-save">Guardar Dirección</button>
+        </form>
+    </main>
+
+</body>
+
+</html>

@@ -1,0 +1,227 @@
+/*
+ * confirm.css
+ * Confirmacion de pedido
+ *
+ * @author Alberto Jimenez Garcia 252595
+ * @author Rene Ezequiel Figueroa Lopez 228691
+ * @author Freddy Ali Castro Roman 252191
+ */
+
+main.confirmation-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 80px 5%;
+    min-height: 60vh;
+}
+
+.confirmation-box {
+    max-width: 550px;
+    width: 100%;
+    text-align: center;
+    padding: var(--spacing-2xl);
+    background-color: var(--background-light);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-divider);
+}
+
+.success-icon {
+    color: var(--color-success);
+    margin-bottom: var(--spacing-lg);
+}
+
+.confirmation-box h1 {
+    font-size: var(--font-size-4xl);
+    color: var(--color-title);
+    margin: 0 0 var(--spacing-sm) 0;
+}
+
+.order-number {
+    font-size: var(--font-size-xl);
+    color: var(--color-text);
+    margin-top: 0;
+}
+
+/* Detalles del pedido */
+.order-details,
+.order-summary-preview {
+    background-color: var(--background);
+    padding: var(--spacing-lg);
+    border-radius: var(--radius-md);
+    margin: var(--spacing-lg) 0;
+    text-align: left;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--spacing-sm) 0;
+    border-bottom: 1px solid var(--color-divider);
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+.total-amount {
+    font-weight: 700;
+    font-size: var(--font-size-xl);
+}
+
+.status-badge {
+    background-color: var(--badge-pendiente-bg);
+    color: var(--badge-pendiente-text);
+    padding: 4px 12px;
+    border-radius: var(--radius-xl);
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+}
+
+.info-text {
+    color: var(--color-text-light);
+    font-size: var(--font-size-base);
+    margin: var(--spacing-lg) 0;
+}
+
+/* Botones de accion */
+.action-buttons {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: center;
+    margin-top: var(--spacing-lg);
+}
+
+.btn-primary,
+.btn-secondary {
+    display: inline-block;
+    padding: 14px var(--spacing-lg);
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    transition: opacity var(--transition-fast);
+}
+
+.btn-primary {
+    background-color: var(--color-btn-primary);
+    color: var(--background);
+}
+
+.btn-secondary {
+    background-color: transparent;
+    color: var(--color-btn-primary);
+    border: 1px solid var(--color-btn-primary);
+}
+
+.btn-primary:hover,
+.btn-secondary:hover {
+    opacity: 0.85;
+    text-decoration: none;
+}
+
+.btn-back-home {
+    display: inline-block;
+    background-color: var(--color-btn-primary);
+    color: var(--background);
+    padding: 14px var(--spacing-xl);
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: var(--radius-sm);
+    margin-top: var(--spacing-lg);
+    transition: opacity var(--transition-fast);
+}
+
+.btn-back-home:hover {
+    opacity: 0.85;
+    text-decoration: none;
+}
+
+/* RESPONSIVE (500px) */
+@media (max-width: 500px) {
+    .action-buttons {
+        flex-direction: column;
+    }
+}
+
+/* RESPONSIVE - Celular (480px) */
+@media (max-width: 480px) {
+    main.confirmation-page {
+        padding: var(--spacing-2xl) 4%;
+        min-height: 50vh;
+    }
+
+    .confirmation-box {
+        padding: var(--spacing-lg) var(--spacing-lg);
+        border-radius: 6px;
+    }
+
+    .success-icon {
+        margin-bottom: var(--spacing-md);
+    }
+
+    .success-icon svg {
+        width: 60px;
+        height: 60px;
+    }
+
+    .confirmation-box h1 {
+        font-size: 22px;
+        margin-bottom: 8px;
+    }
+
+    .order-number {
+        font-size: var(--font-size-md);
+    }
+
+    .order-details,
+    .order-summary-preview {
+        padding: var(--spacing-md);
+        margin: var(--spacing-lg) 0;
+        border-radius: 6px;
+    }
+
+    .detail-row {
+        padding: 8px 0;
+        font-size: var(--font-size-base);
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+
+    .detail-row span:first-child {
+        color: var(--color-text-light);
+        font-size: var(--font-size-sm);
+    }
+
+    .total-amount {
+        font-size: var(--font-size-lg);
+    }
+
+    .status-badge {
+        padding: 3px 10px;
+        font-size: var(--font-size-xs);
+    }
+
+    .info-text {
+        font-size: var(--font-size-sm);
+        margin: var(--spacing-md) 0;
+        line-height: 1.5;
+    }
+
+    .action-buttons {
+        gap: var(--spacing-sm);
+        margin-top: var(--spacing-lg);
+    }
+
+    .btn-primary,
+    .btn-secondary,
+    .btn-back-home {
+        padding: 12px var(--spacing-lg);
+        font-size: var(--font-size-base);
+        width: 100%;
+        text-align: center;
+        box-sizing: border-box;
+    }
+
+    .btn-back-home {
+        margin-top: var(--spacing-md);
+    }
+}
